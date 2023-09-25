@@ -1,4 +1,6 @@
 import Browse from '../views/Browse.vue';
+import ListModelView from "@/_Hub/views/ListModelView.vue";
+import ModelView from "@/_Hub/views/ModelView.vue";
 
 function getRoutes(config) {
   let routes = [];
@@ -55,4 +57,30 @@ function getRoutes(config) {
   return routes;
 }
 
+
+export function getRoutes_2(config) {
+  let routes = [];
+
+  routes = [
+    {
+      path: "/models",
+      name: "listModels",
+      component: ListModelView,
+    },
+    {
+      path: "/model/:id",
+      name: "model",
+      component: ModelView,
+      children:[
+        {
+        path:"/",
+        component:Browse
+      }
+      ]
+    }
+  ];
+  return routes
+}
+
 export default getRoutes;
+

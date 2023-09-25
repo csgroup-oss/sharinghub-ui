@@ -22,19 +22,17 @@ export default defineComponent({
   computed: {
     detectTypo: function () {
       switch (this.$props.type) {
-        case "Title_1":
+        case "Title-1":
           return `text__Title-1`;
         default:
-          return `text__Title-1`;
+          return `text__${this.$props.type}`;
       }
     }
   },
   mounted() {
 
   },
-  methods: {
-
-  }
+  methods: {}
 
 });
 </script>
@@ -47,10 +45,32 @@ export default defineComponent({
   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
   "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  &__Title-1 {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    font-weight: 700;
+  &__Title {
+    &-1 {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      font-weight: 700;
+    }
+
+    &-2 {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      font-weight: 600;
+    }
+  }
+
+  &__Small {
+    &-1 {
+      font-size: 0.9rem;
+    }
+
+    &-2 {
+      font-size: 0.75em;
+    }
+     &-3 {
+      font-size: 0.7em;
+       letter-spacing: 1px;
+    }
   }
 }
 </style>

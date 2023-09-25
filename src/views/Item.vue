@@ -58,7 +58,8 @@ export default {
     Metadata: () => import('../components/Metadata.vue'),
     Providers: () => import('../components/Providers.vue'),
     ReadMore,
-    Thumbnails: () => import('../components/Thumbnails.vue')
+    Thumbnails: () => import('../components/Thumbnails.vue'),
+    Keywords: () => import('../components/Keywords.vue'),
   },
   mixins: [ShowAssetMixin],
   data() {

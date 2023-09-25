@@ -1,3 +1,13 @@
+@import "colors";
+@import "mixins";
+
+html, body {
+  height: 100%;
+  margin: auto;
+  background-color: $grey-color;
+  @include scrollbars(0.6em, $primary-color)
+}
+
 .w {
   &-100 {
     width: 100% !important;
@@ -6,22 +16,22 @@
 
 .h {
   &-100 {
-    width: 100% !important;
+    height: 100% !important;
   }
 }
 
 .border {
   &-grey {
-    border: solid gray 2px;
+    border: solid gray 1px;
   }
 
   &-rose {
-    border: solid darkred 2px;
+    border: solid #dc3545 1px;
   }
 
 }
 
-.text{
+.text {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
 }
 
@@ -30,4 +40,14 @@
   margin-left: auto;
   margin-right: auto;
   //width: 100%;
+}
+
+.p-divider {
+  &--vertical{
+    border-left: solid 1px rgba($secondary-color, 0.4) !important;
+    width: 2px;
+    height: 100%;
+    margin: 0 0.3rem;
+    min-height: 20px;
+  }
 }

@@ -10,7 +10,7 @@
     </header>
     <!-- Content (Item / Catalog) -->
     <router-view />
-    <footer>
+    <footer hidden="hidden">
       <i18n tag="small" path="poweredBy" class="poweredby text-muted">
         <template #link>
           <a href="https://github.com/radiantearth/stac-browser" target="_blank">STAC Browser</a> {{ browserVersion }}
@@ -45,6 +45,7 @@ import URI from 'urijs';
 import I18N from '@radiantearth/stac-fields/I18N';
 import { translateFields, API_LANGUAGE_CONFORMANCE, loadMessages } from './i18n';
 import { getBest, prepareSupported } from './locale-id';
+import Browse from "@/views/Browse.vue";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -60,16 +61,16 @@ Vue.directive('b-toggle', VBToggle);
 Vue.directive('b-visible', VBVisible);
 
 // Setup router
-Vue.use(VueRouter);
-const router = new VueRouter({
-  mode: CONFIG.historyMode,
-  base: CONFIG.pathPrefix,
-  routes: getRoutes(CONFIG)
-});
+//Vue.use(VueRouter);
+//const router = new VueRouter({
+//  mode: CONFIG.historyMode,
+//  base: CONFIG.pathPrefix,
+//  routes: getRoutes(CONFIG)
+//});
 
 // Setup store
-Vue.use(Vuex);
-const store = getStore(CONFIG, router);
+//Vue.use(Vuex);
+//const store = getStore(CONFIG, router);
 
 // Pass Config through from props to vuex
 let Props = {};
@@ -88,10 +89,11 @@ for(let key in CONFIG) {
   };
 }
 
+
 export default {
   name: 'StacBrowser',
-  router,
-  store,
+ // router,
+ // store,
   components: {
     Authentication: () => import('./components/Authentication.vue'),
     ErrorAlert,
