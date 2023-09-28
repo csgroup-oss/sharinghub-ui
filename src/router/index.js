@@ -1,6 +1,6 @@
 import Browse from '../views/Browse.vue';
 import ListModelView from "@/_Hub/views/ListModelView.vue";
-import ModelView from "@/_Hub/views/ModelView.vue";
+import StacBrowser from "@/StacBrowser.vue";
 
 function getRoutes(config) {
   let routes = [];
@@ -68,9 +68,9 @@ export function getRoutes_2(config) {
       component: ListModelView,
     },
     {
-      path: "/model/:id",
+      path: "/metadata",
       name: "model",
-      component: ModelView,
+      component: StacBrowser ,
       children:[
         {
         path:"/",
@@ -79,7 +79,7 @@ export function getRoutes_2(config) {
       ]
     }
   ];
-  return routes
+  return routes;
 }
 
 export default getRoutes;

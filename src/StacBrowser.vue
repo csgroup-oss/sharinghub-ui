@@ -1,15 +1,57 @@
 <template>
-  <b-container id="stac-browser">
-    <Authentication v-if="doAuth.length > 0" />
-    <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError" />
-    <Sidebar v-if="sidebar" />
-    <!-- Header -->
+  <div class="container h-100" id="stac-browser">
+    <Authentication v-if="doAuth.length > 0"/>
+    <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError"/>
+    <Sidebar v-if="sidebar"/>
+    <!-- Header  TODO -->
     <header>
       <div class="logo">{{ displayCatalogTitle }}</div>
-      <StacHeader @enableSidebar="sidebar = true" />
+      <StacHeader @enableSidebar="sidebar = true"/>
     </header>
-    <!-- Content (Item / Catalog) -->
-    <router-view />
+
+    <div class="w-100 p-pt-5 ">
+      <b-tabs class="p-pb-3">
+
+        <b-tab class="p-pt-4">
+          <template #title>
+            <TextView class="Title-2"> Asset Card</TextView>
+          </template>
+          <TextView>
+            <!-- Content (Item / Catalog) -->
+            <router-view/>
+          </TextView>
+        </b-tab>
+        <b-tab class="p-pt-4">
+          <template #title>
+            <TextView class="Title-1"> Reviews community</TextView>
+          </template>
+          <TextView>
+            <ReviewSection/>
+          </TextView>
+        </b-tab>
+
+        <b-tab class="p-pt-4">
+          <template #title>
+            <TextView class="Title-1"> File and versions</TextView>
+          </template>
+          <TextView>
+
+          </TextView>
+        </b-tab>
+
+        <b-tab class="p-pt-4">
+          <template #title>
+            <TextView class="Title-1">STAC Api</TextView>
+          </template>
+          <TextView>
+
+          </TextView>
+        </b-tab>
+
+      </b-tabs>
+
+    </div>
+
     <footer hidden="hidden">
       <i18n tag="small" path="poweredBy" class="poweredby text-muted">
         <template #link>
@@ -17,21 +59,28 @@
         </template>
       </i18n>
     </footer>
-  </b-container>
+  </div>
 </template>
 
 <script>
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Vuex, { mapActions, mapGetters, mapState } from 'vuex';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import CONFIG from './config';
-import getRoutes from "./router";
-import getStore from "./store";
 
 import {
-  AlertPlugin, BadgePlugin, ButtonGroupPlugin, ButtonPlugin,
-  CardPlugin, LayoutPlugin, SpinnerPlugin,
-  VBToggle, VBVisible } from "bootstrap-vue";
+  AlertPlugin,
+  BadgePlugin,
+  BTab,
+  BTabs,
+  ButtonGroupPlugin,
+  ButtonPlugin,
+  CardPlugin,
+  LayoutPlugin,
+  SpinnerPlugin,
+  VBToggle,
+  VBVisible
+} from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
@@ -43,9 +92,10 @@ import Utils from './utils';
 import URI from 'urijs';
 
 import I18N from '@radiantearth/stac-fields/I18N';
-import { translateFields, API_LANGUAGE_CONFORMANCE, loadMessages } from './i18n';
-import { getBest, prepareSupported } from './locale-id';
-import Browse from "@/views/Browse.vue";
+import {API_LANGUAGE_CONFORMANCE, loadMessages, translateFields} from './i18n';
+import {getBest, prepareSupported} from './locale-id';
+import TextView from "@/_Hub/components/TextView.vue";
+import ReviewSection from "@/_Hub/views/sections/ReviewSection.vue";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -75,13 +125,13 @@ Vue.directive('b-visible', VBVisible);
 // Pass Config through from props to vuex
 let Props = {};
 let Watchers = {};
-for(let key in CONFIG) {
+for (let key in CONFIG) {
   Props[key] = {
     default: ['object', 'function'].includes(typeof CONFIG[key]) ? () => CONFIG[key] : CONFIG[key]
   };
   Watchers[key] = {
     immediate: true,
-    handler: function(newValue) {
+    handler: function (newValue) {
       this.$store.commit('config', {
         [key]: newValue
       });
@@ -92,9 +142,10 @@ for(let key in CONFIG) {
 
 export default {
   name: 'StacBrowser',
- // router,
- // store,
+  // router,
+  // store,
   components: {
+    ReviewSection, TextView, BTabs, BTab,
     Authentication: () => import('./components/Authentication.vue'),
     ErrorAlert,
     Sidebar: () => import('./components/Sidebar.vue'),
@@ -123,8 +174,7 @@ export default {
     browserVersion() {
       if (typeof STAC_BROWSER_VERSION !== 'undefined') {
         return STAC_BROWSER_VERSION;
-      }
-      else {
+      } else {
         return "";
       }
     }
@@ -173,15 +223,14 @@ export default {
             let state = Object.assign({}, this.stateQueryParameters);
             this.$router.push(this.toBrowserPath(link.href));
             this.$store.commit('state', state);
-          }
-          else if (this.supportsConformance(API_LANGUAGE_CONFORMANCE)) {
+          } else if (this.supportsConformance(API_LANGUAGE_CONFORMANCE)) {
             // this.url gets reset with resetCatalog so store the url for use in load
             let url = this.url;
             // Todo: Resetting the catalogs is not ideal. 
             // A better way would be to combine the language code and URL as the index in the browser database
             // This needs a database refactor though: https://github.com/radiantearth/stac-browser/issues/231
             this.$store.commit('resetCatalog', true);
-            await this.$store.dispatch("load", { url, loadApi: true, show: true });
+            await this.$store.dispatch("load", {url, loadApi: true, show: true});
           }
         }
       }
@@ -189,7 +238,7 @@ export default {
     catalogUrlFromVueX(url) {
       if (url) {
         // Load the root catalog data if not available (e.g. after page refresh or external access)
-        this.$store.dispatch("load", { url, loadApi: true });
+        this.$store.dispatch("load", {url, loadApi: true});
       }
     },
     stateQueryParameters: {
@@ -207,13 +256,12 @@ export default {
             if (value.length > 0) {
               query[name] = value.join(',');
             }
-          }
-          else if (value !== null) {
-              query[name] = value;
+          } else if (value !== null) {
+            query[name] = value;
           }
         }
 
-        this.$router.replace({ query }).catch(error => {
+        this.$router.replace({query}).catch(error => {
           if (!VueRouter.isNavigationFailure(error, VueRouter.NavigationFailureType.duplicated)) {
             throw Error(error);
           }
@@ -236,7 +284,7 @@ export default {
       let doReset = !root || (oldRoot && Utils.isObject(oldRoot['stac_browser']));
       let doSet = root && Utils.isObject(root['stac_browser']);
 
-      for(let key of canChange) {
+      for (let key of canChange) {
         let value;
         if (doReset) {
           value = CONFIG[key]; // Original value
@@ -244,7 +292,7 @@ export default {
         if (doSet && typeof root['stac_browser'][key] !== 'undefined') {
           value = root['stac_browser'][key]; // Custom value from root
         }
-        
+
         // Don't enable stacLint if it has been disabled by default
         if (key === 'stacLint' && !CONFIG.stacLint) {
           continue;
@@ -252,7 +300,7 @@ export default {
 
         // Commit config
         if (typeof value !== 'undefined') {
-          this.$store.commit('config', { [key]: value });
+          this.$store.commit('config', {[key]: value});
         }
       }
     },
@@ -265,7 +313,7 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     this.$router.onReady(() => {
       this.detectLocale();
       this.parseQuery(this.$route);
@@ -288,6 +336,11 @@ export default {
       this.$store.commit(resetOp);
       this.parseQuery(to);
     });
+    const {external} = this.$route.query;
+    if (!external) {
+      this.$router.push({path: "/models"});
+    }
+    await this.$store.dispatch('load', {url: external, loadApi: true, show: true});
   },
   mounted() {
     this.$root.$on('error', this.showError);
@@ -300,14 +353,14 @@ export default {
       if (this.storeLocaleFromVueX) {
         try {
           locale = window.localStorage.getItem('locale');
-        } catch(error) {
+        } catch (error) {
           console.error(error);
         }
       }
       if (!locale && this.detectLocaleFromBrowserFromVueX && Array.isArray(navigator.languages)) {
         // Detect the most suitable locale
         const supported = prepareSupported(this.supportedLocalesFromVueX);
-        for(let l of navigator.languages) {
+        for (let l of navigator.languages) {
           const best = getBest(supported, l, null);
           if (best) {
             locale = best;
@@ -335,7 +388,7 @@ export default {
       }
       let query = Object.assign({}, route.query, privateFromHash);
       let params = {};
-      for(let key in query) {
+      for (let key in query) {
         let value = query[key];
         // Store all private query parameters (start with ~) and replace them in the shown URI
         if (key.startsWith('~')) {
@@ -371,13 +424,13 @@ export default {
         this.switchLocale({locale: params.state.language});
       }
       if (Utils.size(params.private) > 0) {
-        this.$router.replace({ query });
+        this.$router.replace({query});
       }
 
     },
     showError(error, message) {
       this.$store.commit('showGlobalError', {
-        error, 
+        error,
         message
       });
     },

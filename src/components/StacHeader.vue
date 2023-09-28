@@ -10,46 +10,73 @@
       </h1>
       <p class="lead" v-if="url || isSearchPage()">
         <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
-          <template #catalog><StacLink :data="containerLink" /></template>
+          <template #catalog>
+            <StacLink :data="containerLink"/>
+          </template>
         </i18n>
         <b-button-group>
-          <b-button v-if="parentLink" :to="toBrowserPath(parentLink.href)" :title="parentLinkTitle" variant="outline-primary" size="sm">
-            <b-icon-arrow-90deg-up /> <span class="button-label prio">{{ $t('goToParent.label') }}</span>
+          <b-button v-if="parentLink" :to="toBrowserPath(parentLink.href)" :title="parentLinkTitle"
+                    variant="outline-primary" size="sm">
+            <b-icon-arrow-90deg-up/>
+            <span class="button-label prio">{{ $t('goToParent.label') }}</span>
           </b-button>
-          <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle" variant="outline-primary" size="sm">
-            <b-icon-folder-symlink /> <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
+          <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
+                    variant="outline-primary" size="sm">
+            <b-icon-folder-symlink/>
+            <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
           </b-button>
-          <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar @click="$emit('enableSidebar')">
-            <b-icon-book /> <span class="button-label prio">{{ $t('browse') }}</span>
+          <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar
+                    @click="$emit('enableSidebar')">
+            <b-icon-book/>
+            <span class="button-label prio">{{ $t('browse') }}</span>
           </b-button>
-          <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink" :title="$t('search.title')" :pressed="isSearchPage()">
-            <b-icon-search /> <span class="button-label prio">{{ $t('search.title') }}</span>
+          <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink"
+                    :title="$t('search.title')" :pressed="isSearchPage()">
+            <b-icon-search/>
+            <span class="button-label prio">{{ $t('search.title') }}</span>
           </b-button>
-          <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth" :title="$t('authentication.button.title')">
+          <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth"
+                    :title="$t('authentication.button.title')">
             <template v-if="authData">
-              <b-icon-lock /> <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
+              <b-icon-lock/>
+              <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
             </template>
             <template v-else>
-              <b-icon-unlock /> <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
+              <b-icon-unlock/>
+              <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
             </template>
           </b-button>
         </b-button-group>
       </p>
+
+      <b-col cols="12">
+        <b-row class="p-mb-3">
+           <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
+        </b-row>
+        <b-row>
+          <chip v-for="tag in tags" :label="tag.label" :icon="'pi '+ tag.icon " :class="'p-chip p-chip__' + getRandomColor()" />
+        </b-row>
+      </b-col>
     </b-col>
   </b-row>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import {mapGetters, mapState} from 'vuex';
 import Source from './Source.vue';
 import StacLink from './StacLink.vue';
-import { BIconArrow90degUp, BIconBook, BIconFolderSymlink, BIconSearch, BIconLock, BIconUnlock } from "bootstrap-vue";
+import {BIconArrow90degUp, BIconBook, BIconFolderSymlink, BIconLock, BIconSearch, BIconUnlock} from "bootstrap-vue";
 import STAC from '../models/stac';
 import Utils from '../utils';
+import _ from "lodash";
+import Chip from "primevue/chip/Chip";
+import TagCustom from "@/_Hub/components/TagCustom.vue";
 
 export default {
   name: 'StacHeader',
   components: {
+    TagCustom,
+    Chip,
     BIconArrow90degUp,
     BIconBook,
     BIconFolderSymlink,
@@ -58,6 +85,17 @@ export default {
     BIconUnlock,
     StacLink,
     Source
+  },
+  data() {
+    return {
+      tags: [
+        {label: "Text generation", icon: "pi-file-edit"},
+        {label: "SkykitLean", icon: "pi-github"},
+        {label: "English", icon: "pi-globe"},
+        {label: "DOI:2308.145", icon: "pi-book"},
+        {label: "License: MIT", icon: "pi-check"},
+      ],
+    };
   },
   computed: {
     ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title']),
@@ -97,8 +135,7 @@ export default {
       }
       if (dataLink) {
         return `/search${this.data.getBrowserPath()}`;
-      }
-      else if (this.root && this.allowSelectCatalog) {
+      } else if (this.root && this.allowSelectCatalog) {
         return `/search${this.root.getBrowserPath()}`;
       }
       return '/search';
@@ -111,8 +148,7 @@ export default {
       if (this.root) {
         if (Utils.equalUrl(this.root.getAbsoluteUrl(), this.url)) {
           return null;
-        }
-        else {
+        } else {
           return {
             href: this.root.getAbsoluteUrl(),
             rel: 'root',
@@ -134,13 +170,69 @@ export default {
         show: true,
         force: true
       }));
+    },
+    getRandomColor: function () {
+      return _.sample(["info", "outline", "purple", "danger", "red", "darkgrey", "primary"]);
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+
+@import "src/assets/colors";
+@import "src/assets/mixins";
+
 h1 {
   word-break: break-word;
+}
+
+.hide {
+  display: none !important;
+}
+
+.p-chip {
+  font-size: 0.7em !important;
+  border-radius: 0.5rem !important;
+  background: transparent;
+  max-width: 300px;
+  text-overflow: ellipsis;
+  text-wrap: normal;
+  overflow: hidden;
+  cursor: pointer;
+  margin: 0 3px;
+
+  &__outline {
+    border: 1px rgba($primary-color, 0.5) solid;
+
+    :hover {
+      color: $primary-color;
+      transition: color ease-in-out 0.2ms;
+    }
+  }
+
+  &__info {
+    @include fade_background($info)
+  }
+
+  &__primary {
+    @include fade_background($primary-color)
+  }
+
+  &__danger {
+    @include fade_background($danger)
+  }
+
+  &__red {
+    @include fade_background($red)
+  }
+
+  &__darkgrey {
+    @include fade_background($dark-grey)
+  }
+
+  &__purple {
+    @include fade_background($purple)
+  }
 }
 </style>

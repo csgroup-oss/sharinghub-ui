@@ -1,10 +1,3 @@
-<template>
-  <div class="w-100">
-    <Vssue :title="title" :options="options"
-    />
-  </div>
-</template>
-
 <script>
 import Vue, {defineComponent} from 'vue';
 import Vssue, {VssueComponent} from "vssue";
@@ -17,10 +10,12 @@ Vue.use(Vssue);
 
 const vsOptions = {
   api: GitlabV4,
-  owner: "space_applications/mlops-services/gitlab2stac_tests",
-  repo: "dataset-sample",
-  clientId: "1e810488c2a8919fc56533220691215da5dff1c82d3242e8180e967891ef9b59",
-  clientSecret: "65c4488e201bc86edd6ec9b03be579c61178d40e9dd3d1effada6a4b0ee79743",
+  labels:[],
+  prefix:[""],
+  owner: "olivier.koko",
+  repo: "gitlab_to_stac_test",
+  clientId: "50a9f8a95e3a0c56cfff47adb281ee23b5e332ae4809505409b54bc064d2d1a6",
+  clientSecret: "2524fb8496c1c76f78c31fc51ebf68ed5f1042f429f9529c334c159001ad4fc5",
   baseURL: "https://gitlab.si.c-s.fr",
 };
 
@@ -31,7 +26,8 @@ export default defineComponent({
   },
   data() {
     return {
-      title:"demo",
+      issueId: 1,
+      title: "First issues test",
       options: vsOptions,
     };
   },
@@ -42,6 +38,14 @@ export default defineComponent({
 </script>
 
 
+<template>
+  <div class="w-100">
+    <Vssue :issue-id="issueId" :title="title" :options="options"
+    />
+  </div>
+</template>
+
 <style scoped lang="scss">
 
 </style>
+

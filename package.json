@@ -46,6 +46,7 @@
     "core-js": "^3.6.5",
     "leaflet": "^1.8.0",
     "lodash": "^4.17.21",
+    "luxon": "^3.4.3",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "oh-vue-icons": "^1.0.0-rc3",
     "primeflex": "2.0.0",
