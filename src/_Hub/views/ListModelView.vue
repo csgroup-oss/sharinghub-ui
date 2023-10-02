@@ -1,11 +1,12 @@
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
-import ResourceCard from "@/_Hub/components/ResourceCard.vue";
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 import ItemCard from "@/_Hub/components/ItemCard.vue";
-import {BASE_URL, get} from "@/_Hub/services/https";
+import {get} from "@/_Hub/services/https";
 import _ from "lodash";
+import ErrorAlert from "@/components/ErrorAlert.vue";
+import Utils, {BrowserError} from "@/utils";
 
 const ENTRY = {
   models: "AI Model",
@@ -15,23 +16,27 @@ const ENTRY = {
 
 export default defineComponent({
   name: "ListModelView",
-  components: {ItemCard, TextView},
+  components: {ErrorAlert, ItemCard, TextView},
   data() {
     return {
       loading: true,
-      modelList: []
+      modelList: [],
+      url: undefined,
+      errorId: 401,
+      errorDescription: ""
     };
   },
   computed: {
-    ...mapState(['data'])
+    ...mapState(['data']),
   },
   async created() {
-    const url =  this.$store.state.catalogUrl
-    if(!url){
+    const url = this.$store.state.catalogUrl
+    this.url = this.$store.state.catalogUrl
+    if (!url) {
       this.$router.push("/")
     }
     await this.$store.dispatch('load', {url: url, loadApi: true, show: true});
-    const child = this.data.links.filter((el) => el.rel === "child");
+    const child = this.data.links?.filter((el) => el.rel === "child");
     const child_requests = child.map(async (el) => {
       return get(el.href).then((response) => {
         return response.data;
@@ -43,11 +48,10 @@ export default defineComponent({
     this.modelList = _.flatten(entry_models
       .filter((stac) => stac.title === ENTRY.models)
       .map((stac) => stac.links))
-      .filter((stac)=> stac.rel ==="child");
+      .filter((stac) => stac.rel === "child");
   },
   methods: {
-    async getModels() {
-    },
+
   },
 });
 
@@ -60,8 +64,7 @@ export default defineComponent({
     <TextView type="Title-1">Model List</TextView>
 
     <div class="section">
-      <ItemCard
-        v-for="model in modelList" :metadata="model"/>
+      <ItemCard  v-for="model in modelList" :metadata="model"/>
     </div>
 
   </div>

@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       url: 'https://gitlab.si.c-s.fr',
-      token: "Fs_L1T6iXnq6zxGGSu9W",
+      token: undefined,
     };
   },
   computed: {
@@ -103,6 +103,7 @@ export default {
         return;
       const url = BASE_URL.concat(`${this.url.replace("https://","")}/${this.token}/`)
       this.$store.commit("setBaseUrl", url)
+      this.$store.commit("setToken", this.token)
 
       this.$router.push("models");
     }

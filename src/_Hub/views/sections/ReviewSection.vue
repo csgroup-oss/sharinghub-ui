@@ -1,8 +1,5 @@
 <script>
 import Vue, {defineComponent} from 'vue';
-//import Vssue, {VssueComponent} from "vssue";
-//import 'vssue/dist/vssue.css';
-//import GitlabV4 from "@vssue/api-gitlab-v4";
 import Vssue, {VssueComponent} from "../../../../vendors/dist/vssue";
 import '../../../../vendors/dist/vssue.css';
 import GitlabV4 from "../../../../vendors/lib/index";
@@ -21,7 +18,7 @@ const vsOptions = {
   repo: 406,
   clientId: "",
   clientSecret: "",
-  privateToken:"Fs_L1T6iXnq6zxGGSu9W",
+  privateToken:undefined,
   baseURL: "https://gitlab.si.c-s.fr",
   proxy: url => `https://cors-anywhere.azm.workers.dev/${url}`,
   issueContent: ({ url }) => url,
@@ -36,7 +33,10 @@ export default defineComponent({
   data() {
     return {
       title: "Vssue Dev",
-      options: vsOptions,
+      options: {
+        ...vsOptions,
+        privateToken: this.$store.state.token
+      },
     };
   },
   mounted() {

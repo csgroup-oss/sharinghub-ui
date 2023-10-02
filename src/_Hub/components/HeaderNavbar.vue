@@ -2,7 +2,12 @@
   <header class="nav-bar w-100 p-pb-2">
     <div class="container p-px-4 p-py-1 p-d-flex p-ai-center p-jc-between">
       <div class="p-d-flex p-ai-center">
-        <text-view class="p-mr-4">SharingHUB</text-view>
+        <text-view class="p-mr-4">
+          <router-link to="/" class="cursor">
+            SharingHUB
+          </router-link>
+
+        </text-view>
         <div class="p-input-icon-left">
           <i class="pi pi-search"/>
           <input-text disabled class="p-inputtext-sm" type="text" v-model="value"
@@ -18,7 +23,7 @@
 
 
         <nav-item icon="pi pi-box" class="p-mx-1">
-          <router-link  to="/models">
+          <router-link to="/models">
             Models
           </router-link>
         </nav-item>
@@ -74,6 +79,12 @@ export default defineComponent({
 
   .p-divider {
     border-left: solid 1px rgba($secondary-color, 0.4);
+  }
+  .cursor{
+    &:hover{
+      text-decoration: none !important;
+      text-underline: none !important;
+    }
   }
 }
 

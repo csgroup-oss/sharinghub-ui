@@ -269,6 +269,15 @@ You can run the following commands (see also "[Get started](#get-started)" above
 
 The [release process is documented separately](docs/release.md).
 
+### How deploy 
+- Build project locally with command ```npm run build ```
+- create a zip archive from [static file director](./dist) 
+- make sure your P2 account is member of "sites-developper" group
+- upload archive on P2 to ~/shared/data-sites/sites/sharinghub.web.p2.csgroup.space/
+- go to P2 terminal
+- unzip all files in directory ~/shared/data-sites/sites/sharinghub.web.p2.csgroup.space/
+- check new deployment on URL https://sharinghub.web.p2.csgroup.space/metadata
+
 ### Adding a new language
 
 You can translate STAC Browser into other languages.

@@ -23,6 +23,7 @@ function getStore(config, router) {
     valid: null,
     parents: null,
     globalError: null,
+    token : null,
 
     localRequestQueryParameters: {},
     stateQueryParameters: {
@@ -613,6 +614,11 @@ function getStore(config, router) {
       setBaseUrl(state,  url){
         if(url && url.length > 0){
           state.catalogUrl = url;
+        }
+      },
+      setToken(state,  token){
+        if(token && token.length > 0){
+          state.token = token;
         }
       }
     },

@@ -31,7 +31,7 @@ export default defineComponent({
     }
     await this.$store.dispatch('load', {url: url, loadApi: true, show: true});
 
-    const child = this.data.links.filter((el) => el.rel === "child");
+    const child = this.data.links?.filter((el) => el.rel === "child");
     const child_requests = child.map(async (el) => {
       return get(el.href).then((response) => {
         return response.data;
