@@ -27,8 +27,7 @@ export default defineComponent({
   },
   async mounted() {
     this.stac = (await get(this.$props.metadata.href)).data;
-    console.log("items meta", this.stac);
-    console.log("-------------");
+    console.log("stac", this.stac)
   },
   computed: {},
   methods: {
@@ -48,13 +47,11 @@ export default defineComponent({
       } else if (days <= 30) {
         return `Updated about ${Math.round(days)} day(s) ago`;
       } else {
-        `Updated ${date.toFormat(DateTime.DATE_MED)}`;
+        return `Updated ${date.toLocaleString({ month: 'long', day: 'numeric' , year:"numeric" })}`;
       }
     },
     getPreview() {
-      const prev = this.stac.links.find(el => el.rel === "preview").href || this.owner;
-      console.log("prev", prev);
-      return prev;
+      return  this.stac.links.find(el => el.rel === "preview")?.href || this.owner;
     }
   }
 });

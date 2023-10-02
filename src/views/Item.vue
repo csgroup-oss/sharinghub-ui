@@ -1,6 +1,21 @@
 <template>
   <div class="item" :key="data.id">
     <b-row>
+        <b-col class="right">
+        <section class="intro">
+          <h2 v-if="data.properties.description">{{ $t('description') }}</h2>
+          <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
+          <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
+          <ReadMore v-if="data.properties.description" :lines="10" :text="$t('read.more')" :text-less="$t('read.less')">
+            <Description :description="data.properties.description" />
+          </ReadMore>
+          <Keywords v-if="Array.isArray(data.properties.keywords) && data.properties.keywords.length > 0" :keywords="data.properties.keywords" />
+        </section>
+        <CollectionLink v-if="collectionLink" :link="collectionLink" />
+        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
+        <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
+      </b-col>
+
       <b-col class="left">
         <section class="mb-4">
           <b-card no-body class="maps-preview">
@@ -17,20 +32,7 @@
         <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
         <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
       </b-col>
-      <b-col class="right">
-        <section class="intro">
-          <h2 v-if="data.properties.description">{{ $t('description') }}</h2>
-          <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
-          <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
-          <ReadMore v-if="data.properties.description" :lines="10" :text="$t('read.more')" :text-less="$t('read.less')">
-            <Description :description="data.properties.description" />
-          </ReadMore>
-          <Keywords v-if="Array.isArray(data.properties.keywords) && data.properties.keywords.length > 0" :keywords="data.properties.keywords" />
-        </section>
-        <CollectionLink v-if="collectionLink" :link="collectionLink" />
-        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
-        <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
-      </b-col>
+
     </b-row>
   </div>
 </template>

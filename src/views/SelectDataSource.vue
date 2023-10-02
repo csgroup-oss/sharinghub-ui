@@ -1,5 +1,7 @@
 <template>
-  <main class="select-data-source">
+  <main class="select-data-source container">
+
+    <h4 class="p-mb-5">{{ $t('index.selectTitle') }}</h4>
     <b-form @submit="go">
       <b-form-group
         id="select" :label="$t('index.specifyCatalog')" label-for="url"
@@ -7,39 +9,29 @@
       >
         <b-form-input id="url" type="url" :value="url" @input="setUrl" placeholder="https://..." />
       </b-form-group>
-      <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
+
+       <b-form-group
+        id="select-token" :label="$t('index.specifyToken')" label-for="token"
+        :invalid-feedback="tokenError" :state="this.token===undefined || this.token?.length<1"
+      >
+        <b-form-input id="token" type="password" :value="token" @input="setToken" placeholder="token..."  />
+         <small> {{ $t('index.specifyTokenDetail') }}  </small>
+      </b-form-group>
+
+       <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
+
     </b-form>
-    <hr v-if="stacIndex.length > 0">
-    <b-form-group v-if="stacIndex.length > 0" class="stac-index">
-      <template #label>
-        <i18n path="index.selectStacIndex">
-          <template #stacIndex>
-            <a href="https://stacindex.org" target="_blank">STAC Index</a>
-          </template>
-        </i18n>
-      </template>
-      <b-list-group>
-        <template v-for="catalog in stacIndex">
-          <b-list-group-item button v-if="show(catalog)" :key="catalog.id" :active="url === catalog.url" @click="open(catalog.url)">
-            <div class="d-flex justify-content-between align-items-baseline mb-1">
-              <strong>{{ catalog.title }}</strong>
-              <b-badge v-if="catalog.isApi" variant="danger">{{ $t('index.api') }}</b-badge>
-              <b-badge v-else variant="success">{{ $t('index.catalog') }}</b-badge>
-            </div>
-            <Description :description="catalog.summary" compact />
-          </b-list-group-item>
-        </template>
-      </b-list-group>
-    </b-form-group>
+
   </main>
 </template>
 
 <script>
 import { BForm, BFormGroup, BFormInput, BListGroup, BListGroupItem } from 'bootstrap-vue';
-import { mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import Description from '../components/Description.vue';
 import Utils from '../utils';
 import axios from "axios";
+import {BASE_URL} from "@/_Hub/services/https";
 
 export default {
   name: "SelectDataSource",
@@ -53,12 +45,13 @@ export default {
   },
   data() {
     return {
-      url: '',
-      stacIndex: []
+      url: 'https://gitlab.si.c-s.fr',
+      token: "Fs_L1T6iXnq6zxGGSu9W",
     };
   },
   computed: {
     ...mapGetters(['toBrowserPath']),
+    ...mapActions(['setBasUrl']),
     valid() {
       return !this.error;
     },
@@ -78,41 +71,40 @@ export default {
       } catch (errot) {
         return this.$t('index.urlInvalid');
       }
+    },
+     tokenError() {
+      if (this.token) {
+        return null;
+      }
+      return this.$t("index.tokenError")
     }
+
   },
   async created() {
     // Reset loaded STAC catalog
     this.$store.commit('resetCatalog', true);
     // Load entries from STAC Index
-    try {
-      let response = await axios.get('https://stacindex.org/api/catalogs');
-      if(Array.isArray(response.data)) {
-        this.stacIndex = response.data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
   },
   methods: {
-    show(catalog) {
-      if (catalog.access === 'private') {
-        return false;
-      }
-      else if(!this.url) {
-        return true;
-      }
-
-      return Utils.search(this.url, [catalog.title, catalog.url]);
-    },
     setUrl(url) {
       this.url = url;
+    },
+    setToken(token) {
+      this.token =token ;
     },
     open(url) {
       this.url = url;
       this.go();
     },
-    go() {
-      this.$router.push(this.toBrowserPath(this.url));
+    go(e) {
+      //Fs_L1T6iXnq6zxGGSu9W
+      e.preventDefault();
+      if(!this.token || !this.url)
+        return;
+      const url = BASE_URL.concat(`${this.url.replace("https://","")}/${this.token}/`)
+      this.$store.commit("setBaseUrl", url)
+
+      this.$router.push("models");
     }
   }
 };

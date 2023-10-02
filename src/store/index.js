@@ -609,6 +609,11 @@ function getStore(config, router) {
       showGlobalError(state, error) {
         console.error(error);
         state.globalError = error;
+      },
+      setBaseUrl(state,  url){
+        if(url && url.length > 0){
+          state.catalogUrl = url;
+        }
       }
     },
     actions: {
@@ -968,7 +973,7 @@ function getStore(config, router) {
         } catch (error) {
           cx.commit('valid', error);
         }
-      }
+      },
     },
   });
 }

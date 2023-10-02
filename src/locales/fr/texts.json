@@ -115,7 +115,11 @@
     "catalog": "Catalogue",
     "load": "Charger",
     "selectStacIndex": "... ou en sélectionner un dans {stacIndex}:",
-    "specifyCatalog": "Veuillez spécifier un catalogue STAC ou un API...",
+    "specifyCatalog": "GitLab URL:",
+    "specifyToken": "Access Token:",
+    "specifyTokenDetail": "Doit avoir la permission \"read_api\" et \"api\".",
+    "tokenError": "Ce champs est requis.",
+    "selectTitle": "Veuillez remplir les champs suivants pour explorer GitLab avec STAC.",
     "urlInvalid": "Le lien URL n'est pas valide.",
     "urlMissingHost": "Le lien URL ne contient aucun hôte.",
     "urlMissingProtocol": "Le lien URL ne contient pas de protocole."

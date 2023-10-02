@@ -1,6 +1,9 @@
 import Browse from '../views/Browse.vue';
 import ListModelView from "@/_Hub/views/ListModelView.vue";
 import StacBrowser from "@/StacBrowser.vue";
+import ListDatasetView from "@/_Hub/views/ListDatasetView.vue";
+import ListProcessorView from "@/_Hub/views/ListProcessorView.vue";
+import SelectDataSource from "@/views/SelectDataSource.vue";
 
 function getRoutes(config) {
   let routes = [];
@@ -34,8 +37,7 @@ function getRoutes(config) {
         };
       }
     });
-  }
-  else {
+  } else {
     routes.push({
       path: "/search",
       name: "search",
@@ -63,19 +65,34 @@ export function getRoutes_2(config) {
 
   routes = [
     {
+      path: "/",
+      name: "DataSource",
+      component: SelectDataSource,
+    },
+    {
+      path: "/processors",
+      name: "listProcessor",
+      component: ListProcessorView,
+    },
+    {
       path: "/models",
       name: "listModels",
       component: ListModelView,
     },
     {
+      path: "/datasets",
+      name: "listDataset",
+      component: ListDatasetView,
+    },
+    {
       path: "/metadata",
       name: "model",
-      component: StacBrowser ,
-      children:[
+      component: StacBrowser,
+      children: [
         {
-        path:"/",
-        component:Browse
-      }
+          path: "/",
+          component: Browse
+        }
       ]
     }
   ];

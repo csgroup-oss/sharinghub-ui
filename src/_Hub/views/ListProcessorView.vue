@@ -1,7 +1,6 @@
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
-import ResourceCard from "@/_Hub/components/ResourceCard.vue";
 import {mapState} from "vuex";
 import ItemCard from "@/_Hub/components/ItemCard.vue";
 import {BASE_URL, get} from "@/_Hub/services/https";
@@ -14,7 +13,7 @@ const ENTRY = {
 };
 
 export default defineComponent({
-  name: "ListModelView",
+  name: "ListProcessorView",
   components: {ItemCard, TextView},
   data() {
     return {
@@ -26,11 +25,12 @@ export default defineComponent({
     ...mapState(['data'])
   },
   async created() {
-    const url =  this.$store.state.catalogUrl
-    if(!url){
+    const url = this.$store.state.catalogUrl
+    if (!url) {
       this.$router.push("/")
     }
     await this.$store.dispatch('load', {url: url, loadApi: true, show: true});
+
     const child = this.data.links.filter((el) => el.rel === "child");
     const child_requests = child.map(async (el) => {
       return get(el.href).then((response) => {
@@ -41,9 +41,9 @@ export default defineComponent({
       return res;
     });
     this.modelList = _.flatten(entry_models
-      .filter((stac) => stac.title === ENTRY.models)
+      .filter((stac) => stac.title === ENTRY.processor)
       .map((stac) => stac.links))
-      .filter((stac)=> stac.rel ==="child");
+      .filter((stac) => stac.rel === "child");
   },
   methods: {
     async getModels() {
@@ -57,7 +57,7 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <TextView type="Title-1">Model List</TextView>
+    <TextView type="Title-1">Apps and Services</TextView>
 
     <div class="section">
       <ItemCard

@@ -21,7 +21,8 @@
             <router-view/>
           </TextView>
         </b-tab>
-        <b-tab class="p-pt-4">
+
+       <b-tab class="p-pt-4">
           <template #title>
             <TextView class="Title-1"> Reviews community</TextView>
           </template>
@@ -44,7 +45,6 @@
             <TextView class="Title-1">STAC Api</TextView>
           </template>
           <TextView>
-
           </TextView>
         </b-tab>
 

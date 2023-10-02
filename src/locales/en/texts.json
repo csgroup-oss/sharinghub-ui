@@ -115,7 +115,12 @@
     "catalog": "Catalog",
     "load": "Load",
     "selectStacIndex": "... or select one from {stacIndex}:",
-    "specifyCatalog": "Please specify a STAC Catalog or API...",
+
+    "specifyCatalog": "GitLab URL:",
+    "specifyToken": "Access Token:",
+    "specifyTokenDetail": "Must have \"read_api\" and \" api\" permission",
+    "tokenError": "Field required.",
+    "selectTitle": "Please fill in the following fields to explore GitLab with STAC.",
     "urlInvalid": "The URL is invalid.",
     "urlMissingHost": "The URL is missing a host.",
     "urlMissingProtocol": "The URL is missing a protocol."

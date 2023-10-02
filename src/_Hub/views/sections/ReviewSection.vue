@@ -1,8 +1,11 @@
 <script>
 import Vue, {defineComponent} from 'vue';
-import Vssue, {VssueComponent} from "vssue";
-import 'vssue/dist/vssue.css';
-import GitlabV4 from "@vssue/api-gitlab-v4";
+//import Vssue, {VssueComponent} from "vssue";
+//import 'vssue/dist/vssue.css';
+//import GitlabV4 from "@vssue/api-gitlab-v4";
+import Vssue, {VssueComponent} from "../../../../vendors/dist/vssue";
+import '../../../../vendors/dist/vssue.css';
+import GitlabV4 from "../../../../vendors/lib/index";
 
 
 Vue.use(Vssue);
@@ -10,13 +13,19 @@ Vue.use(Vssue);
 
 const vsOptions = {
   api: GitlabV4,
-  labels:[],
-  prefix:[""],
-  owner: "olivier.koko",
-  repo: "gitlab_to_stac_test",
-  clientId: "50a9f8a95e3a0c56cfff47adb281ee23b5e332ae4809505409b54bc064d2d1a6",
-  clientSecret: "2524fb8496c1c76f78c31fc51ebf68ed5f1042f429f9529c334c159001ad4fc5",
+  state: 'Vssue',
+  labels: ['Vssue'],
+  prefix: '[Vssue]',
+  admins: [],
+  owner: "",
+  repo: 406,
+  clientId: "",
+  clientSecret: "",
+  privateToken:"Fs_L1T6iXnq6zxGGSu9W",
   baseURL: "https://gitlab.si.c-s.fr",
+  proxy: url => `https://cors-anywhere.azm.workers.dev/${url}`,
+  issueContent: ({ url }) => url,
+  autoCreateIssue: true,
 };
 
 export default defineComponent({
@@ -26,8 +35,7 @@ export default defineComponent({
   },
   data() {
     return {
-      issueId: 1,
-      title: "First issues test",
+      title: "Vssue Dev",
       options: vsOptions,
     };
   },
@@ -40,7 +48,7 @@ export default defineComponent({
 
 <template>
   <div class="w-100">
-    <Vssue :issue-id="issueId" :title="title" :options="options"
+    <Vssue :title="title" :options="options"
     />
   </div>
 </template>
