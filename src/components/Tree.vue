@@ -43,6 +43,7 @@ import { BIconFileEarmarkRichtext, BIconFolderMinus, BIconFolderPlus, BIconThree
 import { mapGetters, mapState } from 'vuex';
 import Utils from '../utils';
 import STAC from '../models/stac';
+import config from "../../src/config"
 
 export default {
   name: 'Tree',
@@ -149,7 +150,11 @@ export default {
       if (this.pagination) {
         return this.$t('tree.moreCollectionPagesAvailable');
       }
-      return STAC.getDisplayTitle([this.item, this.stac]);
+      const title = STAC.getDisplayTitle([this.item, this.stac]);
+      if(config.entriesRoot[title]){
+        return config.entriesRoot[title];
+      }
+      return title;
     },
     hasMore() {
       return this.childs.length > this.shownChilds.length;

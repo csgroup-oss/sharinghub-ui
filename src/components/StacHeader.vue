@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col md="12">
-      <Source class="float-right" :title="title" :stacUrl="url" :stac="data" />
+      <Source class="float-right" :title="title" :stacUrl="url" :stac="data"/>
       <h1>
         <template v-if="icon">
           <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
@@ -15,46 +15,49 @@
           </template>
         </i18n>
         <b-button-group>
-          <b-button v-if="parentLink" :to="toBrowserPath(parentLink.href)" :title="parentLinkTitle"
+          <b-button v-if="parentLink" @click="goUp()" :title="parentLinkTitle"
                     variant="outline-primary" size="sm">
             <b-icon-arrow-90deg-up/>
             <span class="button-label prio">{{ $t('goToParent.label') }}</span>
-          </b-button>
-          <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
-                    variant="outline-primary" size="sm">
-            <b-icon-folder-symlink/>
-            <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
           </b-button>
           <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar
                     @click="$emit('enableSidebar')">
             <b-icon-book/>
             <span class="button-label prio">{{ $t('browse') }}</span>
           </b-button>
-          <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink"
-                    :title="$t('search.title')" :pressed="isSearchPage()">
-            <b-icon-search/>
-            <span class="button-label prio">{{ $t('search.title') }}</span>
-          </b-button>
-          <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth"
-                    :title="$t('authentication.button.title')">
-            <template v-if="authData">
-              <b-icon-lock/>
-              <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
-            </template>
-            <template v-else>
-              <b-icon-unlock/>
-              <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
-            </template>
-          </b-button>
+          <template v-if="false">
+            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
+                      variant="outline-primary" size="sm">
+              <b-icon-folder-symlink/>
+              <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
+            </b-button>
+            <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink"
+                      :title="$t('search.title')" :pressed="isSearchPage()">
+              <b-icon-search/>
+              <span class="button-label prio">{{ $t('search.title') }}</span>
+            </b-button>
+            <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth"
+                      :title="$t('authentication.button.title')">
+              <template v-if="authData">
+                <b-icon-lock/>
+                <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
+              </template>
+              <template v-else>
+                <b-icon-unlock/>
+                <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
+              </template>
+            </b-button>
+          </template>
         </b-button-group>
       </p>
 
       <b-col cols="12">
         <b-row class="p-mb-3">
-           <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
+          <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
         </b-row>
         <b-row>
-          <chip v-for="tag in tags" :label="tag.label" :icon="'pi '+ tag.icon " :class="'p-chip p-chip__' + getRandomColor()" />
+          <chip v-for="tag in tags" :label="tag.label" :icon="'pi '+ tag.icon "
+                :class="'p-chip p-chip__' + getRandomColor()"/>
         </b-row>
       </b-col>
     </b-col>
@@ -103,16 +106,14 @@ export default {
     collectionLinkTitle() {
       if (this.collectionLink && Utils.hasText(this.collectionLink.title)) {
         return this.$t('goToCollection.descriptionWithTitle', this.collectionLink);
-      }
-      else {
+      } else {
         return this.$t('goToCollection.description');
       }
     },
     parentLinkTitle() {
       if (this.parentLink && Utils.hasText(this.parentLink.title)) {
         return this.$t('goToParent.descriptionWithTitle', this.parentLink);
-      }
-      else {
+      } else {
         return this.$t('goToParent.description');
       }
     },
@@ -157,6 +158,9 @@ export default {
         }
       }
       return this.collectionLink || this.parentLink;
+    },
+    goUp() {
+      this.$router.go(-1)
     }
   },
   methods: {
@@ -174,6 +178,9 @@ export default {
     getRandomColor: function () {
       return _.sample(["info", "outline", "purple", "danger", "red", "darkgrey", "primary"]);
     }
+  },
+  mounted() {
+    console.log("parent link", this.parentLink)
   }
 };
 </script>

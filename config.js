@@ -39,5 +39,10 @@ module.exports = {
     requestHeaders: {},
     requestQueryParameters: {},
     preprocessSTAC: null,
-    authConfig: null
+    authConfig: null,
+    entriesRoot:{
+      "AI Model" : "Models",
+      "Dataset" : "Datasets",
+      "Processor" : "Processors"
+    }
 };
