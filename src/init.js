@@ -4,7 +4,6 @@ import PrimeVue from "primevue/config";
 import MainPage from "@/MainPage.vue";
 import i18n, {loadDefaultMessages} from './i18n';
 import "primeflex/primeflex.css";
-import "primeicons/primeicons.css";
 import "primevue/resources/primevue.css";
 import "primevue/resources/themes/tailwind-light/theme.css";
 

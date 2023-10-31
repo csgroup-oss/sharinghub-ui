@@ -20,12 +20,14 @@ import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import TextView from "@/_Hub/components/TextView.vue";
-import BootstrapVue from "bootstrap-vue";
+import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import "./assets/base.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
 
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons)
 
 export default defineComponent({
   name: "MainPage",

@@ -27,7 +27,7 @@
             <TextView class="Title-1"> Reviews community</TextView>
           </template>
           <TextView>
-            <ReviewSection/>
+            <TabSectionReview/>
           </TextView>
         </b-tab>
 
@@ -42,10 +42,9 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView class="Title-1">STAC Api</TextView>
+            <TextView class="Title-1">STAC API</TextView>
           </template>
-          <TextView>
-          </TextView>
+          <TabSectionApiStac :title="title" :stacUrl="url" :stac="data"/>
         </b-tab>
 
       </b-tabs>
@@ -95,7 +94,9 @@ import I18N from '@radiantearth/stac-fields/I18N';
 import {API_LANGUAGE_CONFORMANCE, loadMessages, translateFields} from './i18n';
 import {getBest, prepareSupported} from './locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
-import ReviewSection from "@/_Hub/views/sections/ReviewSection.vue";
+import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
+import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
+import Source from "@/components/Source.vue";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -145,7 +146,8 @@ export default {
   // router,
   // store,
   components: {
-    ReviewSection, TextView, BTabs, BTab,
+    Source,
+    TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
     Authentication: () => import('./components/Authentication.vue'),
     ErrorAlert,
     Sidebar: () => import('./components/Sidebar.vue'),

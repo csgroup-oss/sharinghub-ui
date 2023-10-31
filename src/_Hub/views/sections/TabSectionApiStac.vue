@@ -1,81 +1,44 @@
-<template>
-  <div class="share mt-1">
-    <b-button-group>
-      <b-button v-if="showRoot" size="sm" variant="outline-primary" id="popover-root-btn">
-        <b-icon-box /> <span class="button-label">{{ rootTitle }}</span>
-      </b-button>
-
-      <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
-        <b-icon-share /> <span class="button-label">{{ $t('source.share.label') }}</span>
-      </b-button>
-      <b-dropdown size="sm" variant="outline-primary" right :title="$t('source.language.switch')">
-        <template #button-content>
-          <b-icon-flag /> <span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
-        </template>
-        <b-dropdown-item
-          v-for="l of languages" :key="l.code" class="lang-item"
-          @click="switchLocale({locale: l.code, userSelected: true})"
-        >
-          <b-icon-check v-if="locale === l.code" />
-          <b-icon-blank v-else />
-          <span class="title">
-            {{ l.native }}
-            <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
-          </span>
-          <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)" :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')" class="ml-2" />
-        </b-dropdown-item>
-      </b-dropdown>
-    </b-button-group>
-
-    <b-popover
-      v-if="showRoot" id="popover-root" target="popover-root-btn" triggers="focus"
-      placement="bottom" container="stac-browser" :title="rootTitle"
-    >
-      <RootStats />
-    </b-popover>
-
-    <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom" container="stac-browser" :title="$t('source.share.title')">
-      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
-      <hr>
-      <b-button class="twitter mr-1" :href="twitterUrl"><b-icon-twitter /> {{ $t('source.share.twitter') }}</b-button>
-      <b-button variant="dark" :href="mailTo"><b-icon-envelope /> {{ $t('source.share.email') }}</b-button>
-    </b-popover>
-  </div>
-</template>
-
 <script>
+import {defineComponent} from 'vue'
 import {
-  BIconBlank, BIconBox, BIconCheck, BIconEnvelope, BIconExclamationTriangle, BIconFlag, BIconLink, BIconShare, BIconTwitter,
-  BDropdown, BDropdownItem, BPopover } from 'bootstrap-vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
-
-import Url from './Url.vue';
-
-import URI from 'urijs';
-import Utils from '../utils';
-import { getBest, prepareSupported } from '../locale-id';
-import CopyButton from './CopyButton.vue';
+  BDropdown, BDropdownItem,
+  BIconBlank,
+  BIconBox,
+  BIconCheck,
+  BIconEnvelope,
+  BIconExclamationTriangle,
+  BIconFlag, BIconLink,
+  BIconShare,
+  BIconTwitter, BPopover
+} from "bootstrap-vue";
+import CopyButton from "@/components/CopyButton.vue";
+import Url from "@/components/Url.vue";
+import {mapActions, mapGetters, mapState} from "vuex";
+import Utils from "@/utils";
+import URI from "urijs";
+import {getBest, prepareSupported} from "@/locale-id";
+import RootStats from "@/components/RootStats.vue";
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
 
-export default {
-  name: "Source",
+export default defineComponent({
+  name: "TabSectionApiStac",
   components: {
-    BDropdown,
-    BDropdownItem,
-    BIconBlank,
-    BIconBox,
-    BIconCheck,
-    BIconEnvelope,
-    BIconExclamationTriangle,
-    BIconFlag,
-    BIconLink,
-    BIconShare,
-    BIconTwitter,
+    RootStats,
     BPopover,
-    RootStats: () => import('./RootStats.vue'),
     Url,
+    BIconLink,
+    BDropdownItem,
+    BDropdown,
+    BIconExclamationTriangle,
+    BIconCheck,
+    BIconShare,
+    BIconEnvelope,
+    BIconBox,
     CopyButton,
+    BIconTwitter,
+    BIconFlag,
+    BIconBlank
   },
   props: {
     title: {
@@ -211,9 +174,49 @@ export default {
     browserUrl() {
       return window.location.toString();
     }
+  },
+  async beforeMount() {
+     if (!this.canValidate) {
+        return;
+      }
+      await this.$store.dispatch('validate', this.stacUrl);
   }
-};
+})
 </script>
+
+<template>
+  <div class="share mt-1">
+    <div v-if="stacUrl"  class="p-mt-3">
+       <template v-if="stac">
+        <b-row v-if="stacId" class="stac-id">
+          <b-col cols="4">{{ $t('source.id') }}</b-col>
+          <b-col>
+            <code>{{ stacId }}</code>
+            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2" />
+          </b-col>
+        </b-row>
+        <b-row v-if="stacVersion" class="stac-version">
+          <b-col cols="4">{{ $t('source.stacVersion') }}</b-col>
+          <b-col>{{ stacVersion }}</b-col>
+        </b-row>
+        <b-row v-if="canValidate" class="validation">
+          <b-col cols="4">{{ $t('source.valid') }}</b-col>
+          <b-col>
+            <b-spinner v-if="valid === null" :label="$t('source.validating')" small />
+            <template v-else-if="valid === true">✔️</template>
+            <template v-else-if="valid === false">❌</template>
+            <template v-else>{{ $t('source.validationNA') }}</template>
+          </b-col>
+        </b-row>
+        <hr>
+      </template>
+      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')" />
+    </div>
+
+  </div>
+
+
+</template>
 
 <style lang="scss">
 #popover-link, #popover-root, #popover-share {

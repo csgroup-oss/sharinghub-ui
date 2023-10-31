@@ -5,7 +5,7 @@
       <template v-else>{{ $t('metadata.general') }}</template>
     </b-card-title>
     <section class="border metadata-rows">
-      <MetadataEntry v-for="(entry, key) in properties" v-bind="entry" :field="key" :key="key" />
+      <MetadataEntry v-for="(entry, key) in ignoreMetadata()" v-bind="entry" :field="key" :key="key" />
     </section>
   </b-card>
 </template>
@@ -31,6 +31,22 @@ export default {
         type: Object,
         required: true
       }
+  },
+  methods : {
+    ignoreMetadata(){
+      const blackList = ["keywords", "license", "sci:doi"]
+      let data = {}
+      if(this.properties){
+        Object.entries(this.properties).forEach(([key, value]) =>{
+         if(!blackList.includes(key)){
+          data = {...data,
+          [key] : value
+          }
+        }
+      });
+      return data;
+      }
+    }
   }
 };
 </script>

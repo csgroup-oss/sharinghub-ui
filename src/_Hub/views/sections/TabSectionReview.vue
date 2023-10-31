@@ -26,7 +26,7 @@ const vsOptions = {
 };
 
 export default defineComponent({
-  name: "ReviewSection",
+  name: "TabSectionReview",
   components: {
     'Vssue': VssueComponent,
   },
@@ -40,7 +40,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    console.log(this.options);
   }
 });
 </script>

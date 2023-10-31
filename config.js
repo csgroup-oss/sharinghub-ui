@@ -41,8 +41,9 @@ module.exports = {
     preprocessSTAC: null,
     authConfig: null,
     entriesRoot:{
+      "Processor" : "Processors",
       "AI Model" : "Models",
       "Dataset" : "Datasets",
-      "Processor" : "Processors"
+
     }
 };

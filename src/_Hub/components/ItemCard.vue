@@ -27,12 +27,10 @@ export default defineComponent({
   },
   async mounted() {
     this.stac = (await get(this.$props.metadata.href)).data;
-    console.log("stac", this.stac)
   },
   computed: {},
   methods: {
     seeModel(event, url) {
-      console.log("see model", url);
       event.preventDefault();
       router.push({path: `/metadata`, query:{"external":url}});
     },

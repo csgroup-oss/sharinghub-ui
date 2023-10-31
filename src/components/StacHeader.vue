@@ -55,9 +55,10 @@
         <b-row class="p-mb-3">
           <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
         </b-row>
-        <b-row>
-          <chip v-for="tag in tags" :label="tag.label" :icon="'pi '+ tag.icon "
-                :class="'p-chip p-chip__' + getRandomColor()"/>
+
+        <b-row v-if="!!data">
+          <Keywords v-if="Array.isArray(data.properties.keywords) &&
+            data.properties.keywords.length > 0" :keywords="data.properties.keywords" />
         </b-row>
       </b-col>
     </b-col>
@@ -74,10 +75,12 @@ import Utils from '../utils';
 import _ from "lodash";
 import Chip from "primevue/chip/Chip";
 import TagCustom from "@/_Hub/components/TagCustom.vue";
+import Keywords from "@/components/Keywords.vue";
 
 export default {
   name: 'StacHeader',
   components: {
+    Keywords,
     TagCustom,
     Chip,
     BIconArrow90degUp,
@@ -175,12 +178,8 @@ export default {
         force: true
       }));
     },
-    getRandomColor: function () {
-      return _.sample(["info", "outline", "purple", "danger", "red", "darkgrey", "primary"]);
-    }
   },
-  mounted() {
-    console.log("parent link", this.parentLink)
+  beforeMount() {
   }
 };
 </script>

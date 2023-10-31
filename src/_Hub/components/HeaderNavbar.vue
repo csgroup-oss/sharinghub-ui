@@ -14,28 +14,17 @@
                       placeholder="Search services, models, users..."/>
         </div>
       </div>
-      <div class="p-d-flex p-ai-center p-jc-between">
-        <nav-item icon="pi pi-th-large" class="p-mx-1">
-          <router-link to="/processors">
-            Apps and services
-          </router-link>
-        </nav-item>
 
+      <div v-if="routes.length > 0" class="p-d-flex p-ai-center p-jc-between">
 
-        <nav-item icon="pi pi-box" class="p-mx-1">
-          <router-link to="/models">
-            Models
-          </router-link>
-        </nav-item>
-
-        <nav-item icon="pi pi-box" class="p-mx-1">
-          <router-link to="/datasets">
-            Datasets
+        <nav-item v-for="item in routes" class="p-mx-1">
+          <b-icon :icon="item.icon"/>
+          <router-link :to="`/${item.route.toLowerCase()}`">
+           {{item.route}}
           </router-link>
         </nav-item>
 
         <nav-item icon="pi pi-book" disabled class="p-mx-1">Docs</nav-item>
-
 
         <divider class="p-divider" type="solid" layout="vertical"></divider>
         <nav-item disabled="" :is-simple="true" class="p-ml-1 p-mr-4">Log In</nav-item>
@@ -52,6 +41,7 @@ import Divider from "primevue/divider/Divider";
 import Button from "primevue/button/Button";
 import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
+import config from "../../../config";
 
 export default defineComponent({
   name: "HeaderNavbar",
@@ -65,8 +55,37 @@ export default defineComponent({
   data() {
     return {
       value: null,
+      routes: []
     };
   },
+  beforeMount() {
+    if (config?.entriesRoot) {
+      this.routes = Object.values(config.entriesRoot).map((entry) => {
+        if (entry.toLowerCase() === "processors") {
+          return {
+            route: entry,
+            icon: "book",
+          }
+        }
+        if (entry.toLowerCase() === "models") {
+          return {
+            route: entry,
+            icon: "box-seam",
+          }
+        }
+        if (entry.toLowerCase() === "datasets") {
+          return {
+            route: entry,
+            icon: "view-list",
+          }
+        }
+        return {
+          route: entry,
+          icon: "stack",
+        }
+      })
+    }
+  }
 
 });
 </script>
@@ -80,8 +99,9 @@ export default defineComponent({
   .p-divider {
     border-left: solid 1px rgba($secondary-color, 0.4);
   }
-  .cursor{
-    &:hover{
+
+  .cursor {
+    &:hover {
       text-decoration: none !important;
       text-underline: none !important;
     }
