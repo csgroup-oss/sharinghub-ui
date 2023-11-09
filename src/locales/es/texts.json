@@ -92,7 +92,12 @@
     "noExternalAccess": "¡El acceso a catálogos externos no está permitido!",
     "notFound": "El recurso solicitado no existe. @:errors.contactProvider",
     "serverError": "El servidor encontró un problema. @:errors.contactProvider",
-    "unauthorized": "La petición no tiene credenciales, por ejemplo, un token de la API. Por favor introduzca sus credenciales y pruebe de nuevo."
+    "unauthorized": "La petición no tiene credenciales, por ejemplo, un token de la API. Por favor introduzca sus credenciales y pruebe de nuevo.",
+    "authFail": {
+      "title": "Autenticación necesaria",
+      "description": "Inicie sesión para acceder a los recursos de la plataforma",
+      "information": "Si ya ha iniciado sesión y el problema persiste, póngase en contacto con el servicio de asistencia."
+    }
   },
   "featureExperimental": "¡Esta funcionalidad es experimental y puede producir resultados inesperados!",
   "fullscreen": {

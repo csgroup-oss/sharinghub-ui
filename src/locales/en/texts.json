@@ -92,7 +92,12 @@
     "noExternalAccess": "Accessing external catalogs is not allowed!",
     "notFound": "The requested resource does not exist. @:errors.contactProvider",
     "serverError": "The server encountered an issue. @:errors.contactProvider",
-    "unauthorized": "The request lacks credentials, e.g. an API token. Please provide your credentials and try again."
+    "unauthorized": "The request lacks credentials, e.g. an API token. Please provide your credentials and try again.",
+     "authFail": {
+       "title": "Authentication required",
+       "description": "Please log in to access the platform's resources.",
+       "information": "If you are already logged in and the problem persists, please contact support."
+     }
   },
   "featureExperimental": "This feature is still experimental and may give unexpected results!",
   "fullscreen": {

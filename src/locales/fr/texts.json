@@ -92,7 +92,12 @@
     "noExternalAccess": "L'accès aux catalogues externes n'est pas autorisé!",
     "notFound": "La ressource demandée n'existe pas. @:errors.contactProvider",
     "serverError": "Le serveur a rencontré un problème. @:errors.contactProvider",
-    "unauthorized": "La requête requiert des informations d'authentification, comme par exemple un jeton API. Veuillez fournir vos informations d'authentification et réessayer"
+    "unauthorized": "La requête requiert des informations d'authentification, comme par exemple un jeton API. Veuillez fournir vos informations d'authentification et réessayer",
+    "authFail": {
+      "title" : "Authentification requise",
+      "description" : "Veuillez vous connectez pour avoir accès aux ressources de la plateforme.",
+      "information" : "Si vous êtes déjà connecté et le problème persiste veuillez contacter le support."
+    }
   },
   "featureExperimental": "Cette fonctionnalité est encore expérimentale et peut donner des résultats inattendus!",
   "fullscreen": {

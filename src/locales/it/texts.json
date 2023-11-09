@@ -92,7 +92,12 @@
     "noExternalAccess": "L'accesso a cataloghi esterni non è consentito!",
     "notFound": "La risorsa richiesta non esiste. @:errors.contactProvider",
     "serverError": "Il server ha riscontrato un problema. @:errors.contactProvider",
-    "unauthorized": "La richiesta necessita di credenziali, ad esempio un token API. Inserisci i tuoi dati di accesso e riprova."
+    "unauthorized": "La richiesta necessita di credenziali, ad esempio un token API. Inserisci i tuoi dati di accesso e riprova.",
+    "authFail": {
+      "title" : "È richiesta l'autenticazione",
+      "description" : "Effettuare il login per accedere alle risorse della piattaforma.",
+      "information" : "Se avete già effettuato il login e il problema persiste, contattate l'assistenza."
+    }
   },
   "featureExperimental": "Questa funzione è ancora sperimentale e potrebbe dare risultati inaspettati!",
   "fullscreen": {

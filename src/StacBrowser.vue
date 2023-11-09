@@ -22,14 +22,6 @@
           </TextView>
         </b-tab>
 
-       <b-tab class="p-pt-4">
-          <template #title>
-            <TextView class="Title-1"> Reviews community</TextView>
-          </template>
-          <TextView>
-            <TabSectionReview/>
-          </TextView>
-        </b-tab>
 
         <b-tab class="p-pt-4">
           <template #title>

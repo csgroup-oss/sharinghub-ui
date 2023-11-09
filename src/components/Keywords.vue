@@ -27,9 +27,7 @@
 <script>
 import _ from "lodash";
 import {mapState} from "vuex";
-import {
-  formatItemProperties,
-} from "@radiantearth/stac-fields";
+import {formatItemProperties,} from "@radiantearth/stac-fields";
 
 export default {
   name: 'Keywords',
@@ -91,7 +89,7 @@ export default {
       if (isMatching(["sentinel", "callisto", "smap", "satellite"], keyword)) {
         return "flag";
       }
-      return undefined
+      return undefined;
     },
 
     formatData() {
@@ -114,7 +112,9 @@ export default {
       const generalMetadata = dataFormatted.find(el => el.extension === "");
       this.license = generalMetadata.properties.license;
       const sciMetadata = dataFormatted.find(el => el.extension === "sci");
-      this.doi = sciMetadata.properties["sci:doi"];
+      if (sciMetadata) {
+        this.doi = sciMetadata.properties["sci:doi"];
+      }
     }
 
 

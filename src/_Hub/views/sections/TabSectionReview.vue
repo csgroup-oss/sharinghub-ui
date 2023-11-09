@@ -47,8 +47,7 @@ export default defineComponent({
 
 <template>
   <div class="w-100">
-    <Vssue :title="title" :options="options"
-    />
+    <Vssue :title="title" :options="options"/>
   </div>
 </template>
 

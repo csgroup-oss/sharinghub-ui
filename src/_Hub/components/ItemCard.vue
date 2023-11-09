@@ -2,7 +2,7 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import {router} from "@/init";
-import {get} from "@/_Hub/services/https";
+import {get} from "@/_Hub/tools/https";
 import {DateTime, Interval} from "luxon";
 
 export default defineComponent({
@@ -28,7 +28,6 @@ export default defineComponent({
   async mounted() {
     this.stac = (await get(this.$props.metadata.href)).data;
   },
-  computed: {},
   methods: {
     seeModel(event, url) {
       event.preventDefault();

@@ -1,8 +1,6 @@
 import Browse from '../views/Browse.vue';
-import ListModelView from "@/_Hub/views/ListModelView.vue";
 import StacBrowser from "@/StacBrowser.vue";
-import ListDatasetView from "@/_Hub/views/ListDatasetView.vue";
-import ListProcessorView from "@/_Hub/views/ListProcessorView.vue";
+import ListProjectsView from "@/_Hub/views/ListProjectsView.vue";
 import SelectDataSource from "@/views/SelectDataSource.vue";
 
 function getRoutes(config) {
@@ -70,21 +68,6 @@ export function getRoutes_2(config) {
       component: SelectDataSource,
     },
     {
-      path: "/processors",
-      name: "listProcessor",
-      component: ListProcessorView,
-    },
-    {
-      path: "/models",
-      name: "listModels",
-      component: ListModelView,
-    },
-    {
-      path: "/datasets",
-      name: "listDataset",
-      component: ListDatasetView,
-    },
-    {
       path: "/metadata",
       name: "model",
       component: StacBrowser,
@@ -94,7 +77,12 @@ export function getRoutes_2(config) {
           component: Browse
         }
       ]
-    }
+    },
+    {
+      path: "/*",
+      name: "dynamicListSTAC",
+      component: ListProjectsView,
+    },
   ];
   return routes;
 }

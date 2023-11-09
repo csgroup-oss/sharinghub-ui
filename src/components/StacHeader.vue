@@ -56,9 +56,9 @@
           <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
         </b-row>
 
-        <b-row v-if="!!data">
+        <b-row v-if="!!data?.properties">
           <Keywords v-if="Array.isArray(data.properties.keywords) &&
-            data.properties.keywords.length > 0" :keywords="data.properties.keywords" />
+            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords"/>
         </b-row>
       </b-col>
     </b-col>
@@ -72,8 +72,6 @@ import StacLink from './StacLink.vue';
 import {BIconArrow90degUp, BIconBook, BIconFolderSymlink, BIconLock, BIconSearch, BIconUnlock} from "bootstrap-vue";
 import STAC from '../models/stac';
 import Utils from '../utils';
-import _ from "lodash";
-import Chip from "primevue/chip/Chip";
 import TagCustom from "@/_Hub/components/TagCustom.vue";
 import Keywords from "@/components/Keywords.vue";
 
@@ -82,7 +80,6 @@ export default {
   components: {
     Keywords,
     TagCustom,
-    Chip,
     BIconArrow90degUp,
     BIconBook,
     BIconFolderSymlink,
@@ -94,14 +91,7 @@ export default {
   },
   data() {
     return {
-      tags: [
-        {label: "Text generation", icon: "pi-file-edit"},
-        {label: "SkykitLean", icon: "pi-github"},
-        {label: "English", icon: "pi-globe"},
-        {label: "DOI:2308.145", icon: "pi-book"},
-        {label: "License: MIT", icon: "pi-check"},
-      ],
-    };
+    }
   },
   computed: {
     ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title']),
@@ -162,9 +152,6 @@ export default {
       }
       return this.collectionLink || this.parentLink;
     },
-    goUp() {
-      this.$router.go(-1)
-    }
   },
   methods: {
     isSearchPage() {
@@ -178,6 +165,9 @@ export default {
         force: true
       }));
     },
+    goUp() {
+       this.$router.go(-1);
+    }
   },
   beforeMount() {
   }

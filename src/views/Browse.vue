@@ -98,9 +98,7 @@ export default {
         else if (this.redirectLegacyUrls && await this.redirectLegacyUrl(path)) {
           return;
         }
-        return
-        let url = this.fromBrowserPath(path || '/');
-        this.$store.dispatch("load", { url, show: true, loadApi: true });
+
       }
     }
   },

@@ -1,24 +1,23 @@
 <template>
   <main class="select-data-source container">
-
     <h4 class="p-mb-5">{{ $t('index.selectTitle') }}</h4>
     <b-form @submit="go">
       <b-form-group
         id="select" :label="$t('index.specifyCatalog')" label-for="url"
         :invalid-feedback="error" :state="valid"
       >
-        <b-form-input id="url" type="url" :value="url" @input="setUrl" placeholder="https://..." />
+        <b-form-input id="url" type="url" :value="url" @input="setUrl" placeholder="https://..."/>
       </b-form-group>
 
-       <b-form-group
+      <b-form-group
         id="select-token" :label="$t('index.specifyToken')" label-for="token"
         :invalid-feedback="tokenError" :state="this.token===undefined || this.token?.length<1"
       >
-        <b-form-input id="token" type="password" :value="token" @input="setToken" placeholder="token..."  />
-         <small> {{ $t('index.specifyTokenDetail') }}  </small>
+        <b-form-input id="token" type="password" :value="token" @input="setToken" placeholder="token..."/>
+        <small> {{ $t('index.specifyTokenDetail') }} </small>
       </b-form-group>
 
-       <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
+      <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
 
     </b-form>
 
@@ -26,12 +25,9 @@
 </template>
 
 <script>
-import { BForm, BFormGroup, BFormInput, BListGroup, BListGroupItem } from 'bootstrap-vue';
-import {mapActions, mapGetters} from "vuex";
-import Description from '../components/Description.vue';
-import Utils from '../utils';
-import axios from "axios";
-import {BASE_URL} from "@/_Hub/services/https";
+import {BForm, BFormGroup, BFormInput} from 'bootstrap-vue';
+import {mapGetters} from "vuex";
+import {BASE_URL, REPOSITORY_URL} from "@/_Hub/Endpoint";
 
 export default {
   name: "SelectDataSource",
@@ -39,19 +35,15 @@ export default {
     BForm,
     BFormGroup,
     BFormInput,
-    BListGroup,
-    BListGroupItem,
-    Description
   },
   data() {
     return {
-      url: 'https://gitlab.si.c-s.fr',
-      token: undefined,
+      url: 'https://'.concat(REPOSITORY_URL),
+      token: "_ssiSwZ1_HW4n8_PtszT",
     };
   },
   computed: {
     ...mapGetters(['toBrowserPath']),
-    ...mapActions(['setBasUrl']),
     valid() {
       return !this.error;
     },
@@ -63,8 +55,7 @@ export default {
         let url = new URL(this.url);
         if (!url.protocol) {
           return this.$t('index.urlMissingProtocol');
-        }
-        else if (!url.host) {
+        } else if (!url.host) {
           return this.$t('index.urlMissingHost');
         }
         return null;
@@ -72,41 +63,40 @@ export default {
         return this.$t('index.urlInvalid');
       }
     },
-     tokenError() {
+    tokenError() {
       if (this.token) {
         return null;
       }
-      return this.$t("index.tokenError")
+      return this.$t("index.tokenError");
     }
-
   },
   async created() {
     // Reset loaded STAC catalog
     this.$store.commit('resetCatalog', true);
-    // Load entries from STAC Index
   },
   methods: {
     setUrl(url) {
       this.url = url;
     },
     setToken(token) {
-      this.token =token ;
+      this.token = token;
     },
     open(url) {
       this.url = url;
       this.go();
     },
     go(e) {
-      //Fs_L1T6iXnq6zxGGSu9W
       e.preventDefault();
-      if(!this.token || !this.url)
+      if (!this.token || !this.url)
         return;
-      const url = BASE_URL.concat(`${this.url.replace("https://","")}/${this.token}/`)
-      this.$store.commit("setBaseUrl", url)
-      this.$store.commit("setToken", this.token)
-
+      const repository = this.url.replace("https://", "");
+      const url = BASE_URL.concat(`${repository}/stac/`).concat("?gitlab_token=").concat(this.token);
+      this.$store.commit("setBaseUrl", url);
+      this.$store.commit("setToken", this.token);
       this.$router.push("models");
     }
+  },
+  async mounted() {
   }
 };
 </script>
@@ -136,7 +126,7 @@ export default {
       flex-direction: column;
       flex: 1;
       overflow: auto;
-      border: 1px solid rgba(0,0,0,.125);
+      border: 1px solid rgba(0, 0, 0, .125);
       border-radius: $border-radius;
 
       .list-group {
@@ -144,7 +134,7 @@ export default {
 
         .list-group-item {
           border: 0;
-          border-bottom: 1px solid rgba(0,0,0,.125);
+          border-bottom: 1px solid rgba(0, 0, 0, .125);
         }
 
         .active .styled-description a {

@@ -14,7 +14,7 @@ export class Loading {
 export async function stacRequest(cx, link) {
   let opts;
   let headers = {
-    'Accept-Language': cx.getters.acceptedLanguages
+    'Accept-Language': cx.getters.acceptedLanguages,
   };
   if (Utils.isObject(link)) {
     let method = typeof link.method === 'string' ? link.method.toLowerCase() : 'get';
@@ -50,6 +50,7 @@ export async function stacRequest(cx, link) {
   else {
     opts = link;
   }
+  opts = {...opts, withCredentials: true}
   return await axios(opts);
 }
 

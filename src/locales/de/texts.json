@@ -92,7 +92,12 @@
     "noExternalAccess": "Der Zugriff auf externe Kataloge ist nicht erlaubt!",
     "notFound": "Die angeforderte Seite existiert nicht. @:errors.contactProvider",
     "serverError": "Auf dem Server ist ein Problem aufgetreten. @:errors.contactProvider",
-    "unauthorized": "Der Anfrage fehlen die Anmeldedaten, bspw. ein API-Schlüssel. Bitte geben Sie Ihre Anmeldedaten an und versuchen Sie es erneut."
+    "unauthorized": "Der Anfrage fehlen die Anmeldedaten, bspw. ein API-Schlüssel. Bitte geben Sie Ihre Anmeldedaten an und versuchen Sie es erneut.",
+    "authFail": {
+      "title" : "Authentifizierung erforderlich",
+      "description" : "Bitte loggen Sie sich ein, um auf die Ressourcen der Plattform zugreifen zu können.",
+      "information" : "Wenn Sie bereits eingeloggt sind und das Problem weiterhin besteht, wenden Sie sich bitte an den Support."
+    }
   },
   "featureExperimental": "Diese Funktion ist noch experimentell und kann unerwartete Ergebnisse verursachen!",
   "fullscreen": {
