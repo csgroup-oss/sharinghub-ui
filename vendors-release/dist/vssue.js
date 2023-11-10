@@ -1501,7 +1501,7 @@ let VssueStore = class VssueStore extends Vue$1 {
         return (this.isLoadingComments || this.isCreatingComment || this.isUpdatingComment);
     }
     get isLogined() {
-        return this.accessToken !== null || this.user !== null;
+        return this.user !== null;
     }
     get isAdmin() {
         return true;
@@ -1612,7 +1612,6 @@ let VssueStore = class VssueStore extends Vue$1 {
                 clientId: this.options.clientId,
                 clientSecret: this.options.clientSecret,
                 proxy: this.options.proxy,
-                privateToken: this.options.privateToken,
             });
             // handle authorization
             await this.handleAuth();
@@ -1655,7 +1654,6 @@ let VssueStore = class VssueStore extends Vue$1 {
                 this.isIssueNotCreated = true;
                 // try to create issue when `autoCreateIssue = true`
                 if (this.options.autoCreateIssue) {
-                    console.log('post new issue');
                     await this.postIssue();
                 }
             }
@@ -1672,7 +1670,6 @@ let VssueStore = class VssueStore extends Vue$1 {
         if (!this.API || !this.options || this.issue || this.issueId)
             return;
         // login to create issue
-        console.log('isLoginNEd', this.isLogined);
         if (!this.isLogined) {
             this.login();
         }
@@ -1689,7 +1686,6 @@ let VssueStore = class VssueStore extends Vue$1 {
                 }),
                 accessToken: this.accessToken,
             });
-            console.log('issuer', issue);
             this.issue = issue;
             this.isIssueNotCreated = false;
             await this.getComments();
@@ -1858,7 +1854,6 @@ let VssueStore = class VssueStore extends Vue$1 {
      * Handle authorization and set access_token
      */
     async handleAuth() {
-        var _a;
         if (!this.API)
             return;
         // handle authorize and try to get the access_token
@@ -1878,13 +1873,10 @@ let VssueStore = class VssueStore extends Vue$1 {
             this.user = null;
         }
         // ADD init user
-        if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.privateToken) {
-            this.user = await this.API.getUserByPrivateToken();
-            console.clear();
-            console.log(this.user.username);
-            console.log('is logined', this.isLogined);
-            console.log('---------');
-        }
+        this.user = await this.API.getUserByPrivateToken();
+        console.log('----- CURRENT USER    ----');
+        console.log(this.user);
+        console.log('Current user is logined logined', this.isLogined);
     }
     /**
      * Get access token from local storage

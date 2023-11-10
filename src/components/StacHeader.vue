@@ -25,7 +25,7 @@
             <b-icon-book/>
             <span class="button-label prio">{{ $t('browse') }}</span>
           </b-button>
-          <template v-if="false">
+          <template>
             <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
                       variant="outline-primary" size="sm">
               <b-icon-folder-symlink/>
@@ -36,6 +36,7 @@
               <b-icon-search/>
               <span class="button-label prio">{{ $t('search.title') }}</span>
             </b-button>
+
             <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth"
                       :title="$t('authentication.button.title')">
               <template v-if="authData">
@@ -47,13 +48,20 @@
                 <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
               </template>
             </b-button>
+
           </template>
         </b-button-group>
       </p>
 
       <b-col cols="12">
-        <b-row class="p-mb-3">
-          <tag-custom icon="pi pi-heart" label="likes" sub-label="403"/>
+        <b-row v-if="rankRate" class="p-mb-3">
+          <b-button-group size="sm">
+            <b-button @click="canRate ? starProject() : UnStarProject()" variant="outline-dark">
+              <b-icon :icon=" canRate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
+              <TextView type="Small-1" v-html="canRate ? ' Star' : ' Unstar'"></TextView>
+            </b-button>
+            <b-button disabled variant="outline-dark"> {{ rankRate }}</b-button>
+          </b-button-group>
         </b-row>
 
         <b-row v-if="!!data?.properties">
@@ -72,14 +80,17 @@ import StacLink from './StacLink.vue';
 import {BIconArrow90degUp, BIconBook, BIconFolderSymlink, BIconLock, BIconSearch, BIconUnlock} from "bootstrap-vue";
 import STAC from '../models/stac';
 import Utils from '../utils';
-import TagCustom from "@/_Hub/components/TagCustom.vue";
 import Keywords from "@/components/Keywords.vue";
+import {get, post} from "@/_Hub/tools/https";
+import {PROXY_URL} from "@/_Hub/Endpoint";
+import TextView from "@/_Hub/components/TextView.vue";
+
 
 export default {
   name: 'StacHeader',
   components: {
+    TextView,
     Keywords,
-    TagCustom,
     BIconArrow90degUp,
     BIconBook,
     BIconFolderSymlink,
@@ -91,10 +102,13 @@ export default {
   },
   data() {
     return {
-    }
+      canRate: false,
+      rankRate: undefined,
+      hasRank: false
+    };
   },
   computed: {
-    ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title']),
+    ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title',]),
     ...mapGetters(['canSearch', 'root', 'parentLink', 'collectionLink', 'toBrowserPath']),
     collectionLinkTitle() {
       if (this.collectionLink && Utils.hasText(this.collectionLink.title)) {
@@ -153,6 +167,24 @@ export default {
       return this.collectionLink || this.parentLink;
     },
   },
+  watch: {
+    url: {
+      immediate: true,
+      async handler(url) {
+        if (url) {
+          let projectID = this.getProjectID(url);
+          get(PROXY_URL.concat(`projects/${projectID}/starrers`))
+            .then((response) => {
+              if (response.data) {
+                this.rankRate = response.data.length;
+                const currentUser = this.$store.state.auth.user;
+                this.canRate = !response.data.some(el => el.user.username === currentUser.nickname || el.user.web_url === currentUser.profile);
+              }
+            });
+        }
+      }
+    }
+  },
   methods: {
     isSearchPage() {
       return this.$router.currentRoute.name === 'search';
@@ -165,11 +197,42 @@ export default {
         force: true
       }));
     },
+    getProjectID(url = "") {
+      const reversed = url.split("/").reverse();
+      if (reversed.length === 0) {
+        return undefined;
+      }
+      return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
+    },
     goUp() {
-       this.$router.go(-1);
+      this.$router.go(-1);
+    },
+    starProject() {
+      let url = this.url;
+      if (!url) throw  new Error('url is wrong');
+      const projectID = this.getProjectID(url);
+      post(PROXY_URL.concat(`projects/${projectID}/star`))
+        .then((response) => {
+          if (response.data) {
+            this.canRate = false;
+            this.rankRate++;
+          }
+        });
+    },
+    UnStarProject() {
+      let url = this.url;
+      if (!url) throw  new Error('url is wrong');
+      const projectID = this.getProjectID(url);
+      post(PROXY_URL.concat(`projects/${projectID}/unstar`))
+        .then((response) => {
+          if (response.data) {
+            this.canRate = true;
+            this.rankRate--;
+          }
+        });
     }
   },
-  beforeMount() {
+  mounted() {
   }
 };
 </script>

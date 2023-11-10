@@ -192,6 +192,8 @@ function getStore(config, router) {
       },
 
       canSearch: (state, getters) => {
+        console.warn("state", state);
+        console.warn("cansearch", getters.canSearchCollections || getters.canSearchItems);
         return getters.canSearchCollections || getters.canSearchItems;
       },
       canSearchItems: (state, getters) => {

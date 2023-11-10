@@ -17,7 +17,7 @@
       <b-badge v-if="!!doi" variant="light" target="_blank"
                :href="extractHref(doi.formatted)" class="mr-1 mb-1 px-2 py-2">
         <b-icon font-scale="1.25" icon="bank2"/>
-        License : {{ doi.value }}
+        DOI : {{ doi.value }}
       </b-badge>
     </div>
   </div>

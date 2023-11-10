@@ -94,7 +94,7 @@ export default defineComponent({
           this.isLoading = false;
           const {user, token} = response.data;
           this.$store.commit("setUserInfo", {user, token});
-          if (this.$route.fullPath !== "/models") {
+          if (this.$route.fullPath === "") {
             this.$router.push("/models");
           }
         }
@@ -108,8 +108,6 @@ export default defineComponent({
   beforeMount() {
     this.fetchUser();
   },
-  updated() {
-  }
 });
 
 </script>

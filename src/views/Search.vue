@@ -1,5 +1,5 @@
 <template>
-  <main class="search d-flex flex-column">
+  <main class="search d-flex flex-column container">
     <Loading v-if="!parent" stretch />
     <b-alert v-else-if="!canSearch" variant="danger" show>{{ $t('search.notSupported') }}</b-alert>
     <b-row v-else>
@@ -209,6 +209,14 @@ export default {
       this.parent = this.root;
     }
     if (!this.parent) {
+      console.log(this.parent);
+      console.log(this.$route);
+      const regex = /external\/(.+)$/;
+
+// Utilisation de la méthode exec pour obtenir les correspondances
+      const matches = regex.exec(this.$route.path);
+      console.log("mat", matches)
+
       await this.$store.dispatch('load', { url });
       if (!this.root) {
         this.$store.commit("config", { catalogUrl: url });

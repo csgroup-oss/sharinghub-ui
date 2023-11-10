@@ -1,9 +1,13 @@
 <script>
 import Vue, {defineComponent} from 'vue';
-import Vssue, {VssueComponent} from "../../../../vendors/dist/vssue";
-import '../../../../vendors/dist/vssue.css';
-import GitlabV4 from "../../../../vendors/lib/index";
+import {PROXY_URL} from "@/_Hub/Endpoint";
 
+import Vssue, {VssueComponent} from "../../../../vendors-release/dist/vssue";
+import '../../../../vendors-release/dist/vssue.css';
+import GitlabV4 from "../../../../vendors-release/lib/index";
+
+import {mapState} from "vuex";
+import Awaiter from "@/_Hub/components/Awaiter.vue";
 
 Vue.use(Vssue);
 
@@ -11,35 +15,55 @@ Vue.use(Vssue);
 const vsOptions = {
   api: GitlabV4,
   state: 'Vssue',
-  labels: ['Vssue'],
-  prefix: '[Vssue]',
+  labels: ['discussion', 'sharingHub'],
+  prefix: 'Review -',
   admins: [],
-  owner: "",
-  repo: 406,
-  clientId: "",
-  clientSecret: "",
-  privateToken:undefined,
-  baseURL: "https://gitlab.si.c-s.fr",
-  proxy: url => `https://cors-anywhere.azm.workers.dev/${url}`,
-  issueContent: ({ url }) => url,
+  baseURL: PROXY_URL,
+  issueContent: ({url}) => url,
   autoCreateIssue: true,
 };
 
 export default defineComponent({
   name: "TabSectionReview",
   components: {
+    Awaiter,
     'Vssue': VssueComponent,
   },
+  computed: {
+    ...mapState(['data'])
+  },
+  // eslint-disable-next-line vue/order-in-components
   data() {
     return {
-      title: "Vssue Dev",
+      isLoading: true,
+      title: "SharingHUB",
       options: {
         ...vsOptions,
-        privateToken: this.$store.state.token
       },
     };
   },
+  watch: {
+    data: {
+      immediate: true,
+      handler(data) {
+        this.isLoading = true;
+        if (data) {
+          this.options.repo = this.getProjectID(data._path);
+          this.isLoading = false;
+        }
+      }
+    }
+  },
   mounted() {
+  },
+  methods: {
+    getProjectID(url = "") {
+      const reversed = url.split("/").reverse();
+      if (reversed.length === 0) {
+        return undefined;
+      }
+      return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
+    }
   }
 });
 </script>
@@ -47,7 +71,8 @@ export default defineComponent({
 
 <template>
   <div class="w-100">
-    <Vssue :title="title" :options="options"/>
+    <Awaiter v-if="isLoading" :is-visible="isLoading"/>
+        <Vssue :title="title" :options="options" v-else />
   </div>
 </template>
 

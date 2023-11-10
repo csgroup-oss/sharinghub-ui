@@ -33,6 +33,7 @@
             Log In
           </Button>
         </a>
+
         <div v-if="auth">
           <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
@@ -42,6 +43,7 @@
             <b-dropdown-divider/>
           </b-dropdown>
         </div>
+
       </div>
     </div>
   </header>
@@ -85,43 +87,39 @@ export default defineComponent({
   watch: {
     $route: {
       immediate: true,
-      async handler(route) {
-        if (route.fullPath === "/") {
-          this.isAuthenticated = false;
-        } else {
-          this.isAuthenticated = await this.isAuthorizedToFetch();
-          if (!this.isLoading) {
-            const entries = await this.fetchBaseStacEntries();
-            this.routes = entries.map((entry) => {
-              if (entry.title.toLowerCase() === ("processor")) {
-                return {
-                  route: config.entriesRoot[entry.title],
-                  description: entry.description,
-                  icon: "book",
-                };
-              }
-              if (entry.title.toLowerCase().includes("model")) {
-                return {
-                  route: config.entriesRoot[entry.title],
-                  description: entry.description,
-                  icon: "box-seam",
-                };
-              }
-              if (entry.title.toLowerCase().includes("dataset")) {
-                return {
-                  route: config.entriesRoot[entry.title],
-                  description: entry.description,
-                  icon: "view-list",
-                };
-              }
+      async handler() {
+        this.isAuthenticated = await this.isAuthorizedToFetch();
+        if (!this.isLoading) {
+          const entries = await this.fetchBaseStacEntries();
+          this.routes = entries.map((entry) => {
+            if (entry.title.toLowerCase() === ("processor")) {
               return {
                 route: config.entriesRoot[entry.title],
                 description: entry.description,
-                icon: "stack",
+                icon: "book",
               };
-            });
-            this.isLoading = true;
-          }
+            }
+            if (entry.title.toLowerCase().includes("model")) {
+              return {
+                route: config.entriesRoot[entry.title],
+                description: entry.description,
+                icon: "box-seam",
+              };
+            }
+            if (entry.title.toLowerCase().includes("dataset")) {
+              return {
+                route: config.entriesRoot[entry.title],
+                description: entry.description,
+                icon: "view-list",
+              };
+            }
+            return {
+              route: config.entriesRoot[entry.title],
+              description: entry.description,
+              icon: "stack",
+            };
+          });
+          this.isLoading = true;
         }
       }
     },
@@ -130,7 +128,7 @@ export default defineComponent({
       async handler(data) {
         this.isAuthenticated = !!(data?.user && data?.token);
       }
-    }
+    },
   },
   async mounted() {
   },

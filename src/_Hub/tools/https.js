@@ -17,3 +17,21 @@ export async function get(url = undefined) {
     }
   );
 }
+
+export async function post(url = undefined, data = {}) {
+  const CSRFTOKEN = Cookies.get("csrftoken") || "";
+  return await httpService.post(url,
+    data,
+    {
+      headers: {
+        "Accept": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        "X-CSRFToken": CSRFTOKEN,
+      },
+      withCredentials: true,
+    }
+  );
+}
+
+

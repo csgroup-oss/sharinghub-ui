@@ -22,15 +22,13 @@
           </TextView>
         </b-tab>
 
-
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView class="Title-1"> File and versions</TextView>
+            <TextView class="Title-2">Reviews</TextView>
           </template>
-          <TextView>
-
-          </TextView>
+          <TabSectionReview/>
         </b-tab>
+
 
         <b-tab class="p-pt-4">
           <template #title>
@@ -38,7 +36,6 @@
           </template>
           <TabSectionApiStac :title="title" :stacUrl="url" :stac="data"/>
         </b-tab>
-
       </b-tabs>
 
     </div>
@@ -89,6 +86,7 @@ import TextView from "@/_Hub/components/TextView.vue";
 import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
 import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
 import Source from "@/components/Source.vue";
+import Awaiter from "@/_Hub/components/Awaiter.vue";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -138,6 +136,7 @@ export default {
   // router,
   // store,
   components: {
+    Awaiter,
     Source,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
     Authentication: () => import('./components/Authentication.vue'),
@@ -152,7 +151,7 @@ export default {
     return {
       sidebar: false,
       error: null,
-      onDataLoaded: null
+      onDataLoaded: null,
     };
   },
   computed: {
@@ -305,6 +304,13 @@ export default {
       if (data instanceof STAC) {
         this.onDataLoaded();
       }
+    },
+    $route :{
+      immediate:true,
+      async handler(){
+
+      }
+
     }
   },
   async created() {
@@ -430,7 +436,7 @@ export default {
     },
     hideError() {
       this.$store.commit('showGlobalError', null);
-    }
+    },
   }
 };
 </script>

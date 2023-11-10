@@ -25,7 +25,7 @@ export default defineComponent({
   watch: {
     $route: {
       immediate: true,
-      async handler() {
+      async handler(old, from) {
         const matched = this.getEntryMatch();
         if (matched) {
           this.title = Object.values(matched)[0];
@@ -65,12 +65,16 @@ export default defineComponent({
     getEntryMatch() {
       const routePath = this.$route.params.pathMatch;
       let matched = undefined;
-      Object.entries(config.entriesRoot).forEach(([key, val]) => {
+      let tampon = undefined;
+      Object.entries(config.entriesRoot).forEach(([key, val], index) => {
+        if(index ===1){
+          tampon = {[key] : val};
+        }
         if (val.toLowerCase() === routePath) {
           matched = {[key]: val};
         }
       });
-      return matched;
+      return matched ? matched : tampon;
     }
   },
   async beforeMount() {

@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import { buildQuery, buildURL, concatURL, getCleanURL, parseQuery, } from '@vssue/utils';
 import { normalizeUser, normalizeIssue, normalizeComment, normalizeReactions, mapReactionName, } from './utils';
@@ -8,7 +9,7 @@ import { normalizeUser, normalizeIssue, normalizeComment, normalizeReactions, ma
  * @see https://docs.gitlab.com/ce/api/oauth2.html
  */
 export default class GitlabV4 {
-    constructor({ baseURL = 'https://gitlab.com', owner, repo, labels, clientId, state, privateToken, }) {
+    constructor({ baseURL = 'https://gitlab.com', owner, repo, labels, clientId, state, }) {
         this.baseURL = baseURL;
         this.owner = owner;
         this.repo = repo;
@@ -16,14 +17,17 @@ export default class GitlabV4 {
         this.clientId = clientId;
         this.state = state;
         // @see https://docs.gitlab.com/ce/api/README.html#namespaced-path-encoding
-        this._encodedRepo = encodeURIComponent(`${this.owner}/${this.repo}`);
         this._encodedRepo = encodeURIComponent(`${this.repo}`);
-        this.privateToken = privateToken;
+        const CSRFTOKEN = Cookies.get('csrftoken') || '';
         this.$http = axios.create({
-            baseURL: concatURL(baseURL, 'api/v4'),
+            baseURL: baseURL,
             headers: {
                 Accept: 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRFTOKEN,
             },
+            withCredentials: true,
         });
     }
     /**
@@ -81,15 +85,11 @@ export default class GitlabV4 {
      * Get the logged-in user with access token.
      */
     async getUser({ accessToken, }) {
-        const { data } = await this.$http.get('user', {
-            headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const { data } = await this.$http.get('user');
         return normalizeUser(data);
     }
     async getUserByPrivateToken() {
-        const { data } = await this.$http.get('user', {
-            params: { private_token: this.privateToken },
-        });
+        const { data } = await this.$http.get('user');
         return normalizeUser(data);
     }
     /**
@@ -101,14 +101,9 @@ export default class GitlabV4 {
      */
     async getIssue({ accessToken, issueId, issueTitle, }) {
         const options = {};
-        if (accessToken) {
-            options.headers = {
-                Authorization: `Bearer ${accessToken}`,
-            };
-        }
         if (issueId) {
             try {
-                const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}?private_token=${this.privateToken}`, options);
+                const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}`, options);
                 return normalizeIssue(data);
             }
             catch (e) {
@@ -127,7 +122,7 @@ export default class GitlabV4 {
                 sort: 'asc',
                 search: issueTitle,
             };
-            const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues?private_token=${this.privateToken}`, options);
+            const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues`, options);
             const issue = data
                 .map(normalizeIssue)
                 .find(item => item.title === issueTitle);
@@ -140,12 +135,10 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/issues.html#new-issue
      */
     async postIssue({ accessToken, title, content, }) {
-        const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues?private_token=${this.privateToken}`, {
+        const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues`, {
             title,
             description: content,
             labels: this.labels.join(','),
-        }, {
-        //  headers: { Authorization: `Bearer ${accessToken}` },
         });
         return normalizeIssue(data);
     }
@@ -169,14 +162,7 @@ export default class GitlabV4 {
                 sort: sort,
             },
         };
-        if (accessToken) {
-            options.headers = {
-                Authorization: `Bearer ${accessToken}`,
-            };
-        }
-        const response = await this.$http.get(
-        // `projects/${this._encodedRepo}/issues/${issueId}/notes`,
-        `projects/406/issues/${issueId}/notes?private_token=${this.privateToken}`, options);
+        const response = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}/notes`, options);
         const commentsRaw = response.data;
         // gitlab api v4 should get parsed markdown content and reactions by other api
         // this is potentially to cause 429 Too Many Requests
@@ -210,10 +196,8 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/notes.html#create-new-issue-note
      */
     async postComment({ accessToken, issueId, content, }) {
-        const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes?private_token=${this.privateToken}`, {
+        const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes`, {
             body: content,
-        }, {
-        // headers: { Authorization: `Bearer ${accessToken}` },
         });
         return normalizeComment(data);
     }
@@ -223,10 +207,8 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/notes.html#modify-existing-issue-note
      */
     async putComment({ accessToken, issueId, commentId, content, }) {
-        const { data } = await this.$http.put(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}?private_token=${this.privateToken}`, {
+        const { data } = await this.$http.put(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`, {
             body: content,
-        }, {
-        // headers: { Authorization: `Bearer ${accessToken}` },
         });
         const [contentHTML, reactions] = await Promise.all([
             this.getMarkdownContent({
@@ -249,9 +231,7 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/notes.html#delete-an-issue-note
      */
     async deleteComment({ accessToken, issueId, commentId, }) {
-        const { status } = await this.$http.delete(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}?private_token=${this.privateToken}`, {
-        // headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const { status } = await this.$http.delete(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`);
         return status === 204;
     }
     /**
@@ -260,9 +240,7 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/award_emoji.html#list-an-awardables-award-emoji
      */
     async getCommentReactions({ accessToken, issueId, commentId, }) {
-        const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji?private_token=${this.privateToken}`, {
-        //  headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji`);
         return normalizeReactions(data);
     }
     /**
@@ -272,12 +250,8 @@ export default class GitlabV4 {
      */
     async postCommentReaction({ issueId, commentId, reaction, accessToken, }) {
         try {
-            const response = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji?private_token=${this.privateToken}`, {
+            const response = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji`, {
                 name: mapReactionName(reaction),
-            }, {
-                headers: {
-                //  Authorization: `Bearer ${accessToken}`,
-                },
             });
             return response.status === 201;
         }
@@ -301,12 +275,7 @@ export default class GitlabV4 {
      */
     async getMarkdownContent({ accessToken, contentRaw, }) {
         const options = {};
-        if (accessToken) {
-            options.headers = {
-            // Authorization: `Bearer ${accessToken}`,
-            };
-        }
-        const { data } = await this.$http.post(`markdown?private_token=${this.privateToken}`, {
+        const { data } = await this.$http.post(`markdown`, {
             text: contentRaw,
             gfm: true,
         }, options);

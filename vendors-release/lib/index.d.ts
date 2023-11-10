@@ -14,9 +14,8 @@ export default class GitlabV4 implements VssueAPI.Instance {
     clientId: string;
     state: string;
     $http: AxiosInstance;
-    privateToken: string | undefined;
     private _encodedRepo;
-    constructor({ baseURL, owner, repo, labels, clientId, state, privateToken, }: VssueAPI.Options);
+    constructor({ baseURL, owner, repo, labels, clientId, state, }: VssueAPI.Options);
     /**
      * The platform api info
      */

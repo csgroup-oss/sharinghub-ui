@@ -1,10 +1,6 @@
 <template>
   <div class="share mt-1">
     <b-button-group>
-      <b-button v-if="showRoot" size="sm" variant="outline-primary" id="popover-root-btn">
-        <b-icon-box /> <span class="button-label">{{ rootTitle }}</span>
-      </b-button>
-
       <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
         <b-icon-share /> <span class="button-label">{{ $t('source.share.label') }}</span>
       </b-button>
@@ -27,12 +23,6 @@
       </b-dropdown>
     </b-button-group>
 
-    <b-popover
-      v-if="showRoot" id="popover-root" target="popover-root-btn" triggers="focus"
-      placement="bottom" container="stac-browser" :title="rootTitle"
-    >
-      <RootStats />
-    </b-popover>
 
     <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom" container="stac-browser" :title="$t('source.share.title')">
       <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
@@ -44,16 +34,14 @@
 </template>
 
 <script>
-import {
-  BIconBlank, BIconBox, BIconCheck, BIconEnvelope, BIconExclamationTriangle, BIconFlag, BIconLink, BIconShare, BIconTwitter,
-  BDropdown, BDropdownItem, BPopover } from 'bootstrap-vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import {BDropdown, BDropdownItem, BPopover} from 'bootstrap-vue';
+import {mapActions, mapGetters, mapState} from 'vuex';
 
 import Url from './Url.vue';
 
 import URI from 'urijs';
 import Utils from '../utils';
-import { getBest, prepareSupported } from '../locale-id';
+import {getBest, prepareSupported} from '../locale-id';
 import CopyButton from './CopyButton.vue';
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -63,16 +51,6 @@ export default {
   components: {
     BDropdown,
     BDropdownItem,
-    BIconBlank,
-    BIconBox,
-    BIconCheck,
-    BIconEnvelope,
-    BIconExclamationTriangle,
-    BIconFlag,
-    BIconLink,
-    BIconShare,
-    BIconTwitter,
-    BPopover,
     RootStats: () => import('./RootStats.vue'),
     Url,
     CopyButton,

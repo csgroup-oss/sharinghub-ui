@@ -3,7 +3,7 @@
     <template v-if="hasConformances">
       <h4>{{ $t('source.conformanceClasses') }}</h4>
       <dl v-for="(classes, group) in conformances" :key="group">
-        <dt>{{ group }}</dt>
+        <dt>{{ group }} </dt>
         <dd>
           <ul>
             <li v-for="(conf, uri) in classes" :key="uri" :title="uri">

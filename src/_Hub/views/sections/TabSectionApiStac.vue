@@ -1,16 +1,5 @@
 <script>
 import {defineComponent} from 'vue'
-import {
-  BDropdown, BDropdownItem,
-  BIconBlank,
-  BIconBox,
-  BIconCheck,
-  BIconEnvelope,
-  BIconExclamationTriangle,
-  BIconFlag, BIconLink,
-  BIconShare,
-  BIconTwitter, BPopover
-} from "bootstrap-vue";
 import CopyButton from "@/components/CopyButton.vue";
 import Url from "@/components/Url.vue";
 import {mapActions, mapGetters, mapState} from "vuex";
@@ -25,20 +14,8 @@ export default defineComponent({
   name: "TabSectionApiStac",
   components: {
     RootStats,
-    BPopover,
     Url,
-    BIconLink,
-    BDropdownItem,
-    BDropdown,
-    BIconExclamationTriangle,
-    BIconCheck,
-    BIconShare,
-    BIconEnvelope,
-    BIconBox,
     CopyButton,
-    BIconTwitter,
-    BIconFlag,
-    BIconBlank
   },
   props: {
     title: {
@@ -79,20 +56,17 @@ export default defineComponent({
       let lang = this.languages.find(l => l.code === this.locale);
       if (lang) {
         return lang.native;
-      }
-      else {
+      } else {
         return '-';
       }
     },
     canValidate() {
       if (!this.stacLint || typeof this.stacUrl !== 'string') {
         return false;
-      }
-      else if (Utils.size(this.privateQueryParameters) > 0) {
+      } else if (Utils.size(this.privateQueryParameters) > 0) {
         // Don't expose private query parameters to externals
         return false;
-      }
-      else if (Array.isArray(this.stacProxyUrl)) {
+      } else if (Array.isArray(this.stacProxyUrl)) {
         // Don't validate if a proxy has been set
         return false;
       }
@@ -123,7 +97,7 @@ export default defineComponent({
       let languages = [];
 
       // Add all UI languages
-      for(let code of this.supportedLocales) {
+      for (let code of this.supportedLocales) {
         languages.push({
           code,
           native: this.$t(`languages.${code}.native`),
@@ -133,7 +107,7 @@ export default defineComponent({
       }
 
       // Add missing data languages
-      for(let lang of this.dataLanguages) {
+      for (let lang of this.dataLanguages) {
         if (!Utils.isObject(lang) || !lang.code || this.supportedLocales.includes(lang.code)) {
           continue;
         }
@@ -150,7 +124,7 @@ export default defineComponent({
         // Determine which languages are complete
         const uiSupported = prepareSupported(this.supportedLocales);
         const dataSupported = prepareSupported(this.dataLanguages.map(l => l.code));
-        for(let l of languages) {
+        for (let l of languages) {
           if (!l.ui) {
             l.ui = Boolean(getBest(uiSupported, l.code, null));
           }
@@ -160,7 +134,7 @@ export default defineComponent({
         }
       }
 
-      return languages.sort((a,b) => a.global.localeCompare(b.global, this.uiLanguage));
+      return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },
   methods: {
@@ -176,23 +150,24 @@ export default defineComponent({
     }
   },
   async beforeMount() {
-     if (!this.canValidate) {
-        return;
-      }
-      await this.$store.dispatch('validate', this.stacUrl);
+    if (!this.canValidate) {
+      return;
+    }
+    await this.$store.dispatch('validate', this.stacUrl);
   }
-})
+});
+
 </script>
 
 <template>
   <div class="share mt-1">
-    <div v-if="stacUrl"  class="p-mt-3">
-       <template v-if="stac">
+    <div v-if="stacUrl" class="p-mt-3">
+      <template v-if="stac">
         <b-row v-if="stacId" class="stac-id">
           <b-col cols="4">{{ $t('source.id') }}</b-col>
           <b-col>
             <code>{{ stacId }}</code>
-            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2" />
+            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2"/>
           </b-col>
         </b-row>
         <b-row v-if="stacVersion" class="stac-version">
@@ -202,7 +177,7 @@ export default defineComponent({
         <b-row v-if="canValidate" class="validation">
           <b-col cols="4">{{ $t('source.valid') }}</b-col>
           <b-col>
-            <b-spinner v-if="valid === null" :label="$t('source.validating')" small />
+            <b-spinner v-if="valid === null" :label="$t('source.validating')" small/>
             <template v-else-if="valid === true">✔️</template>
             <template v-else-if="valid === false">❌</template>
             <template v-else>{{ $t('source.validationNA') }}</template>
@@ -210,11 +185,13 @@ export default defineComponent({
         </b-row>
         <hr>
       </template>
-      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')" />
+      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')"/>
     </div>
 
+    <div v-if="showRoot">
+       <RootStats />
+    </div>
   </div>
-
 
 </template>
 
@@ -231,15 +208,16 @@ export default defineComponent({
 }
 
 #popover-link .stac-id .copy-button {
-    padding-top: 0.1rem;
-    padding-bottom: 0.1rem;
-    font-size: 0.7rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  font-size: 0.7rem;
 }
 
 </style>
 <style lang="scss" scoped>
 .lang-item > .dropdown-item {
   display: flex;
+
   > .title {
     flex: 1;
   }
