@@ -60,7 +60,6 @@ export default {
     Providers: () => import('../components/Providers.vue'),
     ReadMore,
     Thumbnails: () => import('../components/Thumbnails.vue'),
-    Keywords: () => import('../components/Keywords.vue'),
   },
   mixins: [ShowAssetMixin],
   data() {

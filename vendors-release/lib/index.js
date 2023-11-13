@@ -85,12 +85,15 @@ export default class GitlabV4 {
      * Get the logged-in user with access token.
      */
     async getUser({ accessToken, }) {
-        const { data } = await this.$http.get('user');
+        const { data } = await this.$http.get('user', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
         return normalizeUser(data);
     }
     async getUserByPrivateToken() {
         const { data } = await this.$http.get('user');
-        return normalizeUser(data);
+        const response = await this.$http.get('avatar?email='.concat(data.email));
+        return normalizeUser(data, response.data.avatar_url);
     }
     /**
      * Get issue of this page according to the issue id or the issue title
@@ -99,7 +102,7 @@ export default class GitlabV4 {
      * @see https://docs.gitlab.com/ce/api/issues.html#list-issues
      * @see https://docs.gitlab.com/ce/api/README.html#pagination
      */
-    async getIssue({ accessToken, issueId, issueTitle, }) {
+    async getIssue({ issueId, issueTitle, }) {
         const options = {};
         if (issueId) {
             try {
@@ -134,7 +137,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/issues.html#new-issue
      */
-    async postIssue({ accessToken, title, content, }) {
+    async postIssue({ title, content, }) {
         const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues`, {
             title,
             description: content,
@@ -152,7 +155,7 @@ export default class GitlabV4 {
      * Cannot get the HTML content and the reactions (award_emoji) here.
      * So have to request them via `markdown` and `award_emoji` API.
      */
-    async getComments({ accessToken, issueId, query: { page = 1, perPage = 10, sort = 'desc' } = {}, }) {
+    async getComments({ issueId, query: { page = 1, perPage = 10, sort = 'desc' } = {}, }) {
         const options = {
             params: {
                 // pagination
@@ -170,13 +173,11 @@ export default class GitlabV4 {
         for (const comment of commentsRaw) {
             getCommentsMeta.push((async () => {
                 comment.body_html = await this.getMarkdownContent({
-                    accessToken: accessToken,
                     contentRaw: comment.body,
                 });
             })());
             getCommentsMeta.push((async () => {
                 comment.reactions = await this.getCommentReactions({
-                    accessToken: accessToken,
                     issueId: issueId,
                     commentId: comment.id,
                 });
@@ -195,7 +196,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#create-new-issue-note
      */
-    async postComment({ accessToken, issueId, content, }) {
+    async postComment({ issueId, content, }) {
         const { data } = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes`, {
             body: content,
         });
@@ -206,17 +207,15 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#modify-existing-issue-note
      */
-    async putComment({ accessToken, issueId, commentId, content, }) {
+    async putComment({ issueId, commentId, content, }) {
         const { data } = await this.$http.put(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`, {
             body: content,
         });
         const [contentHTML, reactions] = await Promise.all([
             this.getMarkdownContent({
-                accessToken: accessToken,
                 contentRaw: data.body,
             }),
             this.getCommentReactions({
-                accessToken: accessToken,
                 issueId: issueId,
                 commentId: data.id,
             }),
@@ -230,7 +229,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#delete-an-issue-note
      */
-    async deleteComment({ accessToken, issueId, commentId, }) {
+    async deleteComment({ issueId, commentId, }) {
         const { status } = await this.$http.delete(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`);
         return status === 204;
     }
@@ -239,7 +238,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/award_emoji.html#list-an-awardables-award-emoji
      */
-    async getCommentReactions({ accessToken, issueId, commentId, }) {
+    async getCommentReactions({ issueId, commentId, }) {
         const { data } = await this.$http.get(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji`);
         return normalizeReactions(data);
     }
@@ -248,7 +247,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/award_emoji.html#award-a-new-emoji
      */
-    async postCommentReaction({ issueId, commentId, reaction, accessToken, }) {
+    async postCommentReaction({ issueId, commentId, reaction, }) {
         try {
             const response = await this.$http.post(`projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji`, {
                 name: mapReactionName(reaction),
@@ -273,7 +272,7 @@ export default class GitlabV4 {
      *
      * @see https://docs.gitlab.com/ce/api/markdown.html
      */
-    async getMarkdownContent({ accessToken, contentRaw, }) {
+    async getMarkdownContent({ contentRaw, }) {
         const options = {};
         const { data } = await this.$http.post(`markdown`, {
             text: contentRaw,

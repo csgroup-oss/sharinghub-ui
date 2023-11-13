@@ -1,9 +1,10 @@
 // @ts-nocheck
-export function normalizeUser(user) {
+export function normalizeUser(user, avatar_url = undefined) {
     return {
         username: user.username,
         avatar: user.avatar_url,
         homepage: user.web_url,
+        avatar_url: avatar_url,
     };
 }
 export function normalizeIssue(issue) {

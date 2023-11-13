@@ -92,11 +92,7 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler(route) {
-        if (route.name === "catalog") {
-          this.canSearch = false;
-        } else {
-          this.canSearch = true;
-        }
+        this.canSearch = route.name !== "catalog";
         this.isAuthenticated = await this.isAuthorizedToFetch();
         if (!this.isLoading) {
           const entries = await this.fetchBaseStacEntries();
@@ -138,6 +134,7 @@ export default defineComponent({
         this.isAuthenticated = !!(data?.user);
         if (data?.user) {
           get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
+            console.log(response.data);
             if (response.data) {
               this.avatar_url = response.data.avatar_url;
               console.log("this.avatar", this.avatar_url);
@@ -193,7 +190,6 @@ export default defineComponent({
       get(LOGOUT_URL).then((response) => {
         if (response) {
           this.$store.commit("setUserInfo", null);
-          this.$router.push("/");
         }
       });
     },

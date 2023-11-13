@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col md="12">
-      <Source class="float-right" :title="title" :stacUrl="url" :stac="data"/>
+      <Source class="float-right" :title="title" :stacUrl="url" :stac="data" />
       <h1>
         <template v-if="icon">
           <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
@@ -11,40 +11,35 @@
       <p class="lead" v-if="url || isSearchPage()">
         <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
           <template #catalog>
-            <StacLink :data="containerLink"/>
+            <StacLink :data="containerLink" />
           </template>
         </i18n>
         <b-button-group>
-          <b-button v-if="parentLink" @click="goUp()" :title="parentLinkTitle"
-                    variant="outline-primary" size="sm">
-            <b-icon-arrow-90deg-up/>
+          <b-button v-if="parentLink" @click="goUp()" :title="parentLinkTitle" variant="outline-primary" size="sm" >
+            <b-icon-arrow-90deg-up />
             <span class="button-label prio">{{ $t('goToParent.label') }}</span>
           </b-button>
-          <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar
-                    @click="$emit('enableSidebar')">
-            <b-icon-book/>
+          <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar @click="$emit('enableSidebar')">
+            <b-icon-book />
             <span class="button-label prio">{{ $t('browse') }}</span>
           </b-button>
           <template>
-            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
-                      variant="outline-primary" size="sm">
-              <b-icon-folder-symlink/>
+            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle" variant="outline-primary" size="sm">
+              <b-icon-folder-symlink />
               <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
             </b-button>
-            <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink"
-                      :title="$t('search.title')" :pressed="isSearchPage()">
-              <b-icon-search/>
+            <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink" :title="$t('search.title')" :pressed="isSearchPage()">
+              <b-icon-search />
               <span class="button-label prio">{{ $t('search.title') }}</span>
             </b-button>
 
-            <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth"
-                      :title="$t('authentication.button.title')">
+            <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth" :title="$t('authentication.button.title')">
               <template v-if="authData">
-                <b-icon-lock/>
+                <b-icon-lock />
                 <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
               </template>
               <template v-else>
-                <b-icon-unlock/>
+                <b-icon-unlock />
                 <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
               </template>
             </b-button>
@@ -66,7 +61,7 @@
 
         <b-row v-if="!!data?.properties">
           <Keywords v-if="Array.isArray(data.properties.keywords) &&
-            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords"/>
+            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords" />
         </b-row>
       </b-col>
     </b-col>
@@ -191,6 +186,11 @@ export default {
       }
     }
   },
+  mounted() {
+    console.log("-------------------------")
+    console.log("cansearch", this.canSearch);
+    console.log("data", this.data);
+  },
   methods: {
     isSearchPage() {
       return this.$router.currentRoute.name === 'search';
@@ -237,11 +237,6 @@ export default {
           }
         });
     }
-  },
-  mounted() {
-    console.log("-------------------------")
-    console.log("cansearch", this.canSearch);
-    console.log("data", this.data);
   }
 };
 </script>

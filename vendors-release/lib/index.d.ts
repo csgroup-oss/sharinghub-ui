@@ -49,8 +49,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      * @see https://docs.gitlab.com/ce/api/issues.html#list-issues
      * @see https://docs.gitlab.com/ce/api/README.html#pagination
      */
-    getIssue({ accessToken, issueId, issueTitle, }: {
-        accessToken: VssueAPI.AccessToken;
+    getIssue({ issueId, issueTitle, }: {
         issueId?: string | number;
         issueTitle?: string;
     }): Promise<VssueAPI.Issue | null>;
@@ -59,8 +58,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/issues.html#new-issue
      */
-    postIssue({ accessToken, title, content, }: {
-        accessToken: VssueAPI.AccessToken;
+    postIssue({ title, content, }: {
         title: string;
         content: string;
     }): Promise<VssueAPI.Issue>;
@@ -74,8 +72,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      * Cannot get the HTML content and the reactions (award_emoji) here.
      * So have to request them via `markdown` and `award_emoji` API.
      */
-    getComments({ accessToken, issueId, query: { page, perPage, sort }, }: {
-        accessToken: VssueAPI.AccessToken;
+    getComments({ issueId, query: { page, perPage, sort }, }: {
         issueId: string | number;
         query?: Partial<VssueAPI.Query>;
     }): Promise<VssueAPI.Comments>;
@@ -84,8 +81,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#create-new-issue-note
      */
-    postComment({ accessToken, issueId, content, }: {
-        accessToken: VssueAPI.AccessToken;
+    postComment({ issueId, content, }: {
         issueId: string | number;
         content: string;
     }): Promise<VssueAPI.Comment>;
@@ -94,8 +90,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#modify-existing-issue-note
      */
-    putComment({ accessToken, issueId, commentId, content, }: {
-        accessToken: VssueAPI.AccessToken;
+    putComment({ issueId, commentId, content, }: {
         issueId: string | number;
         commentId: string | number;
         content: string;
@@ -105,8 +100,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/notes.html#delete-an-issue-note
      */
-    deleteComment({ accessToken, issueId, commentId, }: {
-        accessToken: VssueAPI.AccessToken;
+    deleteComment({ issueId, commentId, }: {
         issueId: string | number;
         commentId: string | number;
     }): Promise<boolean>;
@@ -115,8 +109,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/award_emoji.html#list-an-awardables-award-emoji
      */
-    getCommentReactions({ accessToken, issueId, commentId, }: {
-        accessToken: VssueAPI.AccessToken;
+    getCommentReactions({ issueId, commentId, }: {
         issueId: string | number;
         commentId: string | number;
     }): Promise<VssueAPI.Reactions>;
@@ -125,8 +118,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/award_emoji.html#award-a-new-emoji
      */
-    postCommentReaction({ issueId, commentId, reaction, accessToken, }: {
-        accessToken: VssueAPI.AccessToken;
+    postCommentReaction({ issueId, commentId, reaction, }: {
         issueId: string | number;
         commentId: string | number;
         reaction: keyof VssueAPI.Reactions;
@@ -136,7 +128,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
      *
      * @see https://docs.gitlab.com/ce/api/markdown.html
      */
-    getMarkdownContent({ accessToken, contentRaw, }: {
+    getMarkdownContent({ contentRaw, }: {
         accessToken?: string | null;
         contentRaw: string;
     }): Promise<string>;

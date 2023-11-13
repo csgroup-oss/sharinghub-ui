@@ -1,6 +1,6 @@
 import { VssueAPI } from 'vssue';
 import { ResponseUser, ResponseIssue, ResponseComment, ResponseReaction } from './types';
-export declare function normalizeUser(user: ResponseUser): VssueAPI.User;
+export declare function normalizeUser(user: ResponseUser, avatar_url?: any): VssueAPI.User;
 export declare function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue;
 export declare function normalizeComment(comment: ResponseComment): VssueAPI.Comment;
 export declare function normalizeReactions(reactions: ResponseReaction[]): VssueAPI.Reactions;

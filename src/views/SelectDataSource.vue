@@ -96,8 +96,6 @@ export default {
       this.$router.push("models");
     }
   },
-  async mounted() {
-  }
 };
 </script>
 
