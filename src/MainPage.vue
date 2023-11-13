@@ -1,5 +1,5 @@
 <template>
-  <div class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page p-jc-between">
+  <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page p-jc-between">
     <header-navbar/>
 
     <div v-if="isLoading" class="container w-100 h-100 p-pt-6">
@@ -51,7 +51,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 import {get} from "@/_Hub/tools/https";
-import {AUTH_INFO_URL, LOGIN_URL} from "@/_Hub/Endpoint";
+import {LOGIN_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 
@@ -74,7 +74,7 @@ export default defineComponent({
   computed: {
     ...mapState(['auth']),
     login() {
-      return LOGIN_URL();
+      return LOGIN_URL;
     }
   },
   watch: {
@@ -89,16 +89,19 @@ export default defineComponent({
   methods: {
     async fetchUser() {
       this.isLoading = true;
-      get(AUTH_INFO_URL).then((response) => {
-        if (response.data) {
-          this.isLoading = false;
-          const {user, token} = response.data;
-          this.$store.commit("setUserInfo", {user, token});
-          if (this.$route.fullPath === "") {
-            this.$router.push("/models");
+
+      get(PROXY_URL.concat('/user'))
+        .then((userDataResponse) => {
+          if (userDataResponse.data) {
+            this.isLoading = false;
+            const user = userDataResponse.data;
+            const token = {};
+            this.$store.commit("setUserInfo", {user, token});
+            if (this.$route.fullPath === "") {
+              this.$router.push("/models");
+            }
           }
-        }
-      }).catch((reason) => {
+        }).catch((reason) => {
         console.log('------ USER IS DISCONNECT -----', reason);
         this.isLoading = false;
         this.$store.commit("setUserInfo", null);

@@ -3,10 +3,14 @@ import {defineComponent} from 'vue';
 
 export default defineComponent({
   name: "Awaiter",
-  props:{
-    isVisible:{
-      default:false,
+  props: {
+    isVisible: {
+      default: false,
       type: Boolean
+    },
+    type: {
+      default: "medium",
+      type: String
     }
   }
 });
@@ -17,10 +21,13 @@ export default defineComponent({
     <b-skeleton animation="fade" width="85%"></b-skeleton>
     <b-skeleton animation="fade" width="55%"></b-skeleton>
     <b-skeleton animation="fade" width="70%"></b-skeleton>
-    <b-skeleton animation="fade" width="45%"></b-skeleton>
-    <b-skeleton animation="fade" width="85%"></b-skeleton>
-    <b-skeleton animation="fade" width="85%"></b-skeleton>
-    <b-skeleton animation="fade" width="80%"></b-skeleton>
+    <template v-if="type !== 'small'">
+      <b-skeleton animation="fade" width="45%"></b-skeleton>
+      <b-skeleton animation="fade" width="85%"></b-skeleton>
+      <b-skeleton animation="fade" width="85%"></b-skeleton>
+      <b-skeleton animation="fade" width="80%"></b-skeleton>
+    </template>
+
   </div>
 </template>
 

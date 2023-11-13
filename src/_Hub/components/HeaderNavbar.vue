@@ -7,12 +7,15 @@
             SharingHUB
           </router-link>
         </text-view>
-        <div class="p-input-icon-left">
-          <i class="pi pi-search"/>
-          <input-text
-            disabled class="p-inputtext-sm" type="text" v-model="value"
-            placeholder="Search services, models, users..."
-          />
+        <div v-if="canSearch" class="">
+          <b-input-group size="md" class="100">
+            <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
+                          placeholder="Search keyword, models">
+            </b-form-input>
+            <b-input-group-prepend is-text>
+              <b-icon icon="search"/>
+            </b-input-group-prepend>
+          </b-input-group>
         </div>
       </div>
 
@@ -24,8 +27,9 @@
               {{ item.route }}
             </router-link>
           </nav-item>
-
-          <nav-item v-if="isAuthenticated" icon="pi pi-book" disabled class="p-mx-1">Docs</nav-item>
+          <nav-item v-if="isAuthenticated && false" disabled class="p-mx-1">
+            Docs
+          </nav-item>
         </template>
         <divider class="p-divider" type="solid" layout="vertical"/>
         <a v-if="!isAuthenticated" :href="login">
@@ -37,7 +41,7 @@
         <div v-if="auth">
           <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              <b-avatar size="40" variant="info" :src="auth?.user?.picture"/>
+              <b-avatar size="40" variant="info" :src="avatar_url"/>
             </template>
             <b-dropdown-item @click="logout" href="#">Logout</b-dropdown-item>
             <b-dropdown-divider/>
@@ -51,12 +55,11 @@
 
 <script>
 import {defineComponent} from 'vue';
-import InputText from 'primevue/inputtext';
 import Divider from "primevue/divider/Divider";
 import Button from "primevue/button/Button";
 import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
-import {LOGIN_URL, LOGOUT_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
+import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {get} from "@/_Hub/tools/https";
 import config from "../../../config";
@@ -66,7 +69,6 @@ export default defineComponent({
   components: {
     NavItem,
     TextView,
-    InputText,
     Divider,
     Button
   },
@@ -75,19 +77,30 @@ export default defineComponent({
       isAuthenticated: false,
       isLoading: false,
       value: null,
-      routes: []
+      routes: [],
+      canSearch: true,
+      avatar_url: undefined
     };
   },
   computed: {
     ...mapState(['auth']),
     login() {
-      return LOGIN_URL();
+      return LOGIN_URL;
+    },
+    getAvatar() {
+
+
     },
   },
   watch: {
     $route: {
       immediate: true,
-      async handler() {
+      async handler(route) {
+        if (route.name === "catalog") {
+          this.canSearch = false;
+        } else {
+          this.canSearch = true;
+        }
         this.isAuthenticated = await this.isAuthorizedToFetch();
         if (!this.isLoading) {
           const entries = await this.fetchBaseStacEntries();
@@ -126,7 +139,16 @@ export default defineComponent({
     auth: {
       immediate: true,
       async handler(data) {
-        this.isAuthenticated = !!(data?.user && data?.token);
+        this.isAuthenticated = !!(data?.user);
+        if (data?.user) {
+          get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
+            if (response.data) {
+              this.avatar_url = response.data.avatar_url;
+              console.log("this.avatar", this.avatar_url);
+            }
+          });
+        }
+
       }
     },
   },
@@ -172,11 +194,18 @@ export default defineComponent({
         });
     },
     async logout() {
-      get(LOGOUT_URL()).then((response) => {
+      get(LOGOUT_URL).then((response) => {
         if (response) {
           this.$store.commit("setUserInfo", null);
+          this.$router.push("/")
         }
       });
+    },
+    handleEnter() {
+      if (this.value && this.$route.name !== "search") {
+        this.$router.push({path: "/search/", query: {q: this.value}});
+      }
+      this.value = null;
     }
   },
 

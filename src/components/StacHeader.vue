@@ -183,6 +183,12 @@ export default {
             });
         }
       }
+    },
+    data:{
+      immediate:true,
+      handler(data){
+        console.log("data __>", data);
+      }
     }
   },
   methods: {
@@ -233,6 +239,9 @@ export default {
     }
   },
   mounted() {
+    console.log("-------------------------")
+    console.log("cansearch", this.canSearch);
+    console.log("data", this.data);
   }
 };
 </script>

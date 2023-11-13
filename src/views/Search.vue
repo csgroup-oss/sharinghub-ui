@@ -1,6 +1,6 @@
 <template>
   <main class="search d-flex flex-column container">
-    <Loading v-if="!parent" stretch />
+    <Loading v-if="!parent" stretch/>
     <b-alert v-else-if="!canSearch" variant="danger" show>{{ $t('search.notSupported') }}</b-alert>
     <b-row v-else>
       <b-col class="left">
@@ -21,12 +21,12 @@
       </b-col>
       <b-col class="right">
         <b-alert v-if="error" variant="error" show>{{ error }}</b-alert>
-        <Loading v-else-if="!data && loading" fill top />
+        <Loading v-else-if="!data && loading" fill top/>
         <b-alert v-else-if="data === null" variant="info" show>{{ $t('search.modifyCriteria') }}</b-alert>
         <b-alert v-else-if="results.length === 0" variant="warning" show>{{ $t('search.noItemsFound') }}</b-alert>
         <template v-else>
           <div id="search-map" v-if="itemCollection">
-            <Map :stac="stac" :stacLayerData="itemCollection" scrollWheelZoom popover />
+            <Map :stac="stac" :stacLayerData="itemCollection" scrollWheelZoom popover/>
           </div>
           <Catalogs
             v-if="isCollectionSearch" :catalogs="results" collectionsOnly
@@ -35,12 +35,14 @@
           >
             <template #catalogFooter="slot">
               <b-button-group v-if="canSearchItems || canFilterItems(slot.data)" vertical size="sm">
-                <b-button v-if="canSearchItems" variant="outline-primary" :pressed="selectedCollections[slot.data.id]" @click="selectForItemSearch(slot.data)">
-                  <b-icon-check-square v-if="selectedCollections[slot.data.id]" />
-                  <b-icon-square v-else />
+                <b-button v-if="canSearchItems" variant="outline-primary" :pressed="selectedCollections[slot.data.id]"
+                          @click="selectForItemSearch(slot.data)">
+                  <b-icon-check-square v-if="selectedCollections[slot.data.id]"/>
+                  <b-icon-square v-else/>
                   <span class="ml-2">{{ $t('search.selectForItemSearch') }}</span>
                 </b-button>
-                <StacLink :button="{variant: 'outline-primary', disabled: !canFilterItems(slot.data)}" :data="slot.data" :title="$t('search.filterCollection')" :state="{itemFilterOpen: 1}" />
+                <StacLink :button="{variant: 'outline-primary', disabled: !canFilterItems(slot.data)}" :data="slot.data"
+                          :title="$t('search.filterCollection')" :state="{itemFilterOpen: 1}"/>
               </b-button-group>
             </template>
           </Catalogs>
@@ -62,13 +64,14 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import {mapGetters, mapState} from "vuex";
 import Utils from '../utils';
 import SearchFilter from '../components/SearchFilter.vue';
 import Loading from '../components/Loading.vue';
 import STAC from '../models/stac';
-import { BIconCheckSquare, BIconSquare, BTabs, BTab } from 'bootstrap-vue';
-import { processSTAC, stacRequest } from '../store/utils';
+import {BIconCheckSquare, BIconSquare, BTab, BTabs} from 'bootstrap-vue';
+import {processSTAC, stacRequest} from '../store/utils';
+import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
 
 export default {
   name: "Search",
@@ -186,7 +189,7 @@ export default {
       return this.$t('search.metaDescription', {title});
     }
   },
-  watch:{
+  watch: {
     activeSearch() {
       this.data = null;
     },
@@ -204,22 +207,24 @@ export default {
     if (this.loadParent) {
       url = this.fromBrowserPath(this.loadParent);
       this.parent = this.getStac(url);
-    }
-    else {
+    } else {
       this.parent = this.root;
     }
     if (!this.parent) {
-      console.log(this.parent);
-      console.log(this.$route);
-      const regex = /external\/(.+)$/;
-
-// Utilisation de la méthode exec pour obtenir les correspondances
+      const regex = /external\/http:\/(.+)$/;
+      // Utilisation de la méthode exec pour obtenir les correspondances
       const matches = regex.exec(this.$route.path);
-      console.log("mat", matches)
+      if (matches && matches[1]) {
+        url = window.location.protocol.concat(`//${matches[1]}`);
+      }
+      if (!url) {
+        url = STAC_ROOT_URL;
+      }
+      if (url)
+        await this.$store.dispatch('load', {url: url});
 
-      await this.$store.dispatch('load', { url });
       if (!this.root) {
-        this.$store.commit("config", { catalogUrl: url });
+        this.$store.commit("config", {catalogUrl: url});
       }
       this.parent = this.getStac(url);
       this.showPage();
@@ -234,8 +239,7 @@ export default {
     selectForItemSearch(collection) {
       if (this.selectedCollections[collection.id]) {
         this.$delete(this.selectedCollections, collection.id);
-      }
-      else {
+      } else {
         this.$set(this.selectedCollections, collection.id, true);
       }
     },
@@ -259,8 +263,7 @@ export default {
         if (!Utils.isObject(response.data) || !Array.isArray(response.data[key])) {
           this.data = {};
           this.error = this.$t(this.isCollectionSearch ? 'errors.invalidStacCollections' : 'errors.invalidStacItems');
-        }
-        else {
+        } else {
           this.data = response.data;
         }
       } catch (error) {
@@ -273,14 +276,12 @@ export default {
     async setFilters(filters, reset = false) {
       if (this.isCollectionSearch) {
         this.collectionFilters = filters;
-      }
-      else {
+      } else {
         this.itemFilters = filters;
       }
       if (reset) {
         this.data = null;
-      }
-      else {
+      } else {
         await this.loadResults(this.searchLink);
       }
     },
@@ -321,11 +322,13 @@ export default {
     min-width: 350px;
     flex-basis: 40%;
   }
+
   .right {
     min-width: 250px;
     flex-basis: 60%;
     position: relative !important;
   }
+
   .items, .catalogs {
     .card-columns {
       @include media-breakpoint-only(sm) {
@@ -349,4 +352,15 @@ export default {
     }
   }
 }
+
+#search-map {
+  .map-container {
+    .map {
+      height: 350px !important;
+      background-color: transparent;
+    }
+  }
+
+}
+
 </style>

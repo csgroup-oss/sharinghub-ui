@@ -2,7 +2,6 @@ import Browse from '../views/Browse.vue';
 import StacBrowser from "@/StacBrowser.vue";
 import ListProjectsView from "@/_Hub/views/ListProjectsView.vue";
 import Search from "@/views/Search.vue";
-import SelectDataSource from "@/views/SelectDataSource.vue";
 
 function getRoutes(config) {
   let routes = [];
@@ -65,7 +64,7 @@ export function getRoutes_2(config) {
   routes = [
     {
       path: "/",
-      redirect: { name: 'dynamicListSTAC' }
+      redirect: {name: 'dynamicListSTAC'}
     },
     {
       path: "/search/*",
@@ -74,11 +73,11 @@ export function getRoutes_2(config) {
     },
     {
       path: "/metadata",
-      name: "model",
       component: StacBrowser,
       children: [
         {
           path: "/",
+          name: "catalog",
           component: Browse
         }
       ]

@@ -1,6 +1,6 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
-import { stacPagination } from "./rels";
+import {stacPagination} from "./rels";
 
 export const commonFileNames = ['catalog', 'collection', 'item'];
 
@@ -50,17 +50,17 @@ export class BrowserError extends Error {
 
 /**
  * General utilities
- * 
+ *
  * @class
  */
 export default class Utils {
 
   /**
    * Checks whether a variable is a real object or not.
-   * 
+   *
    * This is a more strict version of `typeof x === 'object'` as this example would also succeeds for arrays and `null`.
    * This function only returns `true` for real objects and not for arrays, `null` or any other data types.
-   * 
+   *
    * @param {*} obj - A variable to check.
    * @returns {boolean} - `true` is the given variable is an object, `false` otherwise.
    */
@@ -70,18 +70,17 @@ export default class Utils {
 
   /**
    * Computes the size of an array (number of array elements) or object (number of key-value-pairs).
-   * 
+   *
    * Returns 0 for all other data types.
-   * 
-   * @param {*} obj 
+   *
+   * @param {*} obj
    * @returns {integer}
    */
   static size(obj) {
     if (typeof obj === 'object' && obj !== null) {
       if (Array.isArray(obj)) {
         return obj.length;
-      }
-      else {
+      } else {
         return Object.keys(obj).length;
       }
     }
@@ -98,18 +97,16 @@ export default class Utils {
     }
     if (allowEmpty && !type) {
       return true;
-    }
-    else if (typeof type !== 'string') {
+    } else if (typeof type !== 'string') {
       return false;
-    }
-    else {
+    } else {
       return types.includes(type.toLowerCase());
     }
   }
 
   /**
    * Checks whether a variable is a string and contains at least one character.
-   * 
+   *
    * @param {*} string - A variable to check.
    * @returns {boolean} - `true` is the given variable is an string with length > 0, `false` otherwise.
    */
@@ -124,11 +121,11 @@ export default class Utils {
 
     let sepLen = separator.length;
     let charsToShow = strLen - sepLen;
-    let frontChars = Math.ceil(charsToShow/2);
-    let backChars = Math.floor(charsToShow/2);
-    return fullStr.substr(0, frontChars) + 
-           separator + 
-           fullStr.substr(fullStr.length - backChars);
+    let frontChars = Math.ceil(charsToShow / 2);
+    let backChars = Math.floor(charsToShow / 2);
+    return fullStr.substr(0, frontChars) +
+      separator +
+      fullStr.substr(fullStr.length - backChars);
   }
 
   static isGdalVfsUri(url) {
@@ -233,11 +230,9 @@ export default class Utils {
     return value.map(dt => {
       if (dt instanceof Date) {
         return dt.toISOString();
-      }
-      else if (dt) {
+      } else if (dt) {
         return dt;
-      }
-      else {
+      } else {
         return '..';
       }
     }).join('/');
@@ -258,15 +253,14 @@ export default class Utils {
   static addFiltersToLink(link, filters = {}, itemsPerPage = null) {
     let isEmpty = value => {
       return (value === null
-      || (typeof value === 'number' && !Number.isFinite(value))
-      || (typeof value === 'string' && value.length === 0)
-      || (typeof value === 'object' && Utils.size(value) === 0));
+        || (typeof value === 'number' && !Number.isFinite(value))
+        || (typeof value === 'string' && value.length === 0)
+        || (typeof value === 'object' && Utils.size(value) === 0));
     };
 
     if (!Utils.isObject(filters)) {
       filters = {};
-    }
-    else {
+    } else {
       filters = Object.assign({}, filters);
     }
 
@@ -286,17 +280,15 @@ export default class Utils {
 
         if (key === 'datetime') {
           value = Utils.formatDatetimeQuery(value);
-        }
-        else if (key === 'filters') {
+        } else if (key === 'filters') {
           Object.assign(body, value.toJSON());
           continue;
         }
 
         body[key] = value;
       }
-      return Object.assign({}, link, { body });
-    }
-    else { // GET
+      return Object.assign({}, link, {body});
+    } else { // GET
       // Construct new link with search params
       let url = URI(link.href);
 
@@ -309,14 +301,11 @@ export default class Utils {
 
         if (key === 'datetime') {
           value = Utils.formatDatetimeQuery(value);
-        }
-        else if (key === 'bbox') {
+        } else if (key === 'bbox') {
           value = value.join(',');
-        }
-        else if ((key === 'collections' || key === 'ids' || key === 'q')) {
+        } else if ((key === 'collections' || key === 'ids' || key === 'q')) {
           value = value.join(',');
-        }
-        else if (key === 'filters') {
+        } else if (key === 'filters') {
           let params = value.toText();
           url.setQuery(params);
           continue;
@@ -325,7 +314,7 @@ export default class Utils {
         url.setQuery(key, value);
       }
 
-      return Object.assign({}, link, { href: url.toString() });
+      return Object.assign({}, link, {href: url.toString()});
     }
   }
 
@@ -338,21 +327,16 @@ export default class Utils {
       let path = uri.path().replace(/^\//, '');
       if (auth === 'doi.org' && path.startsWith('10.')) {
         return `DOI ${path}`;
-      }
-      else {
+      } else {
         return `${file} (${auth})`;
       }
-    }
-    else if (file && !commonFileNames.includes(file)) {
+    } else if (file && !commonFileNames.includes(file)) {
       return file;
-    }
-    else if (auth) {
+    } else if (auth) {
       return auth;
-    }
-    else if (dir) {
+    } else if (dir) {
       return dir;
-    }
-    else {
+    } else {
       return href;
     }
   }
@@ -365,17 +349,13 @@ export default class Utils {
     let protocol = uri.protocol().toLowerCase();
     if (protocol && !browserProtocols.includes(protocol)) {
       return false;
-    }
-    else if (browserImageTypes.includes(img.type)) {
+    } else if (browserImageTypes.includes(img.type)) {
       return true;
-    }
-    else if (browserImageTypes.includes('image/' + uri.suffix().toLowerCase())) {
+    } else if (browserImageTypes.includes('image/' + uri.suffix().toLowerCase())) {
       return true;
-    }
-    else if (img.type) {
+    } else if (img.type) {
       return false;
-    }
-    else {
+    } else {
       return true; // If no img.type is given, try to load it anyway: https://github.com/radiantearth/stac-browser/issues/147
     }
   }
@@ -399,8 +379,7 @@ export default class Utils {
     }
     if (Utils.isObject(target)) {
       target = Object.values(target);
-    }
-    else if (typeof target === 'string') {
+    } else if (typeof target === 'string') {
       target = [target];
     }
 
@@ -426,7 +405,7 @@ export default class Utils {
   }
 
   static createLink(href, rel) {
-    return { href, rel };
+    return {href, rel};
   }
 
   static supportsExtension(data, pattern) {
@@ -452,16 +431,24 @@ export default class Utils {
       for (const key in source) {
         if (Utils.isObject(source[key])) {
           if (!target[key]) {
-            Object.assign(target, { [key]: {} });
+            Object.assign(target, {[key]: {}});
           }
           Utils.mergeDeep(target[key], source[key]);
         } else {
-          Object.assign(target, { [key]: source[key] });
+          Object.assign(target, {[key]: source[key]});
         }
       }
     }
 
     return Utils.mergeDeep(target, ...sources);
+  }
+
+  static getProjectID(url = "") {
+    const reversed = url.split("/").reverse();
+    if (reversed.length === 0) {
+      return undefined;
+    }
+    return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
   }
 
 }

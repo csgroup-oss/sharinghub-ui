@@ -117,14 +117,14 @@ export default {
       if (this.stac || this.isStacBrowserLink) {
         let href;
         if (this.stac) {
-          href = this.stac.getBrowserPath();
+          href = this.stac.getAbsoluteUrl();
         }
         else {
           href = this.toBrowserPath(this.link.href);
         }
-        if (!href.startsWith('/')) {
-          href = '/' + href;
-        }
+          console.log("before new", href);
+        href = `/metadata?external=${href}`;
+        console.log("href new", href);
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142
         if (Utils.size(this.privateQueryParameters) > 0 || Utils.size(this.state) > 0) {

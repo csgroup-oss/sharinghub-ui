@@ -1,5 +1,5 @@
 <template>
-  <div class="container h-100" id="stac-browser">
+  <div class="container h-100">
     <Authentication v-if="doAuth.length > 0"/>
     <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError"/>
     <Sidebar v-if="sidebar"/>
