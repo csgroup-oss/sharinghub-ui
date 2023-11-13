@@ -87,10 +87,6 @@ export default defineComponent({
     login() {
       return LOGIN_URL;
     },
-    getAvatar() {
-
-
-    },
   },
   watch: {
     $route: {
@@ -197,7 +193,7 @@ export default defineComponent({
       get(LOGOUT_URL).then((response) => {
         if (response) {
           this.$store.commit("setUserInfo", null);
-          this.$router.push("/")
+          this.$router.push("/");
         }
       });
     },
