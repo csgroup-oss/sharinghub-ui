@@ -36,6 +36,14 @@
           </template>
           <TabSectionApiStac :title="title" :stacUrl="url" :stac="data"/>
         </b-tab>
+
+        <b-tab v-if="isMlModelCompliant" class="p-pt-4">
+          <template #title>
+            <TextView class="Title-1">Model Deployment</TextView>
+          </template>
+          <TabSectionDeployment/>
+        </b-tab>
+
       </b-tabs>
 
     </div>
@@ -85,8 +93,7 @@ import {getBest, prepareSupported} from './locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
 import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
-import Source from "@/components/Source.vue";
-import Awaiter from "@/_Hub/components/Awaiter.vue";
+import TabSectionDeployment from "@/_Hub/views/sections/TabSectionDeployment.vue";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -136,8 +143,7 @@ export default {
   // router,
   // store,
   components: {
-    Awaiter,
-    Source,
+    TabSectionDeployment,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
     Authentication: () => import('./components/Authentication.vue'),
     ErrorAlert,
@@ -149,6 +155,7 @@ export default {
   },
   data() {
     return {
+      isMlModelCompliant: false,
       sidebar: false,
       error: null,
       onDataLoaded: null,
@@ -298,6 +305,7 @@ export default {
       }
     },
     data(data) {
+      this.isMlModelCompliant = Utils.isMlModelCompliant(data.stac_extensions);
       if (!this.onDataLoaded) {
         return;
       }
@@ -305,9 +313,9 @@ export default {
         this.onDataLoaded();
       }
     },
-    $route :{
-      immediate:true,
-      async handler(){
+    $route: {
+      immediate: true,
+      async handler() {
 
       }
 

@@ -173,23 +173,15 @@ export default {
               if (response.data) {
                 this.rankRate = response.data.length;
                 const currentUser = this.$store.state.auth.user;
-                this.canRate = !response.data.some(el => el.user.username === currentUser.nickname || el.user.web_url === currentUser.profile);
+                this.canRate = !response.data.some(el => el.user.username === currentUser.username
+                  || el.user.web_url === currentUser.web_url);
               }
             });
         }
       }
     },
-    data:{
-      immediate:true,
-      handler(data){
-        console.log("data __>", data);
-      }
-    }
   },
   mounted() {
-    console.log("-------------------------")
-    console.log("cansearch", this.canSearch);
-    console.log("data", this.data);
   },
   methods: {
     isSearchPage() {

@@ -95,6 +95,18 @@ export default class GitlabV4 {
         const response = await this.$http.get('avatar?email='.concat(data.email));
         return normalizeUser(data, response.data.avatar_url);
     }
+    async getAvatarUrlByUserid(userId) {
+        if (!userId)
+            throw new Error("userId is undefined");
+        const { data: userData } = await this.$http.get('users/'.concat(userId));
+        if (!userData)
+            throw new Error("user undefined ");
+        if (userData.email) {
+            const response = await this.$http.get("avatar?email=".concat(userData.email));
+            return response.data;
+        }
+        return Promise.resolve({ avatar_url: undefined });
+    }
     /**
      * Get issue of this page according to the issue id or the issue title
      *

@@ -86,10 +86,12 @@ export default defineComponent({
       }
     }
   },
+  beforeMount() {
+    this.fetchUser();
+  },
   methods: {
     async fetchUser() {
       this.isLoading = true;
-
       get(PROXY_URL.concat('/user'))
         .then((userDataResponse) => {
           if (userDataResponse.data) {
@@ -107,9 +109,6 @@ export default defineComponent({
         this.$store.commit("setUserInfo", null);
       });
     }
-  },
-  beforeMount() {
-    this.fetchUser();
   },
 });
 

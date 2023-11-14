@@ -42,6 +42,9 @@ export default class GitlabV4 implements VssueAPI.Instance {
         accessToken: VssueAPI.AccessToken;
     }): Promise<VssueAPI.User>;
     getUserByPrivateToken(): Promise<VssueAPI.User>;
+    getAvatarUrlByUserid(userId: string): Promise<{
+        avatar_url: any;
+    }>;
     /**
      * Get issue of this page according to the issue id or the issue title
      *

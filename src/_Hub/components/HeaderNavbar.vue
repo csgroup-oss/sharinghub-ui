@@ -10,7 +10,7 @@
         <div v-if="canSearch" class="">
           <b-input-group size="md" class="100">
             <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
-                          placeholder="Search keyword, models">
+                          placeholder="Search keyword, models" >
             </b-form-input>
             <b-input-group-prepend is-text>
               <b-icon icon="search"/>
@@ -41,10 +41,13 @@
         <div v-if="auth">
           <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              <b-avatar size="40" variant="info" :src="avatar_url"/>
+              <b-avatar size="40" variant="info" :src="avatar_url" />
             </template>
-            <b-dropdown-item @click="logout" href="#">Logout</b-dropdown-item>
+            <b-dropdown-item >
+              <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
+            </b-dropdown-item>
             <b-dropdown-divider/>
+            <b-dropdown-item @click="logout" href="#">Logout</b-dropdown-item>
           </b-dropdown>
         </div>
 
@@ -132,12 +135,11 @@ export default defineComponent({
       immediate: true,
       async handler(data) {
         this.isAuthenticated = !!(data?.user);
-        if (data?.user) {
+        this.avatar_url = data?.user?.avatar_url;
+        if (data?.user?.email) {
           get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
-            console.log(response.data);
             if (response.data) {
               this.avatar_url = response.data.avatar_url;
-              console.log("this.avatar", this.avatar_url);
             }
           });
         }

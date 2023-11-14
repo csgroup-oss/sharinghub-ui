@@ -1,6 +1,12 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import {stacPagination} from "./rels";
+import {get} from "@/_Hub/tools/https";
+import {RESOLVE_URL} from "@/_Hub/Endpoint";
+
+export const STAC_EXTENSIONS = {
+  "ml-model": "https://stac-extensions.github.io/ml-model/v1.0.0/schema.json"
+};
 
 export const commonFileNames = ['catalog', 'collection', 'item'];
 
@@ -449,6 +455,33 @@ export default class Utils {
       return undefined;
     }
     return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
+  }
+
+  static browsifyUrl(url) {
+    if (url.startsWith(window.location.origin)) {
+      const urlObject = new URL(url);
+      const prefix = urlObject.pathname.split("/").splice(0, 4).join("/")
+      const array = urlObject.pathname.split("/");
+      const url_to_resolve = array.splice(4).join("/");
+      return get(RESOLVE_URL.concat(url_to_resolve)).then((response) => {
+        if (response.data) {
+          return `${window.origin}${prefix}/${response.data.project_id}`;
+        }
+      });
+    }
+    return url;
+  }
+
+  static isMlModelCompliant(array) {
+    return Array.isArray(array) && array.includes(STAC_EXTENSIONS["ml-model"]);
+  }
+
+  static isMlModeltrainData  (rel) {
+   return  rel === "ml-model:train-data";
+  }
+
+  static isBrowserUrl(url){
+    return url.startsWith(window.location.origin);
   }
 
 }

@@ -3,7 +3,17 @@ export interface ResponseUser {
     name: string;
     avatar_url: string;
     web_url: string;
+    email?: string;
+    id?: string;
+}
+export interface ResponseUserPublicData {
+    username: string;
+    name: string;
+    avatar_url: string;
+    web_url: string;
     email: string;
+    public_email: string;
+    state: string;
 }
 export interface ResponseIssue {
     iid: number;

@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
-import { stacBrowserNavigatesTo } from "../rels";
+import {mapGetters, mapState} from 'vuex';
+import {stacBrowserNavigatesTo} from "../rels";
 import Utils from '../utils';
 import STAC from '../models/stac';
 import URI from 'urijs';
@@ -57,22 +57,18 @@ export default {
     stac() {
       if (this.data instanceof STAC) {
         return this.data;
-      }
-      else if (Array.isArray(this.data)) {
+      } else if (Array.isArray(this.data)) {
         return this.data.find(o => o instanceof STAC);
-      }
-      else {
+      } else {
         return null;
       }
     },
     link() {
       if (this.isLink(this.data)) {
         return this.data;
-      }
-      else if (Array.isArray(this.data)) {
+      } else if (Array.isArray(this.data)) {
         return this.data.find(o => this.isLink(o)) || {};
-      }
-      else {
+      } else {
         return {};
       }
     },
@@ -98,10 +94,13 @@ export default {
           Object.assign(obj, this.button);
         }
         return obj;
-      }
-      else {
+      } else {
+        let href = this.$props.data.href;
+        if (Utils.isBrowserUrl(this.$props.data.href)) {
+          href = `${window.location.origin}${window.location.pathname}#/metadata?external=${this.$props.data.href}`;
+        }
         return {
-          href: this.href,
+          href: href,
           target: '_blank',
           rel: this.rel
         };
@@ -118,19 +117,16 @@ export default {
         let href;
         if (this.stac) {
           href = this.stac.getAbsoluteUrl();
-        }
-        else {
+        } else {
           href = this.toBrowserPath(this.link.href);
         }
-          console.log("before new", href);
         href = `/metadata?external=${href}`;
-        console.log("href new", href);
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142
         if (Utils.size(this.privateQueryParameters) > 0 || Utils.size(this.state) > 0) {
           let uri = URI(href);
           let addParameters = (obj, prefix) => {
-            for(let key in obj) {
+            for (let key in obj) {
               let queryKey = `${prefix}${key}`;
               if (!uri.hasQuery(queryKey)) {
                 uri.addQuery(queryKey, obj[key]);
@@ -143,8 +139,7 @@ export default {
         }
 
         return href;
-      }
-      else {
+      } else {
         return this.getRequestUrl(this.link.href);
       }
 
@@ -162,6 +157,6 @@ export default {
     isLink(o) {
       return Utils.isObject(o) && !(o instanceof STAC);
     }
-  }
+  },
 };
 </script>

@@ -5,6 +5,7 @@ export function normalizeUser(user, avatar_url = undefined) {
         avatar: user.avatar_url,
         homepage: user.web_url,
         avatar_url: avatar_url,
+        id: user.id,
     };
 }
 export function normalizeIssue(issue) {
