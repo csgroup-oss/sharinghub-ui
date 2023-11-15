@@ -220,9 +220,9 @@ export default {
       if (!url) {
         url = STAC_ROOT_URL;
       }
-      if (url)
-        await this.$store.dispatch('load', {url: url});
-
+      if (url){
+          await this.$store.dispatch('load', {url: url});
+      }
       if (!this.root) {
         this.$store.commit("config", {catalogUrl: url});
       }

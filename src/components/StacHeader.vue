@@ -15,22 +15,11 @@
           </template>
         </i18n>
         <b-button-group>
-          <b-button v-if="parentLink" @click="goUp()" :title="parentLinkTitle" variant="outline-primary" size="sm" >
-            <b-icon-arrow-90deg-up />
-            <span class="button-label prio">{{ $t('goToParent.label') }}</span>
-          </b-button>
-          <b-button variant="outline-primary" size="sm" :title="$t('browse')" v-b-toggle.sidebar @click="$emit('enableSidebar')">
-            <b-icon-book />
-            <span class="button-label prio">{{ $t('browse') }}</span>
-          </b-button>
+
           <template>
             <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle" variant="outline-primary" size="sm">
               <b-icon-folder-symlink />
               <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
-            </b-button>
-            <b-button v-if="canSearch" variant="outline-primary" size="sm" :to="searchBrowserLink" :title="$t('search.title')" :pressed="isSearchPage()">
-              <b-icon-search />
-              <span class="button-label prio">{{ $t('search.title') }}</span>
             </b-button>
 
             <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth" :title="$t('authentication.button.title')">
@@ -201,9 +190,6 @@ export default {
         return undefined;
       }
       return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
-    },
-    goUp() {
-      this.$router.go(-1);
     },
     starProject() {
       let url = this.url;

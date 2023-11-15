@@ -7,10 +7,10 @@
             SharingHUB
           </router-link>
         </text-view>
-        <div v-if="canSearch" class="">
+        <div class="">
           <b-input-group size="md" class="100">
             <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
-                          placeholder="Search keyword, models" >
+                          placeholder="Search keyword, models">
             </b-form-input>
             <b-input-group-prepend is-text>
               <b-icon icon="search"/>
@@ -41,9 +41,9 @@
         <div v-if="auth">
           <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              <b-avatar size="40" variant="info" :src="avatar_url" />
+              <b-avatar size="40" variant="info" :src="avatar_url"/>
             </template>
-            <b-dropdown-item >
+            <b-dropdown-item>
               <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
             </b-dropdown-item>
             <b-dropdown-divider/>
@@ -81,12 +81,11 @@ export default defineComponent({
       isLoading: false,
       value: null,
       routes: [],
-      canSearch: true,
       avatar_url: undefined
     };
   },
   computed: {
-    ...mapState(['auth']),
+    ...mapState(['auth', 'catalogUrl']),
     login() {
       return LOGIN_URL;
     },
@@ -95,7 +94,6 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler(route) {
-        this.canSearch = route.name !== "catalog";
         this.isAuthenticated = await this.isAuthorizedToFetch();
         if (!this.isLoading) {
           const entries = await this.fetchBaseStacEntries();
@@ -197,7 +195,11 @@ export default defineComponent({
     },
     handleEnter() {
       if (this.value && this.$route.name !== "search") {
-        this.$router.push({path: "/search/", query: {q: this.value}});
+        this.$router.push(
+          {
+            path:`/search/external/${this.catalogUrl}`,
+            query: {q: this.value}
+          });
       }
       this.value = null;
     }

@@ -195,7 +195,7 @@ function getStore(config, router) {
         return   getters.canSearchCollections || getters.canSearchItems;
       },
       canSearchItems: (state, getters) => {
-        return getters.supportsConformance(TYPES.Items.BasicFilters) || true;
+        return getters.supportsConformance(TYPES.Items.BasicFilters) ;
       },
       canSearchCollections: (state, getters) => {
         return getters.supportsConformance(TYPES.Collections.BasicFilters);
@@ -922,6 +922,7 @@ function getStore(config, router) {
         }
       },
       async loadOgcApiConformance(cx, link) {
+        console.log("loadApiConform", link);
         let response = await stacRequest(cx, link);
         if (Utils.isObject(response.data) && Array.isArray(response.data.conformsTo)) {
           cx.commit('setConformanceClasses', response.data.conformsTo);

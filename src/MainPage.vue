@@ -72,7 +72,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth']),
+    ...mapState(['auth', 'conformsTo',]),
     login() {
       return LOGIN_URL;
     }
