@@ -6,7 +6,6 @@ import ItemCard from "@/_Hub/components/ItemCard.vue";
 import {get} from "@/_Hub/tools/https";
 import _ from "lodash";
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
-import config from "../../config";
 
 
 export default defineComponent({
@@ -14,7 +13,6 @@ export default defineComponent({
   components: {ItemCard, TextView},
   data() {
     return {
-      loading: true,
       dataList: [],
       title: ""
     };
@@ -26,18 +24,14 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler(old, from) {
-        const matched = this.getEntryMatch();
-        if (matched) {
-          this.title = Object.values(matched)[0];
-          this.dataList = [];
-          this.dataList = await this.fetchStac();
-        }
+        this.dataList = [];
+        this.dataList = [...await this.fetchStac()];
       }
     },
     auth: {
       immediate: true,
       async handler(data) {
-        if (data?.user && data?.token) {
+        if (data?.user) {
           this.dataList = await this.fetchStac();
         }
       }
@@ -45,6 +39,8 @@ export default defineComponent({
   },
   methods: {
     async fetchStac(url = STAC_ROOT_URL) {
+      let route = this.$route.params.pathMatch;
+      route = route ?  route.split("-").join(" ") : null;
       const data = await get(url).then((response) => response.data);
       const child = data.links?.filter((el) => el.rel === "child");
       const child_requests = child.map(async (el) => {
@@ -55,33 +51,16 @@ export default defineComponent({
       const entry_models = await Promise.all(child_requests).then((res) => {
         return res;
       });
-      let matched = this.getEntryMatch() ? Object.keys(this.getEntryMatch())[0] : undefined;
-      if (!matched) throw new Error("entry is wrong configure");
       return _.flatten(entry_models
-        .filter((stac) => stac.title === matched)
-        .map((stac) => stac.links))
+        .filter((stac, idx) => {
+          let boolean = route ? stac.title.toLowerCase() === route : idx === 0;
+          if (boolean) {
+            this.title = stac.title;
+            return true;
+          }
+        }).map((stac) => stac.links))
         .filter((stac) => stac.rel === "child");
     },
-    getEntryMatch() {
-      const routePath = this.$route.params.pathMatch;
-      let matched = undefined;
-      let tampon = undefined;
-      Object.entries(config.entriesRoot).forEach(([key, val], index) => {
-        if(index ===1){
-          tampon = {[key] : val};
-        }
-        if (val.toLowerCase() === routePath) {
-          matched = {[key]: val};
-        }
-      });
-      return matched ? matched : tampon;
-    }
-  },
-  async beforeMount() {
-    const url = this.$store.state.catalogUrl;
-    if (url) {
-      // this.modelList = await this.fetchStac(url); // TODO check if deconnect work
-    }
   },
 
 });
@@ -94,7 +73,7 @@ export default defineComponent({
   <div class="w-100 container">
     <TextView type="Title-1"> List of {{ title }}</TextView>
     <div class="section">
-      <ItemCard v-for="dataset in dataList" :metadata="dataset"/>
+      <ItemCard v-for="dataset in dataList" :metadata="dataset" />
     </div>
 
   </div>

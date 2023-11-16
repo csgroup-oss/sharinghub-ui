@@ -23,7 +23,7 @@
         <template v-if="isAuthenticated && routes.length > 0">
           <nav-item v-for="item in routes" class="p-mx-1">
             <b-icon :icon="item.icon"/>
-            <router-link :to="`/${item.route.toLowerCase()}`">
+            <router-link :to="`/${item.route.toLowerCase().split(' ').join('-')}`">
               {{ item.route }}
             </router-link>
           </nav-item>
@@ -65,7 +65,7 @@ import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {get} from "@/_Hub/tools/https";
-import config from "../../../config";
+
 
 export default defineComponent({
   name: "HeaderNavbar",
@@ -93,36 +93,36 @@ export default defineComponent({
   watch: {
     $route: {
       immediate: true,
-      async handler(route) {
+      async handler() {
         this.isAuthenticated = await this.isAuthorizedToFetch();
         if (!this.isLoading) {
           const entries = await this.fetchBaseStacEntries();
           this.routes = entries.map((entry) => {
-            if (entry.title.toLowerCase() === ("processor")) {
+            if (entry.title.toLowerCase().includes("processor")) {
               return {
-                route: config.entriesRoot[entry.title],
+                route: entry.title,
                 description: entry.description,
                 icon: "book",
               };
             }
             if (entry.title.toLowerCase().includes("model")) {
               return {
-                route: config.entriesRoot[entry.title],
+                route:  entry.title,
                 description: entry.description,
                 icon: "box-seam",
               };
             }
             if (entry.title.toLowerCase().includes("dataset")) {
               return {
-                route: config.entriesRoot[entry.title],
+                route: entry.title,
                 description: entry.description,
                 icon: "view-list",
               };
             }
             return {
-              route: config.entriesRoot[entry.title],
+              route: entry.title,
               description: entry.description,
-              icon: "stack",
+              icon: "view-stacked",
             };
           });
           this.isLoading = true;
