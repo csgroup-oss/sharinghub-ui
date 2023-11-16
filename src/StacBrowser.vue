@@ -335,12 +335,14 @@ export default {
 
       // Handle catalog change: https://github.com/radiantearth/stac-browser/issues/250
       let resetOp = 'resetPage';
+      /*
       if (this.allowSelectCatalog && to.path) {
         let next = this.fromBrowserPath(to.path);
-        if (this.isExternalUrl(next)) {
+        if (this.isExternalUrl(next)  ) {
           resetOp = 'resetCatalog';
         }
       }
+      */
 
       this.$store.commit(resetOp);
       this.parseQuery(to);
