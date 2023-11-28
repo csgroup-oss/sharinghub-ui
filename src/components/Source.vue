@@ -1,59 +1,91 @@
 <template>
-  <div class="share mt-1">
-    <b-button-group>
-      <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
-        <b-icon-share /> <span class="button-label">{{ $t('source.share.label') }}</span>
-      </b-button>
-      <b-dropdown size="sm" variant="outline-primary" right :title="$t('source.language.switch')">
+  <div class="share">
+
+    <b-button-group size="sm">
+
+      <template v-if="!action || action==='share' ">
+        <b-button v-if="!!notebookData" size="sm" variant="outline-dark" id="popover-share-btn">
+          <b-icon-terminal variant="warning"/>
+          <TextView class="button-label" type="Small-1">
+            <span class="button-label"> Jupyter NoteBook</span>
+          </TextView>
+        </b-button>
+        <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
+          <b-icon-share/>
+          <TextView class="button-label" type="Small-1">
+            <span class="button-label"> {{ $t('source.share.label') }}</span>
+          </TextView>
+        </b-button>
+        <b-button size="sm" @click="canRate ? starProject() : UnStarProject()" variant="outline-primary">
+          <b-icon :icon=" canRate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
+          <TextView type="Small-1" v-html="canRate ? ' Star' : ' Unstar'"></TextView>
+        </b-button>
+        <b-button size="sm" disabled variant="outline-dark"> {{ rankRate }}</b-button>
+      </template>
+
+
+      <b-dropdown v-if="!action || action==='language' " size="sm" variant="outline-primary" right
+                  :title="$t('source.language.switch')">
         <template #button-content>
-          <b-icon-flag /> <span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
+          <b-icon-flag/>
+          <span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
         </template>
         <b-dropdown-item
           v-for="l of languages" :key="l.code" class="lang-item"
           @click="switchLocale({locale: l.code, userSelected: true})"
         >
-          <b-icon-check v-if="locale === l.code" />
-          <b-icon-blank v-else />
+          <b-icon-check v-if="locale === l.code"/>
+          <b-icon-blank v-else/>
           <span class="title">
             {{ l.native }}
             <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
           </span>
-          <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)" :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')" class="ml-2" />
+          <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)"
+                                       :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
+                                       class="ml-2"/>
         </b-dropdown-item>
       </b-dropdown>
+
     </b-button-group>
 
-
-    <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom" container="stac-browser" :title="$t('source.share.title')">
-      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
+    <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
+               container="stac-browser" :title="$t('source.share.title')">
+      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false"/>
       <hr>
-      <b-button class="twitter mr-1" :href="twitterUrl"><b-icon-twitter /> {{ $t('source.share.twitter') }}</b-button>
-      <b-button variant="dark" :href="mailTo"><b-icon-envelope /> {{ $t('source.share.email') }}</b-button>
+      <b-button class="twitter mr-1" :href="twitterUrl">
+        <b-icon-twitter/>
+        {{ $t('source.share.twitter') }}
+      </b-button>
+      <b-button variant="dark" :href="mailTo">
+        <b-icon-envelope/>
+        {{ $t('source.share.email') }}
+      </b-button>
     </b-popover>
   </div>
 </template>
 
 <script>
-import {BDropdown, BDropdownItem, BPopover} from 'bootstrap-vue';
+import {BDropdown, BDropdownItem} from 'bootstrap-vue';
 import {mapActions, mapGetters, mapState} from 'vuex';
 
 import Url from './Url.vue';
-
 import URI from 'urijs';
 import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
-import CopyButton from './CopyButton.vue';
+import TextView from "@/_Hub/components/TextView.vue";
+import {get, post} from "@/_Hub/tools/https";
+import {PROXY_URL} from "@/_Hub/Endpoint";
+
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
 
 export default {
   name: "Source",
   components: {
+    TextView,
     BDropdown,
     BDropdownItem,
-    RootStats: () => import('./RootStats.vue'),
     Url,
-    CopyButton,
   },
   props: {
     title: {
@@ -67,10 +99,22 @@ export default {
     stac: {
       type: Object,
       default: null
+    },
+    action: {
+      type: String,
+      default: null
     }
   },
+  data() {
+    return {
+      canRate: false,
+      rankRate: undefined,
+      hasRank: false,
+      notebookData: undefined,
+    };
+  },
   computed: {
-    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
+    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'data', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
     ...mapGetters(['supportsExtension', 'root']),
     stacVersion() {
       return this.stac?.stac_version;
@@ -94,20 +138,17 @@ export default {
       let lang = this.languages.find(l => l.code === this.locale);
       if (lang) {
         return lang.native;
-      }
-      else {
+      } else {
         return '-';
       }
     },
     canValidate() {
       if (!this.stacLint || typeof this.stacUrl !== 'string') {
         return false;
-      }
-      else if (Utils.size(this.privateQueryParameters) > 0) {
+      } else if (Utils.size(this.privateQueryParameters) > 0) {
         // Don't expose private query parameters to externals
         return false;
-      }
-      else if (Array.isArray(this.stacProxyUrl)) {
+      } else if (Array.isArray(this.stacProxyUrl)) {
         // Don't validate if a proxy has been set
         return false;
       }
@@ -178,6 +219,32 @@ export default {
       return languages.sort((a,b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },
+  watch: {
+    data: {
+      immediate: true,
+      async handler(data) {
+        this.notebookData = undefined;
+        if (data) {
+          let projectID = Utils.getProjectID(data.id);
+          get(PROXY_URL.concat(`projects/${projectID}/starrers`))
+            .then((response) => {
+              if (response.data) {
+                this.rankRate = response.data.length;
+                const currentUser = this.$store.state.auth.user;
+                this.canRate = !response.data.some(el => el.user.username === currentUser.username
+                  || el.user.web_url === currentUser.web_url);
+              }
+            });
+          // eslint-disable-next-line no-unused-vars
+          Object.entries(data.assets).forEach(([_, value]) => {
+            if (Utils.hasNotebookAsset(value.title)) {
+              this.notebookData = value;
+            }
+          });
+        }
+      }
+    }
+  },
   methods: {
     ...mapActions(['switchLocale']),
     async validate() {
@@ -188,7 +255,33 @@ export default {
     },
     browserUrl() {
       return window.location.toString();
-    }
+    },
+    starProject() {
+      let stac_id = this.data?.id;
+      if (!stac_id) throw  new Error('stac_id is wrong');
+      const projectID = Utils.getProjectID(stac_id);
+      if (!projectID) throw new Error('Project is wrong');
+      post(PROXY_URL.concat(`projects/${projectID}/star`))
+        .then((response) => {
+          if (response.data) {
+            this.canRate = false;
+            this.rankRate++;
+          }
+        });
+    },
+    UnStarProject() {
+      let stac_id = this.data?.id;
+      if (!stac_id) throw  new Error('stac_id is wrong');
+      const projectID = Utils.getProjectID(stac_id);
+      if (!projectID) throw new Error('Project is wrong');
+      post(PROXY_URL.concat(`projects/${projectID}/unstar`))
+        .then((response) => {
+          if (response.data) {
+            this.canRate = true;
+            this.rankRate--;
+          }
+        });
+    },
   }
 };
 </script>
@@ -206,15 +299,16 @@ export default {
 }
 
 #popover-link .stac-id .copy-button {
-    padding-top: 0.1rem;
-    padding-bottom: 0.1rem;
-    font-size: 0.7rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  font-size: 0.7rem;
 }
 
 </style>
 <style lang="scss" scoped>
 .lang-item > .dropdown-item {
   display: flex;
+
   > .title {
     flex: 1;
   }

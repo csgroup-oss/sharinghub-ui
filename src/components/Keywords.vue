@@ -1,15 +1,13 @@
 <template>
   <div>
     <div class="keywords d-flex flex-wrap">
-      <b-badge v-for="keyword in keywords" :key="keyword"
-               :variant="getRandomColor()" class="mr-1 mb-1 px-2 py-2">
+      <b-badge v-for="(keyword, index) in keywords" :key="keyword"
+               :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2">
         <b-icon v-if="!!getIcon(keyword)" font-scale="1.25"
                 :icon="getIcon(keyword)"/>
         {{ keyword }}
       </b-badge>
-    </div>
-    <div class="keywords d-flex flex-wrap">
-      <b-badge v-if="!!license" variant="secondary" target="_blank"
+         <b-badge v-if="!!license" variant="secondary" target="_blank"
                :href="extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2">
         <b-icon font-scale="1.25" icon="bank2"/>
         License : {{ license.value }}
@@ -19,6 +17,9 @@
         <b-icon font-scale="1.25" icon="bank2"/>
         DOI : {{ doi.value }}
       </b-badge>
+    </div>
+    <div class="keywords d-flex flex-wrap">
+
     </div>
   </div>
 
@@ -59,12 +60,13 @@ export default {
     ...mapState(['data'])
   },
   methods: {
-    getRandomColor() {
-      return _.sample(["primary", "secondary", "success", "danger", "warning", "info", "dark"]);
+    getRandomColor(index) {
+      const colors = ["primary", "secondary", "success", "danger", "warning", "info", "dark"] ;
+      return colors[index % colors.length];
     },
     getIcon(keyword = null) {
       function isMatching(matches, keyword) {
-        return matches.some((el) => (keyword.toLowerCase().includes(el) > 0))
+        return matches.some((el) => (keyword.toLowerCase().includes(el) > 0));
       }
 
       if (isMatching(["model", "text", "ai", "generation"], keyword)) {

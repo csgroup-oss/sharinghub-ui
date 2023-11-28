@@ -3,6 +3,13 @@
     "description": ""
   },
   "fields": {
-    
+    "update_date": "aggiornato il {0}",
+    "update_days": "aggiornato circa {0} giorno fa",
+    "update_hours": "aggiornato circa {0} ore fa",
+    "search_placeholder": "ricerca per parola chiave, modelli ...",
+    "list_of": "Elenco di {0}",
+    "asset_card": "Dettagli",
+    "reviews": "Commenti",
+    "model_deploy": "Modello di schieramento"
   }
 }

@@ -1,12 +1,12 @@
 <template>
   <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page p-jc-between">
-    <header-navbar/>
+    <header-navbar />
 
-    <div v-if="isLoading" class="container w-100 h-100 p-pt-6">
+    <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
       <Awaiter :is-visible="isLoading"/>
     </div>
 
-    <div v-else class="w-100 h-100 p-pt-6">
+    <div v-else class="w-100 h-100 p-pt-0">
       <router-view v-if="isAuthenticated"/>
       <b-alert v-else show variant="danger" class="container">
         <h4 class="alert-heading"><strong> {{ $t('errors.authFail.title') }}</strong></h4>
@@ -54,6 +54,8 @@ import {get} from "@/_Hub/tools/https";
 import {LOGIN_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
+import I18N from "@radiantearth/stac-fields/I18N";
+import {loadMessages, translateFields} from "@/i18n";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -72,7 +74,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'conformsTo',]),
+    ...mapState(['auth', 'conformsTo', 'uiLanguage']),
     login() {
       return LOGIN_URL;
     }
@@ -83,6 +85,27 @@ export default defineComponent({
       async handler(data) {
         this.isLoading = false;
         this.isAuthenticated = !!(data?.user && data?.token);
+      }
+    },
+    uiLanguage: {
+      immediate: true,
+      async handler(locale) {
+        if (!locale) {
+          return;
+        }
+
+        // Update stac-fields
+        I18N.locales = [locale];
+        I18N.translate = translateFields;
+
+        // Load messages
+        await loadMessages(locale);
+
+        // Set the locale for vue-i18n
+        this.$root.$i18n.locale = locale;
+
+        // Update the HTML lang tag
+        document.documentElement.setAttribute("lang", locale);
       }
     }
   },

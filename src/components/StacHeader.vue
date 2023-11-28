@@ -1,36 +1,32 @@
 <template>
   <b-row>
     <b-col md="12">
-      <Source class="float-right" :title="title" :stacUrl="url" :stac="data" />
+      <b-row class="float-right">
+         <Source action="share" :title="title" :stacUrl="url" :stac="data"/>
+      </b-row>
       <h1>
         <template v-if="icon">
           <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
         </template>
+        <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill class="p-mr-2" >
+          <b-icon-arrow-left/>
+        </b-button>
         <span class="title">{{ title }}</span>
       </h1>
-      <p class="lead" v-if="url || isSearchPage()">
+      <p class="lead" v-if="url">
         <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
           <template #catalog>
-            <StacLink :data="containerLink" />
+           <small>
+              <StacLink :data="containerLink"/>
+           </small>
           </template>
         </i18n>
         <b-button-group>
-
           <template>
-            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle" variant="outline-primary" size="sm">
-              <b-icon-folder-symlink />
+            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
+                      variant="outline-primary" size="sm">
+              <b-icon-folder-symlink/>
               <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
-            </b-button>
-
-            <b-button v-if="authConfig" variant="outline-primary" size="sm" @click="auth" :title="$t('authentication.button.title')">
-              <template v-if="authData">
-                <b-icon-lock />
-                <span class="button-label">{{ $t('authentication.button.authenticated') }}</span>
-              </template>
-              <template v-else>
-                <b-icon-unlock />
-                <span class="button-label">{{ $t('authentication.button.authenticate') }}</span>
-              </template>
             </b-button>
 
           </template>
@@ -38,19 +34,9 @@
       </p>
 
       <b-col cols="12">
-        <b-row v-if="rankRate" class="p-mb-3">
-          <b-button-group size="sm">
-            <b-button @click="canRate ? starProject() : UnStarProject()" variant="outline-dark">
-              <b-icon :icon=" canRate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
-              <TextView type="Small-1" v-html="canRate ? ' Star' : ' Unstar'"></TextView>
-            </b-button>
-            <b-button disabled variant="outline-dark"> {{ rankRate }}</b-button>
-          </b-button-group>
-        </b-row>
-
         <b-row v-if="!!data?.properties">
           <Keywords v-if="Array.isArray(data.properties.keywords) &&
-            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords" />
+            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords"/>
         </b-row>
       </b-col>
     </b-col>
@@ -61,26 +47,17 @@
 import {mapGetters, mapState} from 'vuex';
 import Source from './Source.vue';
 import StacLink from './StacLink.vue';
-import {BIconArrow90degUp, BIconBook, BIconFolderSymlink, BIconLock, BIconSearch, BIconUnlock} from "bootstrap-vue";
 import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from "@/components/Keywords.vue";
-import {get, post} from "@/_Hub/tools/https";
+import {get} from "@/_Hub/tools/https";
 import {PROXY_URL} from "@/_Hub/Endpoint";
-import TextView from "@/_Hub/components/TextView.vue";
 
 
 export default {
   name: 'StacHeader',
   components: {
-    TextView,
     Keywords,
-    BIconArrow90degUp,
-    BIconBook,
-    BIconFolderSymlink,
-    BIconSearch,
-    BIconLock,
-    BIconUnlock,
     StacLink,
     Source
   },
@@ -101,13 +78,6 @@ export default {
         return this.$t('goToCollection.description');
       }
     },
-    parentLinkTitle() {
-      if (this.parentLink && Utils.hasText(this.parentLink.title)) {
-        return this.$t('goToParent.descriptionWithTitle', this.parentLink);
-      } else {
-        return this.$t('goToParent.description');
-      }
-    },
     icon() {
       if (this.data instanceof STAC) {
         let icons = this.data.getIcons();
@@ -117,23 +87,8 @@ export default {
       }
       return null;
     },
-    searchBrowserLink() {
-      if (!this.canSearch) {
-        return null;
-      }
-      let dataLink;
-      if (this.data instanceof STAC && !this.data.equals(this.root)) {
-        dataLink = this.data.getSearchLink();
-      }
-      if (dataLink) {
-        return `/search${this.data.getBrowserPath()}`;
-      } else if (this.root && this.allowSelectCatalog) {
-        return `/search${this.root.getBrowserPath()}`;
-      }
-      return '/search';
-    },
     containerLink() {
-      // Check two cases where this page is the root...
+      // Check two cases where this page is the root..
       if (this.catalogUrl && this.url === this.catalogUrl) {
         return null;
       }
@@ -141,22 +96,29 @@ export default {
         if (Utils.equalUrl(this.root.getAbsoluteUrl(), this.url)) {
           return null;
         } else {
+          const provider = this.data?.getMetadata("providers").find(el => el.roles.includes("host"));
+          const href = provider ? provider.url :  this.root.getAbsoluteUrl();
+          const title = `${STAC.getDisplayTitle(this.root)} / ${this.getProjectPath(this.data?._url)}`;
           return {
-            href: this.root.getAbsoluteUrl(),
+            href: href,
             rel: 'root',
-            title: STAC.getDisplayTitle(this.root)
+            external: true,
+            title: title
           };
         }
       }
       return this.collectionLink || this.parentLink;
     },
+    hasBack(){
+      return !!window.history.state;
+    }
   },
   watch: {
-    url: {
+    data: {
       immediate: true,
-      async handler(url) {
-        if (url) {
-          let projectID = this.getProjectID(url);
+      async handler(data) {
+        if (data) {
+          let projectID = Utils.getProjectID(data.id);
           get(PROXY_URL.concat(`projects/${projectID}/starrers`))
             .then((response) => {
               if (response.data) {
@@ -168,52 +130,18 @@ export default {
             });
         }
       }
-    },
-  },
-  mounted() {
+    }
   },
   methods: {
-    isSearchPage() {
-      return this.$router.currentRoute.name === 'search';
-    },
-    auth() {
-      this.$store.commit('requestAuth', () => this.$store.dispatch("load", {
-        url: this.url,
-        loadApi: true,
-        show: true,
-        force: true
-      }));
-    },
-    getProjectID(url = "") {
-      const reversed = url.split("/").reverse();
-      if (reversed.length === 0) {
-        return undefined;
+    getProjectPath(url) {
+      if (!url) {
+        return null;
       }
-      return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
-    },
-    starProject() {
-      let url = this.url;
-      if (!url) throw  new Error('url is wrong');
-      const projectID = this.getProjectID(url);
-      post(PROXY_URL.concat(`projects/${projectID}/star`))
-        .then((response) => {
-          if (response.data) {
-            this.canRate = false;
-            this.rankRate++;
-          }
-        });
-    },
-    UnStarProject() {
-      let url = this.url;
-      if (!url) throw  new Error('url is wrong');
-      const projectID = this.getProjectID(url);
-      post(PROXY_URL.concat(`projects/${projectID}/unstar`))
-        .then((response) => {
-          if (response.data) {
-            this.canRate = true;
-            this.rankRate--;
-          }
-        });
+      let array = url.split("/").splice(6);
+      return array.map(el =>{
+        const _el = el.split("-").join(" ").replace('_', " ");
+        return _el[0].toUpperCase() + _el.substring(1);
+      }).join(" / ");
     }
   }
 };

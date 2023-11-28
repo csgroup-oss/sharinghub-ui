@@ -186,7 +186,7 @@ class STAC {
   getLocaleLink(locale, fallbackLocale = null) {
     let links = this.getStacLinksWithRel('alternate')
       .filter(link => Utils.hasText(link.hreflang));
-    
+
     let available;
     if (Array.isArray(this.languages)) {
       available = this.languages.map(l => l.code);
@@ -194,7 +194,7 @@ class STAC {
     else {
       available = links.map(link => link.hreflang);
     }
-    
+
     let best = getBest(available, locale, fallbackLocale);
     return links.find(link => link.hreflang === best) || null;
   }
@@ -291,10 +291,10 @@ class STAC {
 
   /**
    * Get the thumbnails from the assets and links in a STAC entity.
-   * 
+   *
    * @param {boolean} browserOnly - Return only images that can be shown in a browser natively (PNG/JPG/GIF/WEBP).
    * @param {?string} prefer - If not `null` (default), prefers a role over the other. Either `thumbnail` or `overview`.
-   * @returns 
+   * @returns
    */
   getThumbnails(browserOnly = false, prefer = null) { // prefer can be either 
     let thumbnails = this.getAssetsWithRoles(['thumbnail', 'overview']);

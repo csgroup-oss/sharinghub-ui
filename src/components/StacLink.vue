@@ -85,19 +85,45 @@ export default {
       return stacBrowserNavigatesTo.includes(this.link.rel);
     },
     attributes() {
-      if (this.isStacBrowserLink || this.button) {
-        let obj = {
-          to: this.href,
+      if (this.$props.data?.external) {
+        return {
+          href: this.$props.data.href,
+          target: '_blank',
           rel: this.rel
+        };
+      }
+      if (this.isStacBrowserLink || this.button) {
+        let href = this.$props.data.href
+        if (this.stac) {
+          href = this.href;
+        }
+        if (Utils.isBrowserUrl(href)) {
+          if (window.location.hash.includes("#metadata?")) {
+            href = `${window.location.origin}${window.location.pathname}?external=${href}`;
+          } else {
+            href = `${window.location.origin}${window.location.pathname}#/metadata?external=${href}`;
+          }
+        }
+        let obj = {
+          href: href,
+          rel: this.rel,
+          target: '_blank',
         };
         if (Utils.isObject(this.button)) {
           Object.assign(obj, this.button);
         }
         return obj;
       } else {
-        let href = this.$props.data.href;
-        if (Utils.isBrowserUrl(this.$props.data.href)) {
-          href = `${window.location.origin}${window.location.pathname}#/metadata?external=${this.$props.data.href}`;
+        let href = this.$props.data.href
+        if (this.stac) {
+          href = this.href;
+        }
+        if (Utils.isBrowserUrl(href)) {
+          if (window.location.hash.includes("#metadata?")) {
+            href = `${window.location.origin}${window.location.pathname}?external=${href}`;
+          } else {
+            href = `${window.location.origin}${window.location.pathname}#/metadata?external=${href}`;
+          }
         }
         return {
           href: href,
@@ -110,7 +136,7 @@ export default {
       if (this.button) {
         return 'b-button';
       }
-      return this.isStacBrowserLink ? 'router-link' : 'a';
+      return 'a';
     },
     href() {
       if (this.stac || this.isStacBrowserLink) {
@@ -120,7 +146,6 @@ export default {
         } else {
           href = this.toBrowserPath(this.link.href);
         }
-        href = `/metadata?external=${href}`;
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142
         if (Utils.size(this.privateQueryParameters) > 0 || Utils.size(this.state) > 0) {

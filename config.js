@@ -40,10 +40,6 @@ module.exports = {
     requestQueryParameters: {},
     preprocessSTAC: null,
     authConfig: null,
-    entriesRoot:{
-      "Processor" : "Processors",
-      "AI Model" : "Models",
-      "Dataset" : "Datasets",
+    noteBookUrl : "https://nb.p2.csgroup.space"
 
-    }
 };

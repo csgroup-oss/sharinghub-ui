@@ -8,6 +8,8 @@ import GitlabV4 from "../../../../vendors-release/lib/index";
 
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
+import Utils from "@/utils";
+
 
 Vue.use(Vssue);
 
@@ -18,6 +20,7 @@ const vsOptions = {
   labels: ['discussion', 'sharingHub'],
   prefix: 'Review -',
   admins: [],
+  locale:"en",
   baseURL: PROXY_URL,
   issueContent: ({url}) => url,
   autoCreateIssue: true,
@@ -30,7 +33,7 @@ export default defineComponent({
     'Vssue': VssueComponent,
   },
   computed: {
-    ...mapState(['data'])
+    ...mapState(['data', 'uiLanguage'])
   },
   // eslint-disable-next-line vue/order-in-components
   data() {
@@ -48,35 +51,45 @@ export default defineComponent({
       handler(data) {
         this.isLoading = true;
         if (data) {
-          this.options.repo = this.getProjectID(data._path);
+          this.options.repo = Utils.getProjectID(data.id);
           this.isLoading = false;
         }
       }
-    }
+    },
+     uiLanguage: {
+        immediate: true,
+        async handler(locale) {
+          if (!locale) {
+            return;
+          }
+          this.options = Object.assign(this.options, {locale : locale});
+        }
+      }
   },
   mounted() {
   },
-  methods: {
-    getProjectID(url = "") {
-      const reversed = url.split("/").reverse();
-      if (reversed.length === 0) {
-        return undefined;
-      }
-      return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
-    }
-  }
+  methods: {}
 });
 </script>
 
 
 <template>
   <div class="w-100">
-    <Awaiter v-if="isLoading" :is-visible="isLoading"/>
-        <Vssue :title="title" :options="options" v-else />
+    <Awaiter v-if="isLoading" :is-visible="isLoading" />
+    <Vssue :title="title" :options="options" v-else />
   </div>
 </template>
 
 <style scoped lang="scss">
+.vssue, .markdown-body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI" !important;
+}
+
+.vssue {
+  a {
+    color: red !important;
+  }
+}
 
 </style>
 

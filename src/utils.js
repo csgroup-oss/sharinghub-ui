@@ -2,7 +2,7 @@ import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import {stacPagination} from "./rels";
 import {get} from "@/_Hub/tools/https";
-import {RESOLVE_URL} from "@/_Hub/Endpoint";
+import {BASE_URL, RESOLVE_URL} from "@/_Hub/Endpoint";
 
 export const STAC_EXTENSIONS = {
   "ml-model": "https://stac-extensions.github.io/ml-model/v1.0.0/schema.json"
@@ -449,8 +449,8 @@ export default class Utils {
     return Utils.mergeDeep(target, ...sources);
   }
 
-  static getProjectID(url = "") {
-    const reversed = url.split("/").reverse();
+  static getProjectID(stac_id = "") {
+    const reversed = stac_id.split("-").reverse();
     if (reversed.length === 0) {
       return undefined;
     }
@@ -458,18 +458,11 @@ export default class Utils {
   }
 
   static browsifyUrl(url) {
-    if (url.startsWith(window.location.origin)) {
       const urlObject = new URL(url);
-      const prefix = urlObject.pathname.split("/").splice(0, 4).join("/")
+      const prefix = urlObject.pathname.split("/").splice(1, 4).join("/");
       const array = urlObject.pathname.split("/");
-      const url_to_resolve = array.splice(4).join("/");
-      return get(RESOLVE_URL.concat(url_to_resolve)).then((response) => {
-        if (response.data) {
-          return `${window.origin}${prefix}/${response.data.project_id}`;
-        }
-      });
-    }
-    return url;
+      const url_to_resolve = array.splice(5).join("/");
+      return `${BASE_URL}${prefix}/${url_to_resolve}`;
   }
 
   static isMlModelCompliant(array) {
@@ -481,7 +474,13 @@ export default class Utils {
   }
 
   static isBrowserUrl(url){
-    return url.startsWith(window.location.origin);
+    if(!url){
+      return url;
+    }
+    return url.startsWith(BASE_URL);
+  }
+   static hasNotebookAsset(url ){
+    return url.endsWith('.ipynb');
   }
 
 }

@@ -10,7 +10,7 @@
         <div class="">
           <b-input-group size="md" class="100">
             <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
-                          placeholder="Search keyword, models">
+                          :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
             <b-input-group-prepend is-text>
               <b-icon icon="search"/>
@@ -38,7 +38,10 @@
           </Button>
         </a>
 
-        <div v-if="auth">
+
+        <div v-if="auth" class="p-d-flex p-ai-center">
+          <Localisation/>
+
           <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
               <b-avatar size="40" variant="info" :src="avatar_url"/>
@@ -47,8 +50,10 @@
               <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
             </b-dropdown-item>
             <b-dropdown-divider/>
-            <b-dropdown-item @click="logout" href="#">Logout</b-dropdown-item>
+            <b-dropdown-divider/>
+            <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
+
         </div>
 
       </div>
@@ -65,11 +70,15 @@ import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {get} from "@/_Hub/tools/https";
+import Source from "@/components/Source.vue";
+import Localisation from "@/components/Localisation.vue";
 
 
 export default defineComponent({
   name: "HeaderNavbar",
   components: {
+    Localisation,
+    Source,
     NavItem,
     TextView,
     Divider,
@@ -85,7 +94,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'catalogUrl']),
+    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url']),
     login() {
       return LOGIN_URL;
     },
@@ -107,7 +116,7 @@ export default defineComponent({
             }
             if (entry.title.toLowerCase().includes("model")) {
               return {
-                route:  entry.title,
+                route: entry.title,
                 description: entry.description,
                 icon: "box-seam",
               };
@@ -197,11 +206,15 @@ export default defineComponent({
       if (this.value && this.$route.name !== "search") {
         this.$router.push(
           {
-            path:`/search/external/${this.catalogUrl}`,
+            path: `/search/external/${this.catalogUrl}`,
             query: {q: this.value}
           });
       }
       this.value = null;
+    },
+    hello(ev) {
+      ev.stopPropagation()
+      console.log(ev)
     }
   },
 

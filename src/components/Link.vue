@@ -51,7 +51,6 @@ export default {
       this.hrefBrowserLink = await Utils.browsifyUrl(this.link.href);
       let base = Object.assign({}, this.link);
       this.dataLink = Object.assign(base, {href: this.hrefBrowserLink});
-      // this.dataLink = this.link;
     } else {
       this.dataLink = this.link;
     }

@@ -28,13 +28,27 @@ export default defineComponent({
       rankRate: 0,
     };
   },
-  async created() {
-
+  computed:{
+    updatedTime() {
+      const data = this.stac.properties.updated;
+      const now = DateTime.now();
+      const date = DateTime.fromISO(data);
+      const interval = Interval.fromDateTimes(date, now);
+      const hours = interval.length('hours');
+      const days = interval.length('days');
+      if (hours <= 24) {
+       return `${this.$t('fields.update_hours', [Math.round(hours)])}` ;
+      } else if (days <= 30) {
+        return `${this.$t('fields.update_days', [Math.round(days)])}` ;
+      } else {
+          return `${this.$t('fields.update_date', [date.toLocaleString({month: 'long', day: 'numeric', year: "numeric"})])}` ;
+      }
+    },
   },
   async beforeMount() {
     let url = this.$props.metadata.href;
     this.stac = (await get(url)).data;
-    const projectID = Utils.getProjectID(url);
+    const projectID = Utils.getProjectID(this.stac.id);
     if (projectID) {
       this.getStarProject(projectID);
     }
@@ -43,20 +57,6 @@ export default defineComponent({
     seeModel(event, url) {
       event.preventDefault();
       router.push({path: `/metadata`, query: {"external": url}});
-    },
-    updatedTime(data) {
-      const now = DateTime.now();
-      const date = DateTime.fromISO(data);
-      const interval = Interval.fromDateTimes(date, now);
-      const hours = interval.length('hours');
-      const days = interval.length('days');
-      if (hours <= 24) {
-        return `Updated about ${Math.round(hours)} hour(s) ago`;
-      } else if (days <= 30) {
-        return `Updated about ${Math.round(days)} day(s) ago`;
-      } else {
-        return `Updated ${date.toLocaleString({month: 'long', day: 'numeric', year: "numeric"})}`;
-      }
     },
     getPreview() {
       return this.stac.links.find(el => el.rel === "preview")?.href || this.owner;
@@ -70,7 +70,8 @@ export default defineComponent({
             this.loading = false;
           }
         }).catch(reason => {
-
+          console.log('error', reason);
+          this.loading = false;
       });
     }
   }
@@ -100,18 +101,17 @@ export default defineComponent({
           <div class="p-text-secondary p-px-2">•</div>
           <div class="p-text-secondary p-d-flex p-ai-center">
             <TextView type="Small-2">
-              {{ updatedTime(this.stac.properties.updated) }}
+              {{ updatedTime }}
             </TextView>
           </div>
         </template>
-        <template v-if="!!this.stac.properties.updated">
+        <template v-if="!!rankRate">
           <div class="p-text-secondary p-px-2">•</div>
           <div class="p-text-secondary p-d-flex p-ai-center">
-            <b-icon icon="star" scale="0.8"/>
             <TextView type="Small-1">
               {{ rankRate }}
             </TextView>
-
+              <b-icon-heart scale="0.65"/>
           </div>
         </template>
       </div>

@@ -16,7 +16,7 @@
   width: 100%;
   color: #2c3e50;
   font-size: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
   padding: 10px;
   direction: rtl;
 }
@@ -26,9 +26,9 @@
   padding: 10px 20px;
   font-size: 1.05;
   font-weight: bold;
-  color: #3eaf7c;
+  color: #188191;
   background-color: transparent;
-  border: 2px solid #3eaf7c;
+  border: 2px solid #188191;
   border-radius: 10px;
 }
 .vssue .vssue-button:disabled {
@@ -44,14 +44,14 @@
   border-color: #a3aab1;
 }
 .vssue .vssue-button:not(:disabled).vssue-button-primary {
-  color: #3eaf7c;
-  border-color: #3eaf7c;
+  color: #188191;
+  border-color: #188191;
 }
 .vssue .vssue-icon {
   width: 1em;
   height: 1em;
   vertical-align: -0.15em;
-  fill: #3eaf7c;
+  fill: #188191;
   overflow: hidden;
 }
 .vssue .vssue-icon-loading {
@@ -105,23 +105,23 @@
   top: 0;
   padding: 10px 20px;
   width: 100%;
-  color: #3eaf7c;
-  border: solid 2px #c3ead8;
+  color: #188191;
+  border: solid 2px #a7e7f0;
   border-radius: 5px;
-  background-color: #f5fbf8;
+  background-color: #f0fbfd;
 }
 .vssue .vssue-notice .vssue-progress {
   position: absolute;
   top: 0;
   left: 0;
   height: 2px;
-  background-color: #3eaf7c;
+  background-color: #188191;
 }
 .vssue .vssue-status {
   text-align: center;
   padding-top: 20px;
   padding-bottom: 10px;
-  color: #3eaf7c;
+  color: #188191;
 }
 .vssue .vssue-status .vssue-icon {
   font-size: 1.4em;
@@ -215,8 +215,8 @@
   width: 100%;
   padding: 15px;
   font-size: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background-color: #f5fbf8;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+  background-color: #f0fbfd;
   border: 1px solid #eaecef;
   border-radius: 5px;
 }
@@ -226,9 +226,9 @@
 }
 .vssue .vssue-new-comment .vssue-new-comment-input:focus {
   background-color: #fff;
-  border-color: #9adbbe;
-  -webkit-box-shadow: 0 0 1px 1px #9adbbe;
-          box-shadow: 0 0 1px 1px #9adbbe;
+  border-color: #6dd7e7;
+  -webkit-box-shadow: 0 0 1px 1px #6dd7e7;
+          box-shadow: 0 0 1px 1px #6dd7e7;
 }
 .vssue .vssue-new-comment .vssue-new-comment-input::-webkit-input-placeholder {
   color: #a3aab1;
@@ -249,9 +249,9 @@
   margin: 15px 0;
 }
 .vssue .vssue-comments .vssue-comment.vssue-comment-edit-mode .vssue-comment-main {
-  border-color: #9adbbe;
-  -webkit-box-shadow: 0 0 1px 1px #9adbbe;
-          box-shadow: 0 0 1px 1px #9adbbe;
+  border-color: #6dd7e7;
+  -webkit-box-shadow: 0 0 1px 1px #6dd7e7;
+          box-shadow: 0 0 1px 1px #6dd7e7;
 }
 .vssue .vssue-comments .vssue-comment.vssue-comment-disabled {
   pointer-events: none;
@@ -318,11 +318,11 @@
   cursor: pointer;
   display: inline-block;
   margin-right: 8px;
-  color: #3eaf7c;
+  color: #188191;
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-footer .vssue-comment-operations {
   float: right;
-  color: #3eaf7c;
+  color: #188191;
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-footer .vssue-comment-operations .vssue-comment-operation {
   cursor: pointer;
@@ -384,7 +384,7 @@
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  border: 1px solid #9adbbe;
+  border: 1px solid #6dd7e7;
   padding-left: 0.2rem;
   padding-right: 1rem;
   background-color: transparent;
@@ -397,8 +397,8 @@
 }
 .vssue .vssue-pagination .vssue-pagination-select:focus {
   background-color: #fff;
-  -webkit-box-shadow: 0 0 0.2px 0.2px #9adbbe;
-          box-shadow: 0 0 0.2px 0.2px #9adbbe;
+  -webkit-box-shadow: 0 0 0.2px 0.2px #6dd7e7;
+          box-shadow: 0 0 0.2px 0.2px #6dd7e7;
 }
 .vssue .vssue-pagination .vssue-pagination-link {
   display: inline-block;
@@ -409,7 +409,7 @@
   pointer-events: none;
 }
 .vssue .vssue-pagination .vssue-pagination-link:not(.disabled) {
-  color: #3eaf7c;
+  color: #188191;
   font-weight: 500;
   cursor: pointer;
 }
@@ -421,7 +421,7 @@
 .vssue :not(.vssue-comment-content) a {
   cursor: pointer;
   font-weight: 500;
-  color: #3eaf7c;
+  color: #188191;
   text-decoration: none;
 }
 .vssue :not(.vssue-comment-content) hr {

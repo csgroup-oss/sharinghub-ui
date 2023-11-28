@@ -138,8 +138,7 @@ export default {
           return null;
         }
       } else if (this.stac instanceof STAC) {
-        const url = `/metadata?external=${this.stac._url}`;
-        return url;
+
         return this.stac.getBrowserPath();
       }
       return null;
@@ -149,9 +148,6 @@ export default {
         return this.$t('tree.moreCollectionPagesAvailable');
       }
       const title = STAC.getDisplayTitle([this.item, this.stac]);
-      if (config.entriesRoot[title]) {
-        return config.entriesRoot[title];
-      }
       return title;
     },
     hasMore() {
@@ -226,13 +222,6 @@ export default {
         await this.$store.dispatch("load", {url, loadApi: true});
         this.loading = false;
       }
-    },
-    getProjectID(url = "") {
-      const reversed = url.split("/").reverse();
-      if (reversed.length === 0) {
-        return undefined;
-      }
-      return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
     }
   }
 };

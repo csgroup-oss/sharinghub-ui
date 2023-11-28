@@ -71,11 +71,10 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <TextView type="Title-1"> List of {{ title }}</TextView>
+    <TextView type="Title-1"> {{ $t('fields.list_of' , [title]) }} </TextView>
     <div class="section">
       <ItemCard v-for="dataset in dataList" :metadata="dataset" />
     </div>
-
   </div>
 </template>
 

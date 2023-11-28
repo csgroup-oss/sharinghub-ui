@@ -290,7 +290,6 @@ let VssueComment = class VssueComment extends Vue$1 {
             if (data === null || data === void 0 ? void 0 : data.avatar_url) {
                 this.avatar_url = data.avatar_url;
             }
-            console.log("new Avatar", data);
         }
     }
     get currentUser() {
@@ -1448,6 +1447,135 @@ const messages$7 = {
     deleteFailed: 'Impossible de créer le commentaire',
 };
 
+const messages$8 = {
+    // auth
+    login: 'Verbinden mit {platform}',
+    logout: 'Sich abmelden',
+    currentUser: 'Aktueller Nutzer',
+    // comment input
+    loading: 'Laden',
+    submit: 'Poster',
+    submitting: 'Wird gesendet',
+    submitComment: 'Kommentar hinzufügen',
+    cancel: 'Abbrechen',
+    edit: 'Bearbeiten',
+    editMode: 'Modus Bearbeiten',
+    delete: 'Löschen',
+    reply: 'Antworten',
+    // reactions
+    heart: 'Anbeten',
+    like: 'Zustimmen',
+    unlike: 'Missbilligen',
+    // pagination
+    perPage: 'Kommentare nach Seiten',
+    sort: 'Klicken Sie, um die Sortierreihenfolge zu ändern',
+    page: 'Seite',
+    prev: 'Vorherige Seite',
+    next: 'Nächste Seite',
+    // hint
+    comments: 'Kommentare | {count} Kommentare | {count} Kommentare',
+    loginToComment: 'Melden Sie sich mit Ihrem Konto {platform} an, um einen Kommentar zu hinterlassen.',
+    placeholder: 'Einen Kommentar hinterlassen. Markdown wird unterstützt. Ctrl + Enter um zu posten.',
+    noLoginPlaceHolder: 'Melden Sie sich an, um einen Kommentar zu hinterlassen. Markdown wird unterstützt.',
+    // status
+    failed: 'Kommentare können nicht geladen werden',
+    initializing: 'Initialisierung...',
+    issueNotCreated: 'Klicken, um einen Kommentar zu erstellen',
+    loadingComments: 'Kommentare laden...',
+    loginRequired: 'Anmelden, um Kommentare zu sehen',
+    noComments: 'Es gibt noch keine Kommentare. Hinterlassen Sie den ersten Kommentar !',
+    // alerts
+    reactionGiven: `Kommentar '{reaction}' bereits gegeben`,
+    deleteConfirm: 'Möchten Sie diesen Kommentar wirklich löschen?',
+    deleteFailed: 'Kommentar konnte nicht erstellt werden',
+};
+
+const messages$9 = {
+    // auth
+    login: 'Conectar con {platform}',
+    logout: 'Cerrar sesión',
+    currentUser: 'Usuario actual',
+    // comment input
+    loading: 'Cargando',
+    submit: 'Contabilización',
+    submitting: 'Subiendo',
+    submitComment: 'Añadir un comentario',
+    cancel: 'Cancelar comentario',
+    edit: 'Editar',
+    editMode: 'Modo edición',
+    delete: 'Borrar comentario',
+    reply: 'Responder',
+    // reactions
+    heart: 'Adorar',
+    like: 'Aprobar',
+    unlike: 'Desaprobar',
+    // pagination
+    perPage: 'Comentarios por página',
+    sort: 'Haga clic para cambiar el orden',
+    page: 'Página',
+    prev: 'Página anterior',
+    next: 'Página siguiente',
+    // hint
+    comments: 'Comentarios | {count} Comentarios | {count} Comentarios',
+    loginToComment: 'Inicia sesión con tu cuenta {platform} para dejar un comentario.',
+    placeholder: 'Deja un comentario. Markdown es compatible. Ctrl + Enter para publicar.',
+    noLoginPlaceHolder: 'Inicia sesión para dejar un comentario. Markdown es compatible.',
+    // status
+    failed: 'No se pueden cargar los comentarios',
+    initializing: 'Inicialización...',
+    issueNotCreated: 'Haga clic para crear un comentario',
+    loadingComments: 'Cargando comentarios...',
+    loginRequired: 'Inicia sesión para ver los comentarios',
+    noComments: 'Actualmente no hay comentarios. Deja tu primer comentario !',
+    // alerts
+    reactionGiven: `Reacción '{reaction}' ya realizada`,
+    deleteConfirm: '¿Estás seguro de que quieres borrar este comentario?',
+    deleteFailed: 'No se puede crear un comentario',
+};
+
+const messages$a = {
+    // auth
+    login: 'Collegati con {platform}',
+    logout: 'Disconnettersi',
+    currentUser: 'Utente corrente',
+    // comment input
+    loading: 'Caricamento',
+    submit: 'Pubblicare',
+    submitting: 'Caricamento',
+    submitComment: 'Aggiungi un commento',
+    cancel: 'Annullamento del commento',
+    edit: 'Modifica',
+    editMode: 'Modalità di modifica',
+    delete: 'Cancellare un commento',
+    reply: 'Rispondi',
+    // reactions
+    heart: 'Adore',
+    like: 'Approvare',
+    unlike: 'Disapprovare',
+    // pagination
+    perPage: 'Commenti per pagina',
+    sort: "Clicca per cambiare l'ordine",
+    page: 'Pagina',
+    prev: 'Pagina precedente',
+    next: 'Pagina successiva',
+    // hint
+    comments: 'Commenti | {count} Commenti | {count} Commenti',
+    loginToComment: 'Accedi con il tuo account {platform} per lasciare un commento',
+    placeholder: 'Lascia un commento. Markdown è supportato. Ctrl + Invio per inviare.',
+    noLoginPlaceHolder: 'Accedi per lasciare un commento. Markdown è supportato.',
+    // status
+    failed: 'Impossibile caricare i commenti',
+    initializing: 'Inizializzazione...',
+    issueNotCreated: 'Fare clic per creare un commento',
+    loadingComments: 'Caricamento dei commenti...',
+    loginRequired: 'Accedi per visualizzare i commenti',
+    noComments: 'Al momento non ci sono commenti. Lascia il tuo primo commento !',
+    // alerts
+    reactionGiven: `Reazione '{reaction}' già data`,
+    deleteConfirm: 'Sei sicuro di voler cancellare questo commento ?',
+    deleteFailed: 'Impossibile creare un commento',
+};
+
 if (!Object.prototype.hasOwnProperty.call(Vue, '$i18n')) {
     Vue.use(VueI18n);
 }
@@ -1470,6 +1598,9 @@ const i18n = new VueI18n({
         'ko-KR': messages$6,
         fr: messages$7,
         'fr-FR': messages$7,
+        de: messages$8,
+        es: messages$9,
+        it: messages$a,
     },
 });
 
@@ -1964,6 +2095,13 @@ __decorate([
         default: () => ({}),
     })
 ], Vssue.prototype, "options", void 0);
+__decorate([
+    Prop({
+        type: [String],
+        required: false,
+        default: 'en',
+    })
+], Vssue.prototype, "lang", void 0);
 __decorate([
     Provide('vssue')
 ], Vssue.prototype, "vssue", void 0);
