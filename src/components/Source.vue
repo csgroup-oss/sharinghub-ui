@@ -4,10 +4,10 @@
     <b-button-group size="sm">
 
       <template v-if="!action || action==='share' ">
-        <b-button v-if="!!notebookData" size="sm" variant="outline-dark" id="popover-share-btn">
+        <b-button v-if="!!notebook_data" size="sm" @click="$event => openJupyterLink($event, notebook_data.notebook_link)" variant="outline-dark" id="popover-share-btn">
           <b-icon-terminal variant="warning"/>
           <TextView class="button-label" type="Small-1">
-            <span class="button-label"> Jupyter NoteBook</span>
+            <span class="button-label"> Jupyter Notebook</span>
           </TextView>
         </b-button>
         <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
@@ -16,11 +16,11 @@
             <span class="button-label"> {{ $t('source.share.label') }}</span>
           </TextView>
         </b-button>
-        <b-button size="sm" @click="canRate ? starProject() : UnStarProject()" variant="outline-primary">
-          <b-icon :icon=" canRate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
-          <TextView type="Small-1" v-html="canRate ? ' Star' : ' Unstar'"></TextView>
+        <b-button size="sm" @click="can_rate ? starProject() : UnStarProject()" variant="outline-primary">
+          <b-icon :icon="can_rate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
+          <TextView type="Small-1" v-html="can_rate ? ' Star' : ' Unstar'"></TextView>
         </b-button>
-        <b-button size="sm" disabled variant="outline-dark"> {{ rankRate }}</b-button>
+        <b-button size="sm" disabled variant="outline-dark"> {{ rank_rate }}</b-button>
       </template>
 
 
@@ -74,7 +74,8 @@ import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import {get, post} from "@/_Hub/tools/https";
-import {PROXY_URL} from "@/_Hub/Endpoint";
+import {PROXY_URL, REPOSITORY_URL} from "@/_Hub/Endpoint";
+import config from "@/config";
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -107,14 +108,14 @@ export default {
   },
   data() {
     return {
-      canRate: false,
-      rankRate: undefined,
-      hasRank: false,
-      notebookData: undefined,
+      can_rate: false,
+      rank_rate: undefined,
+      has_rank: false,
+      notebook_data: undefined,
     };
   },
   computed: {
-    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'data', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
+    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'data', 'auth', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
     ...mapGetters(['supportsExtension', 'root']),
     stacVersion() {
       return this.stac?.stac_version;
@@ -179,7 +180,7 @@ export default {
       let languages = [];
 
       // Add all UI languages
-      for(let code of this.supportedLocales) {
+      for (let code of this.supportedLocales) {
         languages.push({
           code,
           native: this.$t(`languages.${code}.native`),
@@ -223,22 +224,30 @@ export default {
     data: {
       immediate: true,
       async handler(data) {
-        this.notebookData = undefined;
+        this.notebook_data = undefined;
         if (data) {
           let projectID = Utils.getProjectID(data.id);
-          get(PROXY_URL.concat(`projects/${projectID}/starrers`))
-            .then((response) => {
+          get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
               if (response.data) {
-                this.rankRate = response.data.length;
+                this.rank_rate = response.data.length;
                 const currentUser = this.$store.state.auth.user;
-                this.canRate = !response.data.some(el => el.user.username === currentUser.username
+                this.can_rate = !response.data.some(el => el.user.username === currentUser.username
                   || el.user.web_url === currentUser.web_url);
               }
             });
-          // eslint-disable-next-line no-unused-vars
-          Object.entries(data.assets).forEach(([_, value]) => {
-            if (Utils.hasNotebookAsset(value.title)) {
-              this.notebookData = value;
+
+          get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
+            if (res.data) {
+              Object.entries(data.assets).forEach(([, value]) => {
+                if (Utils.hasNotebookAsset(value.title)) {
+                  const {token} = this.auth;
+                  let {ssh_url_to_repo, default_branch} = res.data;
+                  ssh_url_to_repo = ssh_url_to_repo.split(':')[1];
+                  const nb_project_name = ssh_url_to_repo.split('/').reverse()[0].concat('/').concat(value.title).concat(`&branch=${default_branch}`);
+                  let link = `${config.notebookGitPullerURL}?repo=https://oauth2:${token}@${REPOSITORY_URL}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
+                  this.notebook_data = Object.assign(value , {notebook_link  : link});
+                }
+              });
             }
           });
         }
@@ -264,8 +273,8 @@ export default {
       post(PROXY_URL.concat(`projects/${projectID}/star`))
         .then((response) => {
           if (response.data) {
-            this.canRate = false;
-            this.rankRate++;
+            this.can_rate = false;
+            this.rank_rate++;
           }
         });
     },
@@ -277,11 +286,15 @@ export default {
       post(PROXY_URL.concat(`projects/${projectID}/unstar`))
         .then((response) => {
           if (response.data) {
-            this.canRate = true;
-            this.rankRate--;
+            this.can_rate = true;
+            this.rank_rate--;
           }
         });
     },
+
+    openJupyterLink(ev, url){
+      window.open(url, '_blank');
+    }
   }
 };
 </script>

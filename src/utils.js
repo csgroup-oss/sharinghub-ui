@@ -1,8 +1,7 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import {stacPagination} from "./rels";
-import {get} from "@/_Hub/tools/https";
-import {BASE_URL, RESOLVE_URL} from "@/_Hub/Endpoint";
+import {BASE_URL} from "@/_Hub/Endpoint";
 
 export const STAC_EXTENSIONS = {
   "ml-model": "https://stac-extensions.github.io/ml-model/v1.0.0/schema.json"
@@ -479,7 +478,7 @@ export default class Utils {
     }
     return url.startsWith(BASE_URL);
   }
-   static hasNotebookAsset(url ){
+   static hasNotebookAsset(url){
     return url.endsWith('.ipynb');
   }
 

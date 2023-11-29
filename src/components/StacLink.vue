@@ -114,7 +114,7 @@ export default {
         }
         return obj;
       } else {
-        let href = this.$props.data.href
+        let href = this.$props.data.href;
         if (this.stac) {
           href = this.href;
         }

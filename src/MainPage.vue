@@ -51,7 +51,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 import {get} from "@/_Hub/tools/https";
-import {LOGIN_URL, PROXY_URL} from "@/_Hub/Endpoint";
+import {LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import I18N from "@radiantearth/stac-fields/I18N";
@@ -116,12 +116,12 @@ export default defineComponent({
     async fetchUser() {
       this.isLoading = true;
       get(PROXY_URL.concat('/user'))
-        .then((userDataResponse) => {
+        .then(async (userDataResponse) => {
           if (userDataResponse.data) {
-            this.isLoading = false;
             const user = userDataResponse.data;
-            const token = {};
-            this.$store.commit("setUserInfo", {user, token});
+            let {access_token} =  (await get(USER_INFO).then((res) => res.data));
+            this.$store.commit("setUserInfo", {user, token : access_token});
+             this.isLoading = false;
             if (this.$route.fullPath === "") {
               this.$router.push("/models");
             }

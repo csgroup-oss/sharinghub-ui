@@ -40,6 +40,8 @@ module.exports = {
     requestQueryParameters: {},
     preprocessSTAC: null,
     authConfig: null,
-    noteBookUrl : "https://nb.p2.csgroup.space"
+    notebookGitPullerURL : "https://nb.p2.csgroup.space/hub/user-redirect/git-pull",
 
 };
+
+//https://nb.p2.csgroup.space/hub/user-redirect/git-pull?repo=https://oauth2:<t>@gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub-tests/challenge-sample.git&urlpath=lab/tree/challenge-sample.git/sample.ipynb&branch=main

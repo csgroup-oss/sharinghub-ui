@@ -616,7 +616,7 @@ function getStore(config, router) {
       },
       setUserInfo(state, payload) {
         if (payload) {
-          const {user, token} = payload
+          const {user, token} = payload;
           state.auth = {user, token};
         } else {
           state.auth = payload;
