@@ -74,7 +74,7 @@ import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import {get, post} from "@/_Hub/tools/https";
-import {PROXY_URL, REPOSITORY_URL} from "@/_Hub/Endpoint";
+import {PROXY_URL} from "@/_Hub/Endpoint";
 import config from "@/config";
 
 
@@ -242,9 +242,11 @@ export default {
                 if (Utils.hasNotebookAsset(value.title)) {
                   const {token} = this.auth;
                   let {ssh_url_to_repo, default_branch} = res.data;
+                  const prefix_gitlab_url = ssh_url_to_repo.split(':')[0].substring(4);
                   ssh_url_to_repo = ssh_url_to_repo.split(':')[1];
                   const nb_project_name = ssh_url_to_repo.split('/').reverse()[0].concat('/').concat(value.title).concat(`&branch=${default_branch}`);
-                  let link = `${config.notebookGitPullerURL}?repo=https://oauth2:${token}@${REPOSITORY_URL}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
+                  let link = `${config.notebookGitPullerURL}?repo=https://oauth2:${token}@${prefix_gitlab_url}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
+
                   this.notebook_data = Object.assign(value , {notebook_link  : link});
                 }
               });
@@ -297,6 +299,8 @@ export default {
     }
   }
 };
+// https://nb.p2.csgroup.space/hub/user-redirect/git-pull?repo=https://oauth2:<access-token>@gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub-tests/challenge-sample.git&urlpath=lab/tree/challenge-sample.git/notebooks/sample.ipynb&branch=main
+// https://nb.p2.csgroup.space/hub/user-redirect/git-pull?repo=https://oauth2:<access-token>@gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub-tests/challenge-sample.git&urlpath=lab/tree/challenge-sample.git/sample.ipynb&branch=main
 </script>
 
 <style lang="scss">

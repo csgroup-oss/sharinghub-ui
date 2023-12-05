@@ -27,7 +27,7 @@
 <script>
 import {BForm, BFormGroup, BFormInput} from 'bootstrap-vue';
 import {mapGetters} from "vuex";
-import {BASE_URL, REPOSITORY_URL} from "@/_Hub/Endpoint";
+import {BASE_URL} from "@/_Hub/Endpoint";
 
 export default {
   name: "SelectDataSource",
@@ -38,8 +38,8 @@ export default {
   },
   data() {
     return {
-      url: 'https://'.concat(REPOSITORY_URL),
-      token: "_ssiSwZ1_HW4n8_PtszT",
+      url: undefined,
+      token: "",
     };
   },
   computed: {
