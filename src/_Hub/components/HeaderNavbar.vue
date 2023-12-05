@@ -69,7 +69,7 @@ import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
-import {get} from "@/_Hub/tools/https";
+import {get, removeLocalToken} from "@/_Hub/tools/https";
 import Source from "@/components/Source.vue";
 import Localisation from "@/components/Localisation.vue";
 
@@ -199,10 +199,15 @@ export default defineComponent({
       get(LOGOUT_URL).then((response) => {
         if (response) {
           this.$store.commit("setUserInfo", null);
+          removeLocalToken();
         }
       });
     },
     handleEnter() {
+      console.log('this', this.$store)
+      if(!this.catalogUrl){
+        // return
+      }
       if (this.value && this.$route.name !== "search") {
         this.$router.push(
           {
@@ -212,10 +217,7 @@ export default defineComponent({
       }
       this.value = null;
     },
-    hello(ev) {
-      ev.stopPropagation()
-      console.log(ev)
-    }
+
   },
 
 });

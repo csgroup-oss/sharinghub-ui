@@ -19,6 +19,7 @@ export default class GitlabV4 {
         // @see https://docs.gitlab.com/ce/api/README.html#namespaced-path-encoding
         this._encodedRepo = encodeURIComponent(`${this.repo}`);
         const CSRFTOKEN = Cookies.get('csrftoken') || '';
+        const LOCAL_TOKEN = this.clientId || '';
         this.$http = axios.create({
             baseURL: baseURL,
             headers: {
@@ -26,6 +27,7 @@ export default class GitlabV4 {
                 'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': CSRFTOKEN,
+                'X-Gitlab-Token': LOCAL_TOKEN,
             },
             withCredentials: true,
         });
@@ -97,12 +99,12 @@ export default class GitlabV4 {
     }
     async getAvatarUrlByUserid(userId) {
         if (!userId)
-            throw new Error("userId is undefined");
+            throw new Error('userId is undefined');
         const { data: userData } = await this.$http.get('users/'.concat(userId));
         if (!userData)
-            throw new Error("user undefined ");
+            throw new Error('user undefined ');
         if (userData.email) {
-            const response = await this.$http.get("avatar?email=".concat(userData.email));
+            const response = await this.$http.get('avatar?email='.concat(userData.email));
             return response.data;
         }
         return Promise.resolve({ avatar_url: undefined });

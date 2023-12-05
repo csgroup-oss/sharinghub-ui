@@ -133,15 +133,8 @@ export default {
     }
   },
   methods: {
-    getProjectPath(url) {
-      if (!url) {
-        return null;
-      }
-      let array = url.split("/").splice(6);
-      return array.map(el =>{
-        const _el = el.split("-").join(" ").replace('_', " ");
-        return _el[0].toUpperCase() + _el.substring(1);
-      }).join(" / ");
+    getProjectPath() {
+      return this.data.getMetadata('long_title');
     }
   }
 };

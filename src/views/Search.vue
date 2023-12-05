@@ -72,6 +72,7 @@ import STAC from '../models/stac';
 import {BIconCheckSquare, BIconSquare, BTab, BTabs} from 'bootstrap-vue';
 import {processSTAC, stacRequest} from '../store/utils';
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
+import {CONNEXION_MODE} from "@/_Hub/tools/https";
 
 export default {
   name: "Search",
@@ -109,7 +110,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['catalogUrl', 'catalogTitle', 'itemsPerPage']),
+    ...mapState(['catalogUrl', 'catalogTitle', 'itemsPerPage', 'auth']),
     ...mapGetters(['canSearch', 'canSearchItems', 'canSearchCollections', 'getStac', 'root', 'collectionLink', 'parentLink', 'fromBrowserPath', 'toBrowserPath']),
     selectedCollectionCount() {
       return Utils.size(this.selectedCollections);
@@ -219,6 +220,9 @@ export default {
       }
       if (!url) {
         url = STAC_ROOT_URL;
+      }
+      if (this.auth.mode === CONNEXION_MODE.HEADLESS) {
+          url = url.concat(`?gitlab_token=${this.auth.token}`);
       }
       if (url){
           await this.$store.dispatch('load', {url: url});

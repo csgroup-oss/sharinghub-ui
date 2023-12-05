@@ -13,7 +13,6 @@
         <p>
           {{ $t('errors.authFail.description') }}
         </p>
-        <hr>
         <p class="mb-0">
           {{ $t('errors.authFail.information') }}
           <div>
@@ -22,6 +21,19 @@
                 {{ $t('Login') }}
               </b-button>
             </a>
+            <hr>
+
+            <b-form @submit="go">
+              <b-form-group
+                id="select-token" :label="$t('index.specifyToken')" label-for="token"
+              >
+                <b-form-input id="token" type="password" :value="localToken" @input="setToken" placeholder="token..."/>
+                <small> {{ $t('index.specifyTokenDetail') }} </small>
+              </b-form-group>
+
+              <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
+
+          </b-form>
 
           </div>
         </p>
@@ -45,12 +57,12 @@ import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import TextView from "@/_Hub/components/TextView.vue";
-import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import {BForm, BFormGroup, BFormInput, BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import "./assets/base.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
-import {get} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get, getLocalToken, removeLocalToken, setLocalToken} from "@/_Hub/tools/https";
 import {LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
@@ -63,6 +75,7 @@ Vue.use(BootstrapVueIcons);
 export default defineComponent({
   name: "MainPage",
   components: {
+    BFormInput, BForm, BFormGroup,
     Awaiter,
     TextView,
     HeaderNavbar,
@@ -71,6 +84,7 @@ export default defineComponent({
     return {
       isAuthenticated: false,
       isLoading: true,
+      localToken:undefined
     };
   },
   computed: {
@@ -113,14 +127,23 @@ export default defineComponent({
     this.fetchUser();
   },
   methods: {
+
     async fetchUser() {
       this.isLoading = true;
       get(PROXY_URL.concat('/user'))
         .then(async (userDataResponse) => {
           if (userDataResponse.data) {
             const user = userDataResponse.data;
-            let {access_token} =  (await get(USER_INFO).then((res) => res.data));
-            this.$store.commit("setUserInfo", {user, token : access_token});
+            let token;
+            let connexion_mode =  CONNEXION_MODE.CONNECTED;
+            if(getLocalToken()){
+              token = getLocalToken();
+              connexion_mode =  CONNEXION_MODE.HEADLESS;
+            }else {
+               const {access_token} =  (await get(USER_INFO).then((res) => res.data));
+               token = access_token;
+            }
+            this.$store.commit("setUserInfo", {user, token : token, mode: connexion_mode});
              this.isLoading = false;
             if (this.$route.fullPath === "") {
               this.$router.push("/models");
@@ -130,7 +153,20 @@ export default defineComponent({
         console.log('------ USER IS DISCONNECT -----', reason);
         this.isLoading = false;
         this.$store.commit("setUserInfo", null);
+        removeLocalToken()
       });
+    },
+
+    async setToken(token){
+      this.localToken = token;
+      console.log("token", token);
+    },
+    go(e) {
+      e.preventDefault();
+      if (!this.localToken)
+        return;
+       setLocalToken(this.localToken);
+       this.fetchUser();
     }
   },
 });

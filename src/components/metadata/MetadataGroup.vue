@@ -34,14 +34,14 @@ export default {
   },
   methods : {
     ignoreMetadata(){
-      const blackList = ["keywords", "license", "sci:doi"]
-      let data = {}
+      const blackList = ["keywords", "license", "sci:doi", 'long_title'];
+      let data = {};
       if(this.properties){
         Object.entries(this.properties).forEach(([key, value]) =>{
          if(!blackList.includes(key)){
           data = {...data,
           [key] : value
-          }
+          };
         }
       });
       return data;

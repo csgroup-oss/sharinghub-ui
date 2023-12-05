@@ -33,7 +33,7 @@ export default defineComponent({
     'Vssue': VssueComponent,
   },
   computed: {
-    ...mapState(['data', 'uiLanguage'])
+    ...mapState(['data', 'uiLanguage', 'auth'])
   },
   // eslint-disable-next-line vue/order-in-components
   data() {
@@ -52,6 +52,7 @@ export default defineComponent({
         this.isLoading = true;
         if (data) {
           this.options.repo = Utils.getProjectID(data.id);
+          this.options.clientId = this.auth.token;
           this.isLoading = false;
         }
       }

@@ -95,6 +95,8 @@ import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
 import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
 import TabSectionDeployment from "@/_Hub/views/sections/TabSectionDeployment.vue";
 
+import {CONNEXION_MODE} from "@/_Hub/tools/https";
+
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
 Vue.use(ButtonPlugin);
@@ -162,7 +164,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['allowSelectCatalog', 'data', 'dataLanguage', 'description', 'doAuth',
+    ...mapState(['allowSelectCatalog', 'data', 'dataLanguage', 'auth', 'description', 'doAuth',
       'globalError', 'stateQueryParameters', 'title', 'uiLanguage', 'url', 'conformsTo']),
     ...mapState({
       catalogUrlFromVueX: 'catalogUrl',
@@ -347,9 +349,12 @@ export default {
       this.$store.commit(resetOp);
       this.parseQuery(to);
     });
-    const {external} = this.$route.query;
+    let {external} = this.$route.query;
     if (!external) {
       this.$router.push({path: "/models"});
+    }
+    if(this.auth.mode === CONNEXION_MODE.HEADLESS && !external.includes('?gitlab_token=')){
+      external = external.concat(`?gitlab_token=${this.auth.token}`);
     }
     await this.$store.dispatch('load', {url: external, loadApi: true, show: true});
   },

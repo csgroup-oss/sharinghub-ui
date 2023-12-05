@@ -2,11 +2,12 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import {router} from "@/init";
-import {get} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
 import {DateTime, Interval} from "luxon";
 import {PROXY_URL} from "@/_Hub/Endpoint";
 import Utils from "@/utils";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
+import {mapState} from "vuex";
 
 export default defineComponent({
   name: "ItemCard",
@@ -28,7 +29,8 @@ export default defineComponent({
       rankRate: 0,
     };
   },
-  computed:{
+  computed: {
+    ...mapState(['auth']),
     updatedTime() {
       const data = this.stac.properties.updated;
       const now = DateTime.now();
@@ -37,11 +39,15 @@ export default defineComponent({
       const hours = interval.length('hours');
       const days = interval.length('days');
       if (hours <= 24) {
-       return `${this.$t('fields.update_hours', [Math.round(hours)])}` ;
+        return `${this.$t('fields.update_hours', [Math.round(hours)])}`;
       } else if (days <= 30) {
-        return `${this.$t('fields.update_days', [Math.round(days)])}` ;
+        return `${this.$t('fields.update_days', [Math.round(days)])}`;
       } else {
-          return `${this.$t('fields.update_date', [date.toLocaleString({month: 'long', day: 'numeric', year: "numeric"})])}` ;
+        return `${this.$t('fields.update_date', [date.toLocaleString({
+          month: 'long',
+          day: 'numeric',
+          year: "numeric"
+        })])}`;
       }
     },
   },
@@ -59,7 +65,15 @@ export default defineComponent({
       router.push({path: `/metadata`, query: {"external": url}});
     },
     getPreview() {
-      return this.stac.links.find(el => el.rel === "preview")?.href || this.owner;
+      let preview = this.stac.links.find(el => el.rel === "preview");
+      if (preview) {
+        if (this.auth.mode === CONNEXION_MODE.HEADLESS) {
+          preview = preview.href.concat(`?gitlab_token=${this.auth.token}`);
+        }
+      } else {
+        preview = this.owner;
+      }
+      return this.stac.links.find(el => el.rel === "preview")?.href.concat(`?gitlab_token=${this.auth.token}`) || this.owner;
     },
     getStarProject(url) {
       this.loading = true;
@@ -70,8 +84,8 @@ export default defineComponent({
             this.loading = false;
           }
         }).catch(reason => {
-          console.log('error', reason);
-          this.loading = false;
+        console.log('error', reason);
+        this.loading = false;
       });
     }
   }
@@ -111,7 +125,7 @@ export default defineComponent({
             <TextView type="Small-1">
               {{ rankRate }}
             </TextView>
-              <b-icon-heart scale="0.65"/>
+            <b-icon-heart scale="0.65"/>
           </div>
         </template>
       </div>

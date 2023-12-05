@@ -8,6 +8,7 @@ import i18n from '../i18n';
 import {stacBrowserSpecialHandling} from "../rels";
 import Utils, {BrowserError} from '../utils';
 import STAC from '../models/stac';
+import {CONNEXION_MODE} from "@/_Hub/tools/https";
 
 import {
   addQueryIfNotExists,
@@ -66,8 +67,6 @@ function getStore(config, router) {
       globalRequestQueryParameters: config.requestQueryParameters,
       uiLanguage: config.locale,
       auth: {},
-      providerToken: null,
-      isConnected: null,
     }),
     getters: {
       loading: state => !state.url || !state.data || state.database[state.url] instanceof Loading,
@@ -362,7 +361,7 @@ function getStore(config, router) {
           .map(([l, q]) => q >= 1 ? l : `${l};q=${q}`)
           .join(',');
       },
-      isConnected: state => !!state.isConnected,
+
       getToken: state => state.token,
 
     },
@@ -608,16 +607,10 @@ function getStore(config, router) {
         }
       },
 
-      connected(state) {
-        state.isConnected = true;
-      },
-      disConnected(state) {
-        state.isConnected = false;
-      },
       setUserInfo(state, payload) {
         if (payload) {
-          const {user, token} = payload;
-          state.auth = {user, token};
+          const {user, token , mode} = payload;
+          state.auth = {user, token, mode};
         } else {
           state.auth = payload;
         }
@@ -922,7 +915,6 @@ function getStore(config, router) {
         }
       },
       async loadOgcApiConformance(cx, link) {
-        console.log("loadApiConform", link);
         let response = await stacRequest(cx, link);
         if (Utils.isObject(response.data) && Array.isArray(response.data.conformsTo)) {
           cx.commit('setConformanceClasses', response.data.conformsTo);
