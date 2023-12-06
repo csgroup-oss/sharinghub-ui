@@ -23,8 +23,8 @@
         <template v-if="isAuthenticated && routes.length > 0">
           <nav-item v-for="item in routes" class="p-mx-1">
             <b-icon :icon="item.icon"/>
-            <router-link :to="`/${item.route.toLowerCase().split(' ').join('-')}`">
-              {{ item.route }}
+            <router-link :to="`/${item.route}`">
+              {{ item.title }}
             </router-link>
           </nav-item>
           <nav-item v-if="isAuthenticated && false" disabled class="p-mx-1">
@@ -50,7 +50,6 @@
               <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
             </b-dropdown-item>
             <b-dropdown-divider/>
-            <b-dropdown-divider/>
             <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
 
@@ -70,7 +69,6 @@ import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {get, removeLocalToken} from "@/_Hub/tools/https";
-import Source from "@/components/Source.vue";
 import Localisation from "@/components/Localisation.vue";
 
 
@@ -78,18 +76,22 @@ export default defineComponent({
   name: "HeaderNavbar",
   components: {
     Localisation,
-    Source,
     NavItem,
     TextView,
     Divider,
     Button
+  },
+  props:{
+    routes : {
+      type: Array,
+      required : true
+    }
   },
   data() {
     return {
       isAuthenticated: false,
       isLoading: false,
       value: null,
-      routes: [],
       avatar_url: undefined
     };
   },
@@ -104,38 +106,6 @@ export default defineComponent({
       immediate: true,
       async handler() {
         this.isAuthenticated = await this.isAuthorizedToFetch();
-        if (!this.isLoading) {
-          const entries = await this.fetchBaseStacEntries();
-          this.routes = entries.map((entry) => {
-            if (entry.title.toLowerCase().includes("processor")) {
-              return {
-                route: entry.title,
-                description: entry.description,
-                icon: "book",
-              };
-            }
-            if (entry.title.toLowerCase().includes("model")) {
-              return {
-                route: entry.title,
-                description: entry.description,
-                icon: "box-seam",
-              };
-            }
-            if (entry.title.toLowerCase().includes("dataset")) {
-              return {
-                route: entry.title,
-                description: entry.description,
-                icon: "view-list",
-              };
-            }
-            return {
-              route: entry.title,
-              description: entry.description,
-              icon: "view-stacked",
-            };
-          });
-          this.isLoading = true;
-        }
       }
     },
     auth: {
@@ -176,25 +146,6 @@ export default defineComponent({
           }
         });
     },
-    async fetchBaseStacEntries(url = STAC_ROOT_URL) {
-      return get(url).then(
-        async (response) => {
-          if (response.data) {
-            const stacRoot = response.data;
-            const children = stacRoot.links?.filter((el) => el.rel === "child");
-            const children_requests = children.map(async (el) => {
-              return get(el.href).then((response) => {
-                return response.data;
-              });
-            });
-            return await Promise.all(children_requests).then((results) => {
-              return results;
-            });
-          } else {
-            return [];
-          }
-        });
-    },
     async logout() {
       get(LOGOUT_URL).then((response) => {
         if (response) {
@@ -204,10 +155,7 @@ export default defineComponent({
       });
     },
     handleEnter() {
-      console.log('this', this.$store)
-      if(!this.catalogUrl){
-        // return
-      }
+
       if (this.value && this.$route.name !== "search") {
         this.$router.push(
           {
@@ -217,7 +165,6 @@ export default defineComponent({
       }
       this.value = null;
     },
-
   },
 
 });

@@ -4,35 +4,45 @@ import Cookies from "js-cookie";
 let httpService = axios.create({});
 
 export async function get(url = undefined) {
-  const CSRFTOKEN = Cookies.get("csrftoken") || "";
-  const LOCAL_TOKEN = getLocalToken() || "";
+  const CSRFTOKEN = Cookies.get("csrftoken") || undefined;
+  const LOCAL_TOKEN = getLocalToken() ||undefined;
+  let headers = {
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+  };
+  if(CSRFTOKEN){
+    headers = Object.assign(headers, { "X-CSRFToken": CSRFTOKEN});
+  }
+  if(LOCAL_TOKEN){
+      headers = Object.assign(headers, {"X-Gitlab-Token" : LOCAL_TOKEN,});
+  }
   return await httpService.get(url,
     {
-      headers: {
-        "Accept": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        "X-CSRFToken": CSRFTOKEN,
-        "X-Gitlab-Token" : LOCAL_TOKEN,
-      },
+      headers: headers,
       withCredentials: true,
     }
   );
 }
 
 export async function post(url = undefined, data = {}) {
-  const CSRFTOKEN = Cookies.get("csrftoken") || "";
-  const LOCAL_TOKEN = getLocalToken() || "";
+  const CSRFTOKEN = Cookies.get("csrftoken") || undefined;
+  const LOCAL_TOKEN = getLocalToken() ||undefined;
+  let headers = {
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+  };
+  if(CSRFTOKEN){
+    headers = Object.assign(headers, { "X-CSRFToken": CSRFTOKEN});
+  }
+  if(LOCAL_TOKEN){
+      headers = Object.assign(headers, {"X-Gitlab-Token" : LOCAL_TOKEN,});
+    }
   return await httpService.post(url,
     data,
     {
-      headers: {
-        "Accept": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        "X-CSRFToken": CSRFTOKEN,
-        "X-Gitlab-Token" : LOCAL_TOKEN,
-      },
+      headers: headers,
       withCredentials: true,
     }
   );

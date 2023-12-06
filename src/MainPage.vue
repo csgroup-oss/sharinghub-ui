@@ -1,6 +1,6 @@
 <template>
   <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page p-jc-between">
-    <header-navbar />
+    <header-navbar v-if="!!headerRoutes" :routes="headerRoutes"  />
 
     <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
       <Awaiter :is-visible="isLoading"/>
@@ -58,16 +58,16 @@ import Vue, {defineComponent} from 'vue';
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import TextView from "@/_Hub/components/TextView.vue";
 import {BForm, BFormGroup, BFormInput, BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
-import "./assets/base.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
-import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 import {CONNEXION_MODE, get, getLocalToken, removeLocalToken, setLocalToken} from "@/_Hub/tools/https";
-import {LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
+import {CONFIG_URL, LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import I18N from "@radiantearth/stac-fields/I18N";
 import {loadMessages, translateFields} from "@/i18n";
+import "./assets/base.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -84,7 +84,8 @@ export default defineComponent({
     return {
       isAuthenticated: false,
       isLoading: true,
-      localToken:undefined
+      localToken:undefined,
+      headerRoutes : undefined,
     };
   },
   computed: {
@@ -120,14 +121,27 @@ export default defineComponent({
 
         // Update the HTML lang tag
         document.documentElement.setAttribute("lang", locale);
+        const entries = await this.fetchTitles();
+        this.headerRoutes = this.buildRouting(entries, locale);
+        this.$store.commit("setEntriesRoutes", this.headerRoutes);
       }
     }
   },
   beforeMount() {
-    this.fetchUser();
+    this.fetchUser().then(() =>{
+      this.fetchTitles();
+    });
+
   },
   methods: {
 
+    go(e) {
+      e.preventDefault();
+      if (!this.localToken)
+        return;
+       setLocalToken(this.localToken);
+       this.fetchUser();
+    },
     async fetchUser() {
       this.isLoading = true;
       get(PROXY_URL.concat('/user'))
@@ -153,21 +167,50 @@ export default defineComponent({
         console.log('------ USER IS DISCONNECT -----', reason);
         this.isLoading = false;
         this.$store.commit("setUserInfo", null);
-        removeLocalToken()
+        removeLocalToken();
+      });
+    },
+    async setToken(token){
+      this.localToken = token;
+    },
+
+    async fetchTitles(){
+      return get(CONFIG_URL).then((response) =>{
+        if(response.data){
+          let entries = {};
+          Object.entries(response.data.topics).forEach(([topic, values]) =>{
+           entries[topic] = values['locales'];
+          });
+          return entries;
+        }
       });
     },
 
-    async setToken(token){
-      this.localToken = token;
-      console.log("token", token);
-    },
-    go(e) {
-      e.preventDefault();
-      if (!this.localToken)
-        return;
-       setLocalToken(this.localToken);
-       this.fetchUser();
+    buildRouting(entries, locale = 'en'){
+      let routes = [];
+      if ( typeof entries !== "object"){
+        throw new Error("entries point are undefined");
+      }
+      Object.entries(entries).map(([key, value]) =>{
+        let icon;
+        if(key.toLowerCase().includes("processor")){
+          icon =  "book";
+        }else if(key.toLowerCase().includes("model")){
+          icon =  "box-seam";
+        }else if(key.toLowerCase().includes("dataset")){
+          icon =  "view-list";
+        }else {
+          icon = "view-stacked";
+        }
+        const val = value[locale] ? value[locale] : value['en'];
+        routes.push(Object.assign(
+          {route : key, icon }, val)
+        );
+      });
+      return routes;
     }
+
+
   },
 });
 

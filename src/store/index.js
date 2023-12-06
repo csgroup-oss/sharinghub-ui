@@ -67,6 +67,7 @@ function getStore(config, router) {
       globalRequestQueryParameters: config.requestQueryParameters,
       uiLanguage: config.locale,
       auth: {},
+      entriesRoute: {},
     }),
     getters: {
       loading: state => !state.url || !state.data || state.database[state.url] instanceof Loading,
@@ -614,7 +615,12 @@ function getStore(config, router) {
         } else {
           state.auth = payload;
         }
+      },
+
+      setEntriesRoutes(state, payload) {
+         state.entriesRoute = payload;
       }
+
 
     },
     actions: {

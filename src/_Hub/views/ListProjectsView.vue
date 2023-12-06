@@ -18,12 +18,12 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['data', 'auth']),
+    ...mapState(['data', 'auth', 'entriesRoute']),
   },
   watch: {
     $route: {
       immediate: true,
-      async handler(old, from) {
+      async handler() {
         this.dataList = [];
         this.dataList = [...await this.fetchStac()];
       }
@@ -35,12 +35,11 @@ export default defineComponent({
           this.dataList = await this.fetchStac();
         }
       }
-    }
+    },
   },
   methods: {
     async fetchStac(url = STAC_ROOT_URL) {
       let route = this.$route.params.pathMatch;
-      route = route ?  route.split("-").join(" ") : null;
       const data = await get(url).then((response) => response.data);
       const child = data.links?.filter((el) => el.rel === "child");
       const child_requests = child.map(async (el) => {
@@ -53,13 +52,12 @@ export default defineComponent({
       });
       return _.flatten(entry_models
         .filter((stac, idx) => {
-          let boolean = route ? stac.title.toLowerCase() === route : idx === 0;
+          let boolean = route ? stac.id.includes(route) : idx === 0;
           if (boolean) {
-            this.title = stac.title;
+            this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title ;
             return true;
           }
-        }).map((stac) => stac.links))
-        .filter((stac) => stac.rel === "child");
+        }).map((stac) => stac.links)).filter((stac) => stac.rel === "child");
     },
   },
 

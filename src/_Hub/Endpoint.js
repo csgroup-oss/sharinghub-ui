@@ -8,5 +8,6 @@ export const LOGIN_URL = BASE_URL.concat("auth/login?redirect_uri=".concat(windo
 export const LOGOUT_URL = BASE_URL.concat("auth/logout");
 export const USER_INFO = BASE_URL.concat("auth/info");
 export const PROXY_URL = BASE_URL.concat("api/");
+export const CONFIG_URL = BASE_URL.concat("config/");
 //export const PROXY_URL = BASE_URL.concat("/api/");
 

@@ -242,6 +242,7 @@ export default {
       if (url) {
         // Load the root catalog data if not available (e.g. after page refresh or external access)
         this.$store.dispatch("load", {url, loadApi: true});
+        console.log("vueX")
       }
     },
     stateQueryParameters: {
@@ -356,6 +357,7 @@ export default {
     if(this.auth.mode === CONNEXION_MODE.HEADLESS && !external.includes('?gitlab_token=')){
       external = external.concat(`?gitlab_token=${this.auth.token}`);
     }
+    console.log("external", external);
     await this.$store.dispatch('load', {url: external, loadApi: true, show: true});
   },
   mounted() {

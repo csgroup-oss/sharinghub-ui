@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     getProjectPath() {
-      return this.data.getMetadata('long_title');
+      return this.data?.getMetadata('long_title');
     }
   }
 };
