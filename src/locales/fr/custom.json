@@ -10,6 +10,7 @@
     "list_of": "Liste des {0}",
     "asset_card" : "Détails",
     "reviews" : "Commentaires",
-    "model_deploy" : "Déploiement de modèles"
+    "model_deploy" : "Déploiement de modèles",
+    "no_data_found" : "Aucun résultats"
   }
 }

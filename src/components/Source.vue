@@ -4,7 +4,9 @@
     <b-button-group size="sm">
 
       <template v-if="!action || action==='share' ">
-        <b-button v-if="!!notebook_data" size="sm" @click="$event => openJupyterLink($event, notebook_data.notebook_link)" variant="outline-dark" id="popover-share-btn">
+        <b-button v-if="!!notebook_data" size="sm"
+                  @click="$event => openJupyterLink($event, notebook_data.notebook_link)" variant="outline-dark"
+                  id="popover-share-btn">
           <b-icon-terminal variant="warning"/>
           <TextView class="button-label" type="Small-1">
             <span class="button-label"> Jupyter Notebook</span>
@@ -75,7 +77,6 @@ import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import {get, post} from "@/_Hub/tools/https";
 import {PROXY_URL} from "@/_Hub/Endpoint";
-import config from "@/config";
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -102,6 +103,10 @@ export default {
       default: null
     },
     action: {
+      type: String,
+      default: null
+    },
+    jupyter: {
       type: String,
       default: null
     }
@@ -190,7 +195,7 @@ export default {
       }
 
       // Add missing data languages
-      for(let lang of this.dataLanguages) {
+      for (let lang of this.dataLanguages) {
         if (!Utils.isObject(lang) || !lang.code || this.supportedLocales.includes(lang.code)) {
           continue;
         }
@@ -207,7 +212,7 @@ export default {
         // Determine which languages are complete
         const uiSupported = prepareSupported(this.supportedLocales);
         const dataSupported = prepareSupported(this.dataLanguages.map(l => l.code));
-        for(let l of languages) {
+        for (let l of languages) {
           if (!l.ui) {
             l.ui = Boolean(getBest(uiSupported, l.code, null));
           }
@@ -217,7 +222,7 @@ export default {
         }
       }
 
-      return languages.sort((a,b) => a.global.localeCompare(b.global, this.uiLanguage));
+      return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },
   watch: {
@@ -228,33 +233,39 @@ export default {
         if (data) {
           let projectID = Utils.getProjectID(data.id);
           get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
-              if (response.data) {
-                this.rank_rate = response.data.length;
-                const currentUser = this.$store.state.auth.user;
-                this.can_rate = !response.data.some(el => el.user.username === currentUser.username
-                  || el.user.web_url === currentUser.web_url);
-              }
-            });
-
-          get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
-            if (res.data) {
-              Object.entries(data.assets).forEach(([, value]) => {
-                if (Utils.hasNotebookAsset(value.title)) {
-                  const {token} = this.auth;
-                  let {ssh_url_to_repo, default_branch} = res.data;
-                  const prefix_gitlab_url = ssh_url_to_repo.split(':')[0].substring(4);
-                  ssh_url_to_repo = ssh_url_to_repo.split(':')[1];
-                  const nb_project_name = ssh_url_to_repo.split('/').reverse()[0].concat('/').concat(value.title).concat(`&branch=${default_branch}`);
-                  let link = `${config.notebookGitPullerURL}?repo=https://oauth2:${token}@${prefix_gitlab_url}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
-
-                  this.notebook_data = Object.assign(value , {notebook_link  : link});
-                }
-              });
+            if (response.data) {
+              this.rank_rate = response.data.length;
+              const currentUser = this.$store.state.auth.user;
+              this.can_rate = !response.data.some(el => el.user.username === currentUser.username
+                || el.user.web_url === currentUser.web_url);
             }
           });
+
+          console.log("jupyer", this.jupyter);
+          if (this.jupyter) {
+            let projectID = Utils.getProjectID(data.id);
+            get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
+              if (res.data) {
+                Object.entries(this.data.assets).forEach(([, value]) => {
+                  if (Utils.hasNotebookAsset(value.title)) {
+                    const {token} = this.auth;
+                    let {ssh_url_to_repo, default_branch} = res.data;
+                    const prefix_gitlab_url = ssh_url_to_repo.split(':')[0].substring(4);
+                    ssh_url_to_repo = ssh_url_to_repo.split(':')[1];
+                    const nb_project_name = ssh_url_to_repo.split('/').reverse()[0].concat('/').concat(value.title).concat(`&branch=${default_branch}`);
+                    let link = `${this.jupyter}/hub/user-redirect/git-pull?repo=https://oauth2:${token}@${prefix_gitlab_url}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
+                    this.notebook_data = Object.assign(value, {notebook_link: link});
+                  }
+                });
+              }
+            });
+          }
+
         }
+
+
       }
-    }
+    },
   },
   methods: {
     ...mapActions(['switchLocale']),
@@ -294,13 +305,11 @@ export default {
         });
     },
 
-    openJupyterLink(ev, url){
+    openJupyterLink(ev, url) {
       window.open(url, '_blank');
-    }
+    },
   }
 };
-// https://nb.p2.csgroup.space/hub/user-redirect/git-pull?repo=https://oauth2:<access-token>@gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub-tests/challenge-sample.git&urlpath=lab/tree/challenge-sample.git/notebooks/sample.ipynb&branch=main
-// https://nb.p2.csgroup.space/hub/user-redirect/git-pull?repo=https://oauth2:<access-token>@gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub-tests/challenge-sample.git&urlpath=lab/tree/challenge-sample.git/sample.ipynb&branch=main
 </script>
 
 <style lang="scss">

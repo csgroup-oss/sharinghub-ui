@@ -8,6 +8,7 @@ import {PROXY_URL} from "@/_Hub/Endpoint";
 import Utils from "@/utils";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import {mapState} from "vuex";
+import linuxIco from "@/assets/img/linux.png";
 
 export default defineComponent({
   name: "ItemCard",
@@ -23,7 +24,7 @@ export default defineComponent({
   },
   data() {
     return {
-      owner: "https://aeiljuispo.cloudimg.io/v7/https://cdn-uploads.huggingface.co/production/uploads/1583646260758-5e64858c87403103f9f1055d.png?w=200&h=200&f=face",
+      owner: linuxIco,
       stac: undefined,
       loading: true,
       rankRate: 0,

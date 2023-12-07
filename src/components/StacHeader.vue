@@ -1,14 +1,15 @@
 <template>
   <b-row>
     <b-col md="12">
-      <b-row class="float-right">
-         <Source action="share" :title="title" :stacUrl="url" :stac="data"/>
+      <b-row v-if="!loading" class="float-right">
+        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data"/>
       </b-row>
       <h1>
         <template v-if="icon">
           <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
         </template>
-        <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill class="p-mr-2" >
+        <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill
+                  class="p-mr-2">
           <b-icon-arrow-left/>
         </b-button>
         <span class="title">{{ title }}</span>
@@ -16,9 +17,9 @@
       <p class="lead" v-if="url">
         <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
           <template #catalog>
-           <small>
+            <small>
               <StacLink :data="containerLink"/>
-           </small>
+            </small>
           </template>
         </i18n>
         <b-button-group>
@@ -51,7 +52,7 @@ import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from "@/components/Keywords.vue";
 import {get} from "@/_Hub/tools/https";
-import {PROXY_URL} from "@/_Hub/Endpoint";
+import {CONFIG_URL, PROXY_URL} from "@/_Hub/Endpoint";
 
 
 export default {
@@ -65,7 +66,9 @@ export default {
     return {
       canRate: false,
       rankRate: undefined,
-      hasRank: false
+      hasRank: false,
+      jupyterLabUrl: undefined,
+      loading:true,
     };
   },
   computed: {
@@ -97,7 +100,7 @@ export default {
           return null;
         } else {
           const provider = this.data?.getMetadata("providers").find(el => el.roles.includes("host"));
-          const href = provider ? provider.url :  this.root.getAbsoluteUrl();
+          const href = provider ? provider.url : this.root.getAbsoluteUrl();
           const title = `${STAC.getDisplayTitle(this.root)} / ${this.getProjectPath(this.data?._url)}`;
           return {
             href: href,
@@ -109,9 +112,9 @@ export default {
       }
       return this.collectionLink || this.parentLink;
     },
-    hasBack(){
+    hasBack() {
       return !!window.history.state;
-    }
+    },
   },
   watch: {
     data: {
@@ -131,6 +134,14 @@ export default {
         }
       }
     }
+  },
+  async beforeMount() {
+    get(CONFIG_URL).then((response) => {
+      if (response.data) {
+        this.jupyterLabUrl = response.data.jupyterlab?.url;
+        this.loading = false;
+      }
+    });
   },
   methods: {
     getProjectPath() {

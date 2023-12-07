@@ -40,7 +40,6 @@ module.exports = {
     requestQueryParameters: {},
     preprocessSTAC: null,
     authConfig: null,
-    notebookGitPullerURL : "https://nb.p2.csgroup.space/hub/user-redirect/git-pull",
 
 };
 

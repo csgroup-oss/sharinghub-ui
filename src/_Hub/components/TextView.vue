@@ -47,7 +47,7 @@ export default defineComponent({
 
   &__Title {
     &-1 {
-      font-size: 1.125rem;
+      font-size: 1.5rem;
       line-height: 1.75rem;
       font-weight: 700;
     }

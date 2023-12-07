@@ -6,15 +6,17 @@ import ItemCard from "@/_Hub/components/ItemCard.vue";
 import {get} from "@/_Hub/tools/https";
 import _ from "lodash";
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
+import Awaiter from "@/_Hub/components/Awaiter.vue";
 
 
 export default defineComponent({
   name: "ListProjectsView",
-  components: {ItemCard, TextView},
+  components: {Awaiter, ItemCard, TextView},
   data() {
     return {
       dataList: [],
-      title: ""
+      title: "",
+      loading: true
     };
   },
   computed: {
@@ -39,6 +41,7 @@ export default defineComponent({
   },
   methods: {
     async fetchStac(url = STAC_ROOT_URL) {
+      this.loading = true;
       let route = this.$route.params.pathMatch;
       const data = await get(url).then((response) => response.data);
       const child = data.links?.filter((el) => el.rel === "child");
@@ -50,14 +53,17 @@ export default defineComponent({
       const entry_models = await Promise.all(child_requests).then((res) => {
         return res;
       });
-      return _.flatten(entry_models
+      const res =  _.flatten(entry_models
         .filter((stac, idx) => {
           let boolean = route ? stac.id.includes(route) : idx === 0;
           if (boolean) {
-            this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title ;
+            this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
             return true;
           }
+          return false;
         }).map((stac) => stac.links)).filter((stac) => stac.rel === "child");
+      this.loading = false;
+      return res;
     },
   },
 
@@ -69,10 +75,19 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <TextView type="Title-1"> {{ $t('fields.list_of' , [title]) }} </TextView>
-    <div class="section">
-      <ItemCard v-for="dataset in dataList" :metadata="dataset" />
+    <TextView type="Title-1"> {{ $t('fields.list_of', [title]) }}</TextView>
+
+    <template v-if="loading">
+      <Awaiter :is-visible="loading"/>
+    </template>
+    <div v-else class="section">
+      <template v-if="dataList.length !== 0">
+        <ItemCard v-for="dataset in dataList" :metadata="dataset"/>
+      </template>
+      <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
     </div>
+
+
   </div>
 </template>
 
