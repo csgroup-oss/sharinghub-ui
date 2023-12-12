@@ -14,7 +14,7 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView class="Title-2"> {{ $t('fields.asset_card') }}</TextView>
+            <TextView type="Title-1"> {{ $t('fields.asset_card') }}</TextView>
           </template>
           <TextView>
             <!-- Content (Item / Catalog) -->
@@ -24,22 +24,22 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView class="Title-2"> {{ $t('fields.reviews') }} </TextView>
+            <TextView type="Title-1"> {{ $t('fields.reviews') }} </TextView>
           </template>
           <TabSectionReview/>
         </b-tab>
 
 
-         <b-tab v-if="isMlModelCompliant" class="p-pt-4">
+         <b-tab v-if="isMlModelCompliant && canDeploy" class="p-pt-4">
           <template #title>
-            <TextView class="Title-1">{{ $t('fields.model_deploy') }}</TextView>
+            <TextView type="Title-1">{{ $t('fields.model_deploy') }}</TextView>
           </template>
           <TabSectionDeployment/>
         </b-tab>
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView class="Title-1">STAC API</TextView>
+            <TextView type="Title-1">STAC API</TextView>
           </template>
           <TabSectionApiStac :title="title" :stacUrl="url" :stac="data" />
         </b-tab>
@@ -180,6 +180,12 @@ export default {
       } else {
         return "";
       }
+    },
+    canDeploy(){
+      if(this.data instanceof STAC){
+        return this.data.getMetadata("sharinghub:deployment") === "enable";
+      }
+      return false;
     }
   },
   watch: {
@@ -242,7 +248,6 @@ export default {
       if (url) {
         // Load the root catalog data if not available (e.g. after page refresh or external access)
         this.$store.dispatch("load", {url, loadApi: true});
-        console.log("vueX")
       }
     },
     stateQueryParameters: {
@@ -357,7 +362,6 @@ export default {
     if(this.auth.mode === CONNEXION_MODE.HEADLESS && !external.includes('?gitlab_token=')){
       external = external.concat(`?gitlab_token=${this.auth.token}`);
     }
-    console.log("external", external);
     await this.$store.dispatch('load', {url: external, loadApi: true, show: true});
   },
   mounted() {

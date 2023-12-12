@@ -15,6 +15,7 @@ import { mapState } from 'vuex';
 // Register custom fields for the metadata rendering
 // eslint-disable-next-line
 import __ from '../../fields.config';
+import config from "@/config";
 
 export default {
     name: "Metadata",
@@ -64,7 +65,8 @@ export default {
                 isoDuration.setLocales({en});
 
                 // Format the data again to update translations
-                this.formattedData = this.formatData();
+
+                this.formattedData = this.formatData()?.filter((el) => !config.blackListProperties.includes(el.extension));
             }
         }
     },

@@ -47,13 +47,13 @@ export default defineComponent({
 
   &__Title {
     &-1 {
-      font-size: 1.5rem;
+      font-size: 20px;
       line-height: 1.75rem;
       font-weight: 700;
     }
 
     &-2 {
-      font-size: 1.125rem;
+      font-size: 16px;
       line-height: 1.75rem;
       font-weight: 600;
     }

@@ -40,6 +40,7 @@ module.exports = {
     requestQueryParameters: {},
     preprocessSTAC: null,
     authConfig: null,
+    blackListProperties : ["sharinghub"]
 
 };
 

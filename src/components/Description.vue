@@ -48,8 +48,11 @@ export default {
   line-height: 1.4em;
 
   h1, h2, h3, h4, h5, h6 {
-    color: map-get($theme-colors, "secondary");
+    color: map-get($theme-colors, "primary");
     font-weight: 600;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
   h1 {
     font-size: 1.5rem;

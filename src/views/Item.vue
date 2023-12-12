@@ -1,22 +1,21 @@
 <template>
   <div class="item" :key="data.id">
-    <b-row>
-        <b-col class="right">
+    <b-row class="w-100">
+        <b-col cols="7" class="right">
         <section class="intro">
-          <h2 v-if="data.properties.description">{{ $t('description') }}</h2>
           <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
           <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
-          <ReadMore v-if="data.properties.description" :lines="10" :text="$t('read.more')" :text-less="$t('read.less')">
+          <ReadMore v-if="data.properties.description" :open="true" :lines="10" :text="$t('read.more')" :text-less="$t('read.less')">
             <Description :description="data.properties.description" />
           </ReadMore>
         </section>
         <CollectionLink v-if="collectionLink" :link="collectionLink" />
-        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
+
         <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
       </b-col>
 
-      <b-col class="left">
-        <section class="mb-4">
+      <b-col cols="5" class="left">
+        <section v-if="canViewMap" class="mb-4">
           <b-card no-body class="maps-preview">
             <b-tabs v-model="tab" ref="tabs" card pills vertical end>
               <b-tab :title="$t('map')" no-body>
@@ -30,6 +29,7 @@
         </section>
         <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
         <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
+        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
       </b-col>
 
     </b-row>
@@ -43,6 +43,7 @@ import ReadMore from "vue-read-more-smooth";
 import ShowAssetMixin from '../components/ShowAssetMixin';
 import { BTabs, BTab } from 'bootstrap-vue';
 import { addSchemaToDocument, createItemSchema } from '../schema-org';
+import STAC from "@/models/stac";
 
 export default {
   name: "Item",
@@ -80,7 +81,13 @@ export default {
   },
   computed: {
     ...mapState(['data', 'url']),
-    ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink'])
+    ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink']),
+    canViewMap(){
+      if(this.data instanceof STAC){
+        return this.data.getMetadata("sharinghub:map-viewer") === "enable";
+      }
+      return false;
+    }
   },
   watch: {
     data: {
@@ -104,7 +111,7 @@ export default {
 
 #stac-browser .item {
   .left, .right {
-    max-width: 50%;
+    //max-width: 50%;
     @include media-breakpoint-down(sm) {
       max-width: 100%;
       min-width: 100%;

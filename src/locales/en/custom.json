@@ -8,7 +8,7 @@
     "update_hours": "update about {0} hour(s) ago",
     "search_placeholder": "search keyword, models ...",
     "list_of": "List of {0}",
-    "asset_card": "Asset Card",
+    "asset_card": "Details",
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
     "no_data_found" : "No results"

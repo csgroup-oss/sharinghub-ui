@@ -62,8 +62,8 @@ body {
         align-items: center;
     }
 
-    h2 {
-        color: map-get($theme-colors, 'secondary');
+    h2, h3 {
+        color: map-get($theme-colors, 'primary');
         font-weight: 600;
     }
 
