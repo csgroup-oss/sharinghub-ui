@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as commonmark from 'commonmark';
+import markdownit from 'markdown-it';
 
 export default {
   name: 'Description',
@@ -31,11 +31,13 @@ export default {
         return '';
       }
 
-      // Parse CommonMark
-      var reader = new commonmark.Parser();
-      var writer = new commonmark.HtmlRenderer({safe: !this.allowHTML, smart: true});
-      var parsed = reader.parse(text);
-      return writer.render(parsed);
+      // Render Markdown
+      const md = markdownit({
+        html: this.allowHTML,
+        linkify: true,
+        typographer: true,
+      });
+      return md.render(text);
     }
   }
 };
@@ -80,7 +82,7 @@ export default {
     overflow-y: auto;
   }
   pre code {
-    background-color: transparent; 
+    background-color: transparent;
     display: block;
     margin: 0.5em;
   }
