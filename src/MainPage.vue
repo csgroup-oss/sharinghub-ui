@@ -220,6 +220,7 @@ export default defineComponent({
 <style scoped lang="scss">
 @import "assets/colors";
 
+
 .main-page {
   .footer {
     display: none;

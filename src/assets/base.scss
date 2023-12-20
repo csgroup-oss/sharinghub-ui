@@ -11,6 +11,9 @@ html, body {
   &-100 {
     width: 100% !important;
   }
+  &-60 {
+    width: 60% !important;
+  }
 }
 
 .h {
@@ -43,6 +46,13 @@ html, body {
     border-left: solid 1px rgba($secondary-color, 0.4) !important;
     width: 2px;
     height: 100%;
+    margin: 0 0.3rem;
+    min-height: 20px;
+  }
+    &--horizontal{
+    border-top: solid 1px rgba($secondary-color, 0.2) !important;
+    width: 100%;
+    height: 3px;
     margin: 0 0.3rem;
     min-height: 20px;
   }

@@ -65,4 +65,5 @@ export function removeLocalToken(){
 export const CONNEXION_MODE =  {
   "HEADLESS" : "HEADLESS",
   "CONNECTED" : "CONNECTED",
+  "DEFAULT" : "DEFAULT",
 };

@@ -2,7 +2,7 @@ import Browse from '../views/Browse.vue';
 import StacBrowser from "@/StacBrowser.vue";
 import ListProjectsView from "@/_Hub/views/ListProjectsView.vue";
 import Search from "@/views/Search.vue";
-
+import Home from "@/views/Home.vue";
 function getRoutes(config) {
   let routes = [];
 
@@ -58,13 +58,14 @@ function getRoutes(config) {
 }
 
 
-export function getRoutes_2(config) {
+export function getRoutes_2() {
   let routes = [];
 
   routes = [
     {
       path: "/",
-      redirect: {name: 'dynamicListSTAC'}
+      name:"Home",
+      component: Home,
     },
     {
       path: "/search/*",
