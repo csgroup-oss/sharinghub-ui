@@ -18,9 +18,9 @@
             <span class="button-label"> {{ $t('source.share.label') }}</span>
           </TextView>
         </b-button>
-        <b-button size="sm" @click="can_rate ? starProject() : UnStarProject()" variant="outline-primary">
-          <b-icon :icon="can_rate ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
-          <TextView type="Small-1" v-html="can_rate ? ' Star' : ' Unstar'"></TextView>
+        <b-button  :disabled="!can_rate" size="sm" @click="has_rated ? starProject() : UnStarProject()" variant="outline-primary">
+          <b-icon :icon="has_rated ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
+          <TextView type="Small-1" v-html="has_rated ? ' Star' : ' Unstar'"></TextView>
         </b-button>
         <b-button size="sm" disabled variant="outline-dark"> {{ rank_rate }}</b-button>
       </template>
@@ -115,7 +115,7 @@ export default {
     return {
       can_rate: false,
       rank_rate: undefined,
-      has_rank: false,
+      has_rated: true,
       notebook_data: undefined,
     };
   },
@@ -230,19 +230,22 @@ export default {
       immediate: true,
       async handler(data) {
         this.notebook_data = undefined;
+        this.can_rate = false;
         if (data) {
+          const currentUser = this.$store.state.auth.user;
           let projectID = Utils.getProjectID(data.id);
           get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
             if (response.data) {
               this.rank_rate = response.data.length;
-              const currentUser = this.$store.state.auth.user;
-              this.can_rate = !response.data.some(el => el.user.username === currentUser.username
+              if(currentUser){
+                this.can_rate = true;
+                this.has_rated = !response.data.some(el => el.user.username === currentUser.username
                 || el.user.web_url === currentUser.web_url);
+              }
             }
           });
 
-          console.log("jupyer", this.jupyter);
-          if (this.jupyter) {
+          if (this.jupyter && currentUser) {
             let projectID = Utils.getProjectID(data.id);
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
               if (res.data) {
@@ -262,8 +265,6 @@ export default {
           }
 
         }
-
-
       }
     },
   },

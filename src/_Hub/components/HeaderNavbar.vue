@@ -20,29 +20,23 @@
       </div>
 
       <div class="p-d-flex p-ai-center p-jc-between">
-        <template v-if="isAuthenticated && routes.length > 0">
+        <template v-if="routes.length > 0">
           <nav-item v-for="item in routes" class="p-mx-1">
             <b-icon :icon="item.icon"/>
             <router-link :to="`/${item.route}`">
               {{ item.title }}
             </router-link>
           </nav-item>
-          <nav-item v-if="isAuthenticated && false" disabled class="p-mx-1">
+          <nav-item disabled class="p-mx-1">
             Docs
           </nav-item>
         </template>
-        <divider class="p-divider" type="solid" layout="vertical"/>
-        <a v-if="!isAuthenticated" :href="login">
-          <Button :href="login" class=" p-button-sm p-button-info">
-            Log In
-          </Button>
-        </a>
+        <div class="p-divider--vertical"/>
 
-
-        <div v-if="auth" class="p-d-flex p-ai-center">
+        <div class="p-d-flex p-ai-center">
           <Localisation/>
 
-          <b-dropdown size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+          <b-dropdown v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
               <b-avatar size="40" variant="info" :src="avatar_url"/>
             </template>
@@ -53,7 +47,16 @@
             <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
 
+          <template v-else>
+            <div v-if="$route.name !== 'Login'" class="p-ml-3">
+              <b-button size="sm" to="login" variant="dark">
+                {{ $t('fields.login') }}
+                <b-icon-box-arrow-in-right/>
+              </b-button>
+            </div>
+          </template>
         </div>
+
 
       </div>
     </div>
@@ -62,13 +65,11 @@
 
 <script>
 import {defineComponent} from 'vue';
-import Divider from "primevue/divider/Divider";
-import Button from "primevue/button/Button";
 import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
-import {LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL} from "@/_Hub/Endpoint";
+import {LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
-import {get, removeLocalToken} from "@/_Hub/tools/https";
+import {get, removeLocalToken, CONNEXION_MODE} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
 
 
@@ -78,13 +79,11 @@ export default defineComponent({
     Localisation,
     NavItem,
     TextView,
-    Divider,
-    Button
   },
-  props:{
-    routes : {
+  props: {
+    routes: {
       type: Array,
-      required : true
+      required: true
     }
   },
   data() {
@@ -102,16 +101,9 @@ export default defineComponent({
     },
   },
   watch: {
-    $route: {
-      immediate: true,
-      async handler() {
-        this.isAuthenticated = await this.isAuthorizedToFetch();
-      }
-    },
     auth: {
       immediate: true,
       async handler(data) {
-        this.isAuthenticated = !!(data?.user);
         this.avatar_url = data?.user?.avatar_url;
         if (data?.user?.email) {
           get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
@@ -120,42 +112,20 @@ export default defineComponent({
             }
           });
         }
-
+        this.isAuthenticated = !!data.user;
       }
     },
   },
-  async mounted() {
-  },
   methods: {
-    async isAuthorizedToFetch() {
-      return get(STAC_ROOT_URL).then(
-        async (response) => {
-          if (response.data) {
-            const stacRoot = response.data;
-            const children = stacRoot.links?.filter((el) => el.rel === "child");
-            const children_requests = children.map(async (el) => {
-              return get(el.href).then((response) => {
-                return response.data;
-              });
-            });
-            return await Promise.allSettled(children_requests).then((results) => {
-              return results.map(el => el.status).reduce((ac, nex) => nex === "fulfilled", false);
-            });
-          } else {
-            return false;
-          }
-        });
-    },
     async logout() {
       get(LOGOUT_URL).then((response) => {
         if (response) {
-          this.$store.commit("setUserInfo", null);
-          removeLocalToken();
+          const auth = {...this.auth, mode : CONNEXION_MODE.DEFAULT_TOKEN, user:null };
+          this.$store.commit("setUserInfo", auth);
         }
       });
     },
     handleEnter() {
-
       if (this.value && this.$route.name !== "search") {
         this.$router.push(
           {

@@ -3,6 +3,7 @@ import StacBrowser from "@/StacBrowser.vue";
 import ListProjectsView from "@/_Hub/views/ListProjectsView.vue";
 import Search from "@/views/Search.vue";
 import Home from "@/views/Home.vue";
+import LoginView from "@/_Hub/views/LoginView.vue";
 function getRoutes(config) {
   let routes = [];
 
@@ -62,11 +63,17 @@ export function getRoutes_2() {
   let routes = [];
 
   routes = [
+     {
+      path: "/login",
+      name:"Login",
+      component: LoginView,
+    },
     {
       path: "/",
       name:"Home",
       component: Home,
     },
+
     {
       path: "/search/*",
       name: "search",

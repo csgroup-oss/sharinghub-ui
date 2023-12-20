@@ -68,7 +68,7 @@ export default defineComponent({
     getPreview() {
       let preview = this.stac.links.find(el => el.rel === "preview");
       if (preview) {
-        if (this.auth.mode === CONNEXION_MODE.HEADLESS) {
+        if (this.auth.mode !== CONNEXION_MODE.CONNECTED) {
           preview = preview.href.concat(`?gitlab_token=${this.auth.token}`);
         }
       } else {

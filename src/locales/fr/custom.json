@@ -4,13 +4,14 @@
   },
   "fields": {
     "update_date": "mis à jour le {0}",
-    "update_days": "mis à jour il y'a {0} jour(s)",
-    "update_hours": "mis à jour il y'a {0} heure(s)",
+    "update_days": "mis à jour il y a {0} jour(s)",
+    "update_hours": "mis à jour il y a {0} heure(s)",
     "search_placeholder": "recherchez mots clés, models ...",
     "list_of": "Liste des {0}",
     "asset_card" : "Détails",
     "reviews" : "Commentaires",
     "model_deploy" : "Déploiement de modèles",
-    "no_data_found" : "Aucun résultats"
+    "no_data_found" : "Aucun résultats",
+    "login" : "Se connecter"
   }
 }

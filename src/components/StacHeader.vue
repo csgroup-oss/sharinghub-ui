@@ -64,9 +64,6 @@ export default {
   },
   data() {
     return {
-      canRate: false,
-      rankRate: undefined,
-      hasRank: false,
       jupyterLabUrl: undefined,
       loading:true,
     };
@@ -115,25 +112,6 @@ export default {
     hasBack() {
       return !!window.history.state;
     },
-  },
-  watch: {
-    data: {
-      immediate: true,
-      async handler(data) {
-        if (data) {
-          let projectID = Utils.getProjectID(data.id);
-          get(PROXY_URL.concat(`projects/${projectID}/starrers`))
-            .then((response) => {
-              if (response.data) {
-                this.rankRate = response.data.length;
-                const currentUser = this.$store.state.auth.user;
-                this.canRate = !response.data.some(el => el.user.username === currentUser.username
-                  || el.user.web_url === currentUser.web_url);
-              }
-            });
-        }
-      }
-    }
   },
   async beforeMount() {
     get(CONFIG_URL).then((response) => {

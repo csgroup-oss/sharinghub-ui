@@ -11,6 +11,7 @@
     "asset_card": "Details",
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
-    "no_data_found" : "No results"
+    "no_data_found" : "No results",
+    "login" : "Log in"
   }
 }

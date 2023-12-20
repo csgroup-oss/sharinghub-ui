@@ -10,6 +10,7 @@
     "list_of": "Liste der {0}",
     "asset_card": "Einzelheiten",
     "reviews": "Kommentare",
-    "model_deploy": "Bereitstellung von Vorlagen"
+    "model_deploy": "Bereitstellung von Vorlagen",
+    "login" : "Login"
   }
 }

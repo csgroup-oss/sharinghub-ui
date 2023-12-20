@@ -10,6 +10,7 @@
     "list_of": "Elenco di {0}",
     "asset_card": "Dettagli",
     "reviews": "Commenti",
-    "model_deploy": "Modello di schieramento"
+    "model_deploy": "Modello di schieramento",
+    "login": "Accesso"
   }
 }

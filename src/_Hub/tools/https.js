@@ -4,14 +4,14 @@ import Cookies from "js-cookie";
 let httpService = axios.create({});
 
 export async function get(url = undefined) {
-  const CSRFTOKEN = Cookies.get("csrftoken") || undefined;
+  let CSRFTOKEN = Cookies.get("csrftoken") || undefined;
   const LOCAL_TOKEN = getLocalToken() ||undefined;
   let headers = {
       "Accept": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
   };
-  if(CSRFTOKEN){
+  if(CSRFTOKEN && !LOCAL_TOKEN){
     headers = Object.assign(headers, { "X-CSRFToken": CSRFTOKEN});
   }
   if(LOCAL_TOKEN){
@@ -33,7 +33,7 @@ export async function post(url = undefined, data = {}) {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
   };
-  if(CSRFTOKEN){
+  if(CSRFTOKEN && !LOCAL_TOKEN){
     headers = Object.assign(headers, { "X-CSRFToken": CSRFTOKEN});
   }
   if(LOCAL_TOKEN){
@@ -65,5 +65,5 @@ export function removeLocalToken(){
 export const CONNEXION_MODE =  {
   "HEADLESS" : "HEADLESS",
   "CONNECTED" : "CONNECTED",
-  "DEFAULT" : "DEFAULT",
+  "DEFAULT_TOKEN" : "DEFAULT_TOKEN",
 };

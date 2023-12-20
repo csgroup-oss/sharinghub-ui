@@ -359,7 +359,7 @@ export default {
     if (!external) {
       this.$router.push({path: "/models"});
     }
-    if(this.auth.mode === CONNEXION_MODE.HEADLESS && !external.includes('?gitlab_token=')){
+    if(this.auth.mode !== CONNEXION_MODE.CONNECTED && !external.includes('?gitlab_token=')){
       external = external.concat(`?gitlab_token=${this.auth.token}`);
     }
     await this.$store.dispatch('load', {url: external, loadApi: true, show: true});

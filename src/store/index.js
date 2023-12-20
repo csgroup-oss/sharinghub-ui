@@ -66,7 +66,9 @@ function getStore(config, router) {
       allowSelectCatalog: !config.catalogUrl,
       globalRequestQueryParameters: config.requestQueryParameters,
       uiLanguage: config.locale,
-      auth: {},
+      auth: {
+        mode : CONNEXION_MODE.DEFAULT_TOKEN
+      },
       entriesRoute: {},
     }),
     getters: {
