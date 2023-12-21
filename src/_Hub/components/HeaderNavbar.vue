@@ -27,13 +27,16 @@
               {{ item.title }}
             </router-link>
           </nav-item>
-          <nav-item disabled class="p-mx-1">
-            Docs
-          </nav-item>
         </template>
         <div class="p-divider--vertical"/>
 
         <div class="p-d-flex p-ai-center">
+          <nav-item class="p-mx-1">
+            <b-icon icon="book"/>
+            <a :href="docs_url" target="_blank">
+              Docs
+            </a>
+          </nav-item>
           <Localisation/>
 
           <b-dropdown v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
@@ -67,7 +70,7 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
-import {LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
+import {LOGIN_URL, LOGOUT_URL, PROXY_URL, DOCS_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {get, removeLocalToken, CONNEXION_MODE} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
@@ -99,6 +102,9 @@ export default defineComponent({
     login() {
       return LOGIN_URL;
     },
+    docs_url() {
+      return DOCS_URL + this.$root.$i18n.locale;
+    }
   },
   watch: {
     auth: {
