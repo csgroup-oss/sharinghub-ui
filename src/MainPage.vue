@@ -209,7 +209,7 @@ export default defineComponent({
       Object.entries(entries).map(([key, value]) => {
         let icon;
         if (key.toLowerCase().includes("processor")) {
-          icon = "book";
+          icon = "tools";
         } else if (key.toLowerCase().includes("model")) {
           icon = "box-seam";
         } else if (key.toLowerCase().includes("dataset")) {
