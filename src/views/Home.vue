@@ -80,7 +80,8 @@ export default defineComponent({
     <div class="p-d-flex p-justify-center p-mb-6">
       <div class="p-d-flex p-justify-between p-ai-baseline" style="width: 65%">
         <div>
-          <h1 class="p-mb-3"> SharingHUB community </h1>
+          <h1 class="p-mb-4"> SharingHUB community </h1>
+          <h2 class="p-mb-3"> {{ config?.title }} </h2>
           <Description v-if="!loading" :description="config?.description"/>
         </div>
         <div>
@@ -93,7 +94,7 @@ export default defineComponent({
     </div>
 
     <div class="w-100 p-d-flex p-justify-center p-flex-column p-ai-center">
-      <div v-for="(el, key) in topics" class="p-mb-6 w-60">
+      <div v-for="(el, key) in topics" :key="key" class="p-mb-6 w-60">
         <div class="w-100">
           <home-card v-bind="el" :index="key"/>
         </div>
