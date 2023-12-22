@@ -288,6 +288,10 @@
       "twitter": "Twitter",
       "withOthers": "Share this page with others"
     },
+    "jupyter": {
+      "enabled": "Open the notebook in Jupyter",
+      "disabled": "Login to open the notebook in Jupyter"
+    },
     "stacExtension": "STAC Extension",
     "stacVersion": "STAC Version",
     "statistics": "Statistics",
