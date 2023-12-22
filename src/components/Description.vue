@@ -91,6 +91,10 @@ export default {
     display: inline-block;
     padding: 0 0.1em;
   }
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 
   &.compact {
     h1, h2, h3, h4, h5, h6 {
