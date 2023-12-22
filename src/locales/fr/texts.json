@@ -288,8 +288,9 @@
       "withOthers": "Partagez cette page"
     },
     "jupyter": {
-      "enabled": "Ouvrir le notebook dans Jupyter",
-      "disabled": "Connectez-vous pour ouvrir le notebook dans Jupyter"
+      "open": "Ouvrir",
+      "enabled": "Ouvrir dans Jupyter",
+      "disabled": "Connectez-vous pour ouvrir dans Jupyter"
     },
     "stacExtension": "Extension du STAC",
     "stacVersion": "Version STAC",

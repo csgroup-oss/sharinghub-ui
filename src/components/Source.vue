@@ -5,18 +5,18 @@
 
       <template v-if="!action || action==='share' ">
         <b-button
-          v-if="!!notebook_data"
-          @click="$event => openJupyterLink($event, notebook_data.notebook_link)"
+          v-if="canUseJupyter"
+          @click="$event => openJupyterLink($event, jupyter_link)"
           id="popover-share-btn"
           variant="outline-dark"
           size="sm"
-          :disabled="!currentUser"
+          :disabled="!jupyter_link || !currentUser"
           v-b-tooltip
-          :title="(currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
+          :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
         >
           <b-icon-terminal variant="warning"/>
           <TextView class="button-label" type="Small-1">
-            <span class="button-label"> Jupyter Notebook</span>
+            <span class="button-label"> {{ $t("source.jupyter.open") }}</span>
           </TextView>
         </b-button>
         <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
@@ -123,7 +123,7 @@ export default {
       can_rate: false,
       rank_rate: undefined,
       has_rated: true,
-      notebook_data: undefined,
+      jupyter_link: undefined,
     };
   },
   computed: {
@@ -233,13 +233,16 @@ export default {
       }
 
       return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
+    },
+    canUseJupyter() {
+      return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:jupyter") === "enable" : false;
     }
   },
   watch: {
     data: {
       immediate: true,
       async handler(data) {
-        this.notebook_data = undefined;
+        this.jupyter_link = undefined;
         this.can_rate = false;
         if (data) {
           let projectID = Utils.getProjectID(data.id);
@@ -254,21 +257,22 @@ export default {
             }
           });
 
-          if (this.jupyter) {
+          if (this.jupyter && this.canUseJupyter) {
+            const notebooks = Object.values(this.data.assets).filter((el) => {
+              return Utils.hasNotebookAsset(el.title);
+            });
             let projectID = Utils.getProjectID(data.id);
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
               if (res.data) {
-                Object.entries(this.data.assets).forEach(([, value]) => {
-                  if (Utils.hasNotebookAsset(value.title)) {
-                    const {token} = this.auth;
-                    let {ssh_url_to_repo, default_branch} = res.data;
-                    const prefix_gitlab_url = ssh_url_to_repo.split(':')[0].substring(4);
-                    ssh_url_to_repo = ssh_url_to_repo.split(':')[1];
-                    const nb_project_name = ssh_url_to_repo.split('/').reverse()[0].concat('/').concat(value.title).concat(`&branch=${default_branch}`);
-                    let link = `${this.jupyter}/hub/user-redirect/git-pull?repo=https://oauth2:${token}@${prefix_gitlab_url}/${ssh_url_to_repo}&urlpath=lab/tree/${nb_project_name}`;
-                    this.notebook_data = Object.assign(value, {notebook_link: link});
-                  }
-                });
+                const {token} = this.auth;
+                const {http_url_to_repo, default_branch} = res.data;
+                const repo_url = new URL(http_url_to_repo);
+                const repo_dir = repo_url.pathname.split("/").pop();
+                let lab_path = `lab/tree/${repo_dir}`;
+                if (notebooks.length > 0) {
+                  lab_path = lab_path.concat(`/${notebooks[0].title}`);
+                }
+                this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&urlpath=${lab_path}`;
               }
             });
           }
