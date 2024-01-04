@@ -1,7 +1,7 @@
 <script>
 import {defineComponent} from 'vue';
-import {CONNEXION_MODE, get, setLocalToken} from "@/_Hub/tools/https";
-import {PROXY_URL, USER_INFO, LOGIN_URL} from "@/_Hub/Endpoint";
+import {CONNEXION_MODE, get, setLocalToken, removeLocalToken} from "@/_Hub/tools/https";
+import {PROXY_URL, LOGIN_URL} from "@/_Hub/Endpoint";
 
 
 export default defineComponent({
@@ -31,6 +31,7 @@ export default defineComponent({
             let user = userDataResponse.data;
             let connexion_mode = CONNEXION_MODE.HEADLESS;
             this.$store.commit("setUserInfo", {user, token: this.privateToken, mode: connexion_mode});
+            removeLocalToken();
             this.isLoading = false;
             this.$router.push("/");
           }

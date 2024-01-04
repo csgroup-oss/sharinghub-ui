@@ -7,6 +7,8 @@ import {get} from "@/_Hub/tools/https";
 import _ from "lodash";
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
+import I18N from "@radiantearth/stac-fields/I18N";
+import {loadMessages, translateFields} from "@/i18n";
 
 
 export default defineComponent({
@@ -20,7 +22,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['data', 'auth', 'entriesRoute']),
+    ...mapState(['data', 'auth', 'entriesRoute','uiLanguage' ]),
   },
   watch: {
     $route: {
@@ -38,6 +40,13 @@ export default defineComponent({
         }
       }
     },
+     entriesRoute: {
+      immediate: true,
+      async handler(entries) {
+      this.dataList = [];
+        this.dataList = [...await this.fetchStac()];
+      }
+    }
   },
   methods: {
     async fetchStac(url = STAC_ROOT_URL) {
@@ -53,11 +62,12 @@ export default defineComponent({
       const entry_models = await Promise.all(child_requests).then((res) => {
         return res;
       });
-      const res =  _.flatten(entry_models
+      const res = _.flatten(entry_models
         .filter((stac, idx) => {
           let boolean = route ? stac.id.includes(route) : idx === 0;
           if (boolean) {
             this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
+            console.log("thjis", this.title);
             return true;
           }
           return false;
@@ -75,14 +85,17 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <TextView type="Title-1"> {{ $t('fields.list_of', [title]) }}</TextView>
-
+    <text-view class="p-ml-5" type="header__b20"> {{ $t('fields.list_of', [title]) }}</text-view>
     <template v-if="loading">
-      <Awaiter :is-visible="loading"/>
+
+      <awaiter :is-visible="loading"/>
     </template>
     <div v-else class="section">
+
       <template v-if="dataList.length !== 0">
-        <ItemCard v-for="dataset in dataList" :metadata="dataset"/>
+        <b-col cols="3" v-for="dataset in dataList">
+          <item-card :metadata="dataset"/>
+        </b-col>
       </template>
       <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
     </div>
@@ -94,9 +107,11 @@ export default defineComponent({
 <style scoped lang="scss">
 .section {
   width: 100%;
-  display: grid;
-  grid-template-columns: 48% 48%;
-  grid-column-gap: 4%;
+  display: flex;
+  flex-wrap: wrap;
+  //display: grid;
+  //grid-template-columns: 48% 48%;
+  //grid-column-gap: 4%;
 
 }
 </style>

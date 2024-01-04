@@ -93,6 +93,7 @@ export default {
     data: {
       immediate: true,
       handler(data) {
+        console.log("data", data);
         try {
           let schema = createItemSchema(data, [this.collectionLink, this.parentLink], this.$store);
           addSchemaToDocument(document, schema);

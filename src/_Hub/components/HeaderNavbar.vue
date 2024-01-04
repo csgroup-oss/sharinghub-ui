@@ -4,7 +4,7 @@
       <div class="p-d-flex p-ai-center">
         <text-view class="p-mr-4">
           <router-link to="/" class="cursor">
-            SharingHUB
+            <h3>SharingHUB</h3>
           </router-link>
         </text-view>
         <div class="">
@@ -21,10 +21,11 @@
 
       <div class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
-          <nav-item v-for="item in routes" class="p-mx-1">
-            <b-icon :icon="item.icon"/>
-            <router-link :to="`/${item.route}`">
-              {{ item.title }}
+          <nav-item v-for="item in routes" class="p-mx-1 p-d-flex p-ai-center">
+            <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
+            <b-icon  v-else :icon="item.icon"/>
+            <router-link class="mx-1" :to="`/${item.route}`">
+             <text-view type="header__b14"> {{ item.title }}</text-view>
             </router-link>
           </nav-item>
         </template>
@@ -34,7 +35,7 @@
           <nav-item class="p-mx-1">
             <b-icon icon="book"/>
             <a :href="docs_url" target="_blank">
-              Docs
+               <text-view type="header__b14"> Docs</text-view>
             </a>
           </nav-item>
           <Localisation/>

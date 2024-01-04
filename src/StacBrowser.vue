@@ -14,7 +14,7 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView type="Title-1"> {{ $t('fields.asset_card') }}</TextView>
+            <TextView type="header__b16"> {{ $t('fields.asset_card') }}</TextView>
           </template>
           <TextView>
             <!-- Content (Item / Catalog) -->
@@ -24,7 +24,7 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView type="Title-1"> {{ $t('fields.reviews') }} </TextView>
+            <TextView type="header__b16"> {{ $t('fields.reviews') }} </TextView>
           </template>
           <TabSectionReview/>
         </b-tab>
@@ -32,14 +32,14 @@
 
          <b-tab v-if="isMlModelCompliant && canDeploy" class="p-pt-4">
           <template #title>
-            <TextView type="Title-1">{{ $t('fields.model_deploy') }}</TextView>
+            <TextView type="header__b16">{{ $t('fields.model_deploy') }}</TextView>
           </template>
           <TabSectionDeployment/>
         </b-tab>
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView type="Title-1">STAC API</TextView>
+            <TextView type="header__b16">STAC API</TextView>
           </template>
           <TabSectionApiStac :title="title" :stacUrl="url" :stac="data" />
         </b-tab>

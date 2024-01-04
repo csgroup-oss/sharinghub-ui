@@ -45,6 +45,44 @@ export default defineComponent({
   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
   "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
+  &__header {
+    &__13 {
+      font-size: 13px;
+    }
+
+    &__b13 {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    &__14 {
+      font-size: 14px;
+    }
+
+    &__b14 {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    &__16 {
+      font-size: 16px;
+    }
+
+    &__b16 {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    &__20 {
+      font-size: 20px;
+    }
+
+    &__b20 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+  }
+
   &__Title {
     &-1 {
       font-size: 20px;
@@ -67,9 +105,10 @@ export default defineComponent({
     &-2 {
       font-size: 0.75em;
     }
-     &-3 {
+
+    &-3 {
       font-size: 0.7em;
-       letter-spacing: 1px;
+      letter-spacing: 1px;
     }
   }
 }
