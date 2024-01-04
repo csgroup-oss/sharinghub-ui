@@ -7,7 +7,6 @@
         <b-button
           v-if="canUseJupyter"
           @click="$event => openJupyterLink($event, jupyter_link)"
-          id="popover-share-btn"
           variant="outline-dark"
           size="sm"
           :disabled="!jupyter_link || !currentUser"
