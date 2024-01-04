@@ -109,7 +109,7 @@ export default defineComponent({
     </template>
     <template v-else>
       <div class="card-hover">
-        <div class="p-d-flex p-ai-center p-justify-end  mt-2" v-if="!!stac.properties.keywords">
+        <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2" v-if="!!stac.properties.keywords">
           <b-badge variant="info" class="mx-1">{{ stac.properties.keywords[0] }}</b-badge>
           <b-badge variant="info mx-1">{{ stac.properties.keywords[4] }}</b-badge>
           <b-badge variant="light">

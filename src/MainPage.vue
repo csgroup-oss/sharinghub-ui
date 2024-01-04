@@ -57,7 +57,7 @@ import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import TextView from "@/_Hub/components/TextView.vue";
-import {BForm, BFormGroup, BFormInput, BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import {CONNEXION_MODE, get, getLocalToken, removeLocalToken, setLocalToken} from "@/_Hub/tools/https";
 import {CONFIG_URL, LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
@@ -75,7 +75,6 @@ Vue.use(BootstrapVueIcons);
 export default defineComponent({
   name: "MainPage",
   components: {
-    BFormInput, BForm, BFormGroup,
     Awaiter,
     TextView,
     HeaderNavbar,
@@ -98,7 +97,7 @@ export default defineComponent({
       immediate: true,
       async handler(data, old_data) {
         this.isLoading = false;
-        if (data.mode !== old_data?.mode  && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
+        if (data.mode !== old_data?.mode && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
           removeLocalToken();
           this.initWithUserCredentials().then(() => {
             this.fetchTitles();
@@ -194,7 +193,7 @@ export default defineComponent({
         if (response.data) {
           let entries = {};
           Object.entries(response.data.topics).forEach(([topic, values]) => {
-            entries[topic] = values['locales'];
+            entries[topic] = {...values['locales'], icon: values["icon"]};
           });
           return entries;
         }
@@ -218,9 +217,7 @@ export default defineComponent({
           icon = "view-stacked";
         }
         const val = value[locale] ? value[locale] : value['en'];
-        routes.push(Object.assign(
-          {route: key, icon}, val)
-        );
+        routes.push({...val, route: key, ico: value["icon"] || icon});
       });
       return routes;
     }

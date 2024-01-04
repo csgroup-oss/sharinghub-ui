@@ -57,22 +57,22 @@ export default {
   "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
   h1 {
-    font-size: 1.5rem;
-  }
-  h2 {
-    font-size: 1.4rem;
-  }
-  h3 {
     font-size: 1.3rem;
   }
-  h4 {
+  h2 {
     font-size: 1.2rem;
   }
-  h5 {
+  h3 {
     font-size: 1.1rem;
   }
+  h4 {
+    font-size: 1rem;
+  }
+  h5 {
+    font-size: 0.9rem;
+  }
   h6 {
-    font-size: 1.0rem;
+    font-size: 0.9rem;
   }
   pre {
     background-color: #eee;

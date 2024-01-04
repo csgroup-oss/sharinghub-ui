@@ -67,7 +67,6 @@ export default defineComponent({
           let boolean = route ? stac.id.includes(route) : idx === 0;
           if (boolean) {
             this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
-            console.log("thjis", this.title);
             return true;
           }
           return false;

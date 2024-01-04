@@ -4,7 +4,7 @@
       <b-row v-if="!loading" class="float-right">
         <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data"/>
       </b-row>
-      <h1>
+      <text-view type="header__b20">
         <template v-if="icon">
           <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
         </template>
@@ -13,8 +13,8 @@
           <b-icon-arrow-left/>
         </b-button>
         <span class="title">{{ title }}</span>
-      </h1>
-      <p class="lead" v-if="url">
+      </text-view>
+      <text-view type="header__16" class="p-d-block p-pt-1 p-pb-3" v-if="url">
         <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
           <template #catalog>
             <small>
@@ -32,7 +32,7 @@
 
           </template>
         </b-button-group>
-      </p>
+      </text-view>
 
       <b-col cols="12">
         <b-row v-if="!!data?.properties">
@@ -52,12 +52,14 @@ import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from "@/components/Keywords.vue";
 import {get} from "@/_Hub/tools/https";
-import {CONFIG_URL, PROXY_URL} from "@/_Hub/Endpoint";
+import {CONFIG_URL} from "@/_Hub/Endpoint";
+import TextView from "@/_Hub/components/TextView.vue";
 
 
 export default {
   name: 'StacHeader',
   components: {
+    TextView,
     Keywords,
     StacLink,
     Source
@@ -65,7 +67,7 @@ export default {
   data() {
     return {
       jupyterLabUrl: undefined,
-      loading:true,
+      loading: true,
     };
   },
   computed: {
@@ -142,48 +144,4 @@ h1 {
   display: none !important;
 }
 
-.p-chip {
-  font-size: 0.7em !important;
-  border-radius: 0.5rem !important;
-  background: transparent;
-  max-width: 300px;
-  text-overflow: ellipsis;
-  text-wrap: normal;
-  overflow: hidden;
-  cursor: pointer;
-  margin: 0 3px;
-
-  &__outline {
-    border: 1px rgba($primary-color, 0.5) solid;
-
-    :hover {
-      color: $primary-color;
-      transition: color ease-in-out 0.2ms;
-    }
-  }
-
-  &__info {
-    @include fade_background($info)
-  }
-
-  &__primary {
-    @include fade_background($primary-color)
-  }
-
-  &__danger {
-    @include fade_background($danger)
-  }
-
-  &__red {
-    @include fade_background($red)
-  }
-
-  &__darkgrey {
-    @include fade_background($dark-grey)
-  }
-
-  &__purple {
-    @include fade_background($purple)
-  }
-}
 </style>

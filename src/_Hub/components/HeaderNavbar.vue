@@ -12,8 +12,10 @@
             <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
-            <b-input-group-prepend is-text>
-              <b-icon icon="search"/>
+            <b-input-group-prepend>
+              <b-button @click="handleEnter()" variant="outline-primary">
+                <b-icon icon="search"/>
+              </b-button>
             </b-input-group-prepend>
           </b-input-group>
         </div>
@@ -23,9 +25,9 @@
         <template v-if="routes.length > 0">
           <nav-item v-for="item in routes" class="p-mx-1 p-d-flex p-ai-center">
             <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
-            <b-icon  v-else :icon="item.icon"/>
+            <b-icon v-else :icon="item.icon"/>
             <router-link class="mx-1" :to="`/${item.route}`">
-             <text-view type="header__b14"> {{ item.title }}</text-view>
+              <text-view type="header__b14"> {{ item.title }}</text-view>
             </router-link>
           </nav-item>
         </template>
@@ -35,7 +37,7 @@
           <nav-item class="p-mx-1">
             <b-icon icon="book"/>
             <a :href="docs_url" target="_blank">
-               <text-view type="header__b14"> Docs</text-view>
+              <text-view type="header__b14"> Docs</text-view>
             </a>
           </nav-item>
           <Localisation/>
@@ -71,9 +73,9 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
-import {LOGIN_URL, LOGOUT_URL, PROXY_URL, DOCS_URL} from "@/_Hub/Endpoint";
+import {DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
-import {get, removeLocalToken, CONNEXION_MODE} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
 
 
@@ -127,13 +129,13 @@ export default defineComponent({
     async logout() {
       get(LOGOUT_URL).then((response) => {
         if (response) {
-          const auth = {...this.auth, mode : CONNEXION_MODE.DEFAULT_TOKEN, user:null };
+          const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
           this.$store.commit("setUserInfo", auth);
         }
       });
     },
     handleEnter() {
-      if (this.value && this.$route.name !== "search") {
+      if ( this.$route.name !== "search") {
         this.$router.push(
           {
             path: `/search/external/${this.catalogUrl}`,
