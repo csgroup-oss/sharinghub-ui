@@ -33,7 +33,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth']),
+    ...mapState(['auth', 'uiLanguage']),
     updatedTime() {
       const data = this.stac.properties.updated;
       const now = DateTime.now();
@@ -46,7 +46,8 @@ export default defineComponent({
       } else if (days <= 30) {
         return `${this.$t('fields.update_days', [Math.round(days)])}`;
       } else {
-        return `${this.$t('fields.update_date', [date.toLocaleString({
+        const lang = ["fr", "en"].includes(this.uiLanguage) ? this.uiLanguage : "en";
+        return `${this.$t('fields.update_date', [date.setLocale(lang).toLocaleString( {
           month: 'long',
           day: 'numeric',
           year: "numeric"

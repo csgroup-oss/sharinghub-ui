@@ -13,7 +13,7 @@
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
             <b-input-group-prepend style="height: 33px">
-              <b-button @click="handleEnter()" variant="outline-primary">
+              <b-button @click="handleEnter()" :disabled="!isAuthenticated" variant="outline-primary">
                 <b-icon icon="search"/>
               </b-button>
             </b-input-group-prepend>
@@ -131,12 +131,16 @@ export default defineComponent({
     async logout() {
       get(LOGOUT_URL).then((response) => {
         if (response) {
+          this.isAuthenticated = false;
           const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
           this.$store.commit("setUserInfo", auth);
         }
       });
     },
     handleEnter() {
+      if(!this.isAuthenticated){
+        return;
+      }
       if (this.$route.name !== "search") {
         this.$router.push(
           {
