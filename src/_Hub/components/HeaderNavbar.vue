@@ -113,15 +113,17 @@ export default defineComponent({
     auth: {
       immediate: true,
       async handler(data) {
-        this.avatar_url = data?.user?.avatar_url;
-        if (data?.user?.email) {
-          get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
-            if (response.data) {
-              this.avatar_url = response.data.avatar_url;
-            }
-          });
+        if (data.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
+          this.avatar_url = data?.user?.avatar_url;
+          if (data?.user?.email) {
+            get(PROXY_URL.concat(`avatar?email=${data.user.email}`)).then(response => {
+              if (response.data) {
+                this.avatar_url = response.data.avatar_url;
+              }
+            });
+          }
+          this.isAuthenticated = !!data.user;
         }
-        this.isAuthenticated = !!data.user;
       }
     },
   },
@@ -135,7 +137,7 @@ export default defineComponent({
       });
     },
     handleEnter() {
-      if ( this.$route.name !== "search") {
+      if (this.$route.name !== "search") {
         this.$router.push(
           {
             path: `/search/external/${this.catalogUrl}`,
@@ -155,12 +157,14 @@ export default defineComponent({
 .nav-bar {
   border-bottom: rgba($secondary-color, 0.05) 2px solid;
   padding-top: 8px !important;
-  h3{
-    font-size:1.5rem;
+
+  h3 {
+    font-size: 1.5rem;
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
   }
-  input{
+
+  input {
     height: 33px;
   }
 

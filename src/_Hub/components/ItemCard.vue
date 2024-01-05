@@ -2,7 +2,7 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import {router} from "@/init";
-import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
+import {get} from "@/_Hub/tools/https";
 import {DateTime, Interval} from "luxon";
 import {PROXY_URL} from "@/_Hub/Endpoint";
 import Utils from "@/utils";
@@ -54,7 +54,7 @@ export default defineComponent({
       }
     },
     getDescription() {
-      const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\)/g;
+      const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties.description.replace(regex, "");
       return r.substr(0, 120).concat(" ...");
     }
@@ -74,13 +74,6 @@ export default defineComponent({
     },
     getPreview() {
       let preview = this.stac.links.find(el => el.rel === "preview")?.href;
-      if (preview) {
-        if (this.auth.mode !== CONNEXION_MODE.CONNECTED && !preview.includes("gitlab_token")) {
-          preview = preview.concat(`?gitlab_token=${this.auth.token}`);
-        }
-      } else {
-        preview = this.owner;
-      }
       return preview || this.owner;
     },
     getStarProject(url) {
@@ -108,37 +101,45 @@ export default defineComponent({
       <Awaiter type="small" :is-visible="loading"/>
     </template>
     <template v-else>
-      <div class="card-hover">
-        <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2" v-if="!!stac.properties.keywords">
-          <b-badge variant="info" class="mx-1">{{ stac.properties.keywords[0] }}</b-badge>
-          <b-badge variant="info mx-1">{{ stac.properties.keywords[4] }}</b-badge>
-          <b-badge variant="light">
-            <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
-            {{ rankRate }}
-          </b-badge>
+      <div class="items-card">
+        <div>
+          <img :src="getPreview()">
+          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+            <b-badge variant="light">
+              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
+              {{ rankRate }}
+            </b-badge>
+          </div>
+          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
+            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="info" class="m-1">
+              {{ tag }}
+            </b-badge>
+          </div>
 
         </div>
-        <div class="card-hover__content">
-          <div class="card-hover__title">
-            <TextView type="header__b16">{{ stac.properties.title }}</TextView>
-          </div>
-          <p class="card-hover__text">
-            <Description compact inline :description="getDescription"/>
-          </p>
-          <a href="#" class="card-hover__link">
-            <span>More info</span>
-          </a>
-        </div>
-        <div class="card-hover__extra">
-          <div>
-            <div v-if="!!stac.properties.updated">
-              <small class="p-text-capitalize">
+        <div class="items-card__content p-px-3">
+          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-evenly">
+            <h3 class="items-card__content__title">
+              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
+            </h3>
+
+            <div class="items-card__content__description">
+              <Description compact inline :description="getDescription"/>
+            </div>
+
+            <h3 class="p-d-flex p-jc-center mt-1">
+              <b-button size="sm" variant="primary"> {{ $t('showMore') }}</b-button>
+            </h3>
+
+            <div class="items-card__content__extra" v-if="!!stac.properties.updated">
+              <small class="">
                 <span class="p-text-secondary px-2">•</span>
                 {{ updatedTime }}</small>
             </div>
+
           </div>
         </div>
-        <img :src="getPreview()">
+
       </div>
     </template>
   </div>
@@ -152,10 +153,10 @@ img {
   height: auto;
 }
 
-.card-hover {
+.items-card {
   $root: &;
-  width: 360px;
-  height: 300px;
+  width: 300px;
+  height: 360px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
@@ -165,173 +166,50 @@ img {
   border-radius: 0.8rem;
   border: 1px #b5b9bb solid;
 
-  &:has(#{$root}__link:hover) {
-    #{$root}__extra {
-      transform: translateY(0);
-      transition: transform 0.35s;
-    }
-  }
-
-  &:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-
-    #{$root} {
-      &__content {
-        background-color: rgba(map-get($theme-colors, 'info'), 1);
-        opacity: 1;
-        color: white;
-        bottom: 100%;
-        transform: translateY(100%);
-        padding: 4px 8px;
-        transition: all 0.35s cubic-bezier(.1, .72, .4, .97);
-        h1,h2,h3,h4,h5{
-          color: #FFFFFF !important;
-        }
-      }
-
-      &__title {
-        span {
-          color: #FFFFFF !important;
-        }
-      }
-
-      &__link {
-        color: #FFFFFF;
-        font-weight: 800;
-        opacity: 1;
-        transform: translate(-50%, 0);
-        transition: all 0.3s 0.35s cubic-bezier(.1, .72, .4, .97);
-      }
-
-    }
-
-    img {
-      transform: scale(1);
-      transition: 0.35s 0.1s transform cubic-bezier(.1, .72, .4, .97);
-    }
-
-  }
-
-  .pi {
-    font-size: 0.8rem;
-    margin-right: 2px;
-  }
-
-  &:after {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  &__content {
-    width: 100%;
-    text-align: center;
-    background-color: #FFFFFF;
-    padding: 0 4px 8px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    transform: translateY(0);
-    transition: all 0.35s 0.35s cubic-bezier(.1, .72, .4, .97);
-    will-change: bottom, background-color, transform, padding;
-    z-index: 1;
-
-    &::before,
-    &::after {
-      content: '';
-      width: 100%;
-      height: 120px;
-      background-color: inherit;
-      position: absolute;
-      left: 0;
-      z-index: -1;
-    }
-
-    &::before {
-      top: -80px;
-      clip-path: ellipse(60% 80px at bottom center);
-    }
-
-    &::after {
-      bottom: -80px;
-      clip-path: ellipse(60% 80px at top center);
-    }
-  }
-
-  &__title {
-    font-size: 1.5rem;
-    margin-bottom: 1em;
-
-    span {
-      color: map-get($theme-colors, 'primary');
-    }
-  }
-
-  &__text {
-    font-size: 0.82rem;
-  }
-
-  &__link {
-    position: absolute;
-    bottom: -2.5rem;
-    left: 50%;
-    transform: translate(-50%, 10%);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    text-decoration: none;
-    color: map-get($theme-colors, 'secondary');
-    opacity: 0;
-    padding: 10px;
-    transition: all 0.35s;
-
-    &:hover {
-      svg {
-        transform: translateX(4px);
-      }
-    }
-
-    svg {
-      width: 18px;
-      margin-left: 4px;
-      transition: transform 0.3s;
-    }
-  }
-
-  &__extra {
-    height: 50%;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-    text-align: center;
-    background-color: #FFFFFF;
-    padding: 20px;
-    bottom: 0;
-    z-index: 0;
-    color: #000000;
-    transform: translateY(100%);
-    will-change: transform;
-    transition: transform 0.35s;
-
-    span {
-      color: map-get($theme-colors, "primary");
-    }
-  }
 
   img {
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: 150px;
+    object-fit: contain;
     object-position: center;
     z-index: -1;
     transform: scale(1.2);
     transition: 0.35s 0.35s transform cubic-bezier(.1, .72, .4, .97);
+  }
+
+  &__content {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__description {
+      font-size: 12px;
+      text-wrap: wrap;
+      max-height: 51px;
+    }
+
+    &__tag {
+      padding: 0 10px;
+    }
+  }
+
+  small {
+    font-size: 12px;
+  }
+
+  .btn-sm {
+    height: 20px;
+    font-size: 12px;
+    padding: 1px;
   }
 }
 

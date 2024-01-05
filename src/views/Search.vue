@@ -222,7 +222,7 @@ export default {
         url = STAC_ROOT_URL;
       }
       if (this.auth.mode !== CONNEXION_MODE.CONNECTED) {
-          url = url.concat(`?gitlab_token=${this.auth.token}`);
+       //   url = url.concat(`?gitlab_token=${this.auth.token}`);
       }
       if (url){
           await this.$store.dispatch('load', {url: url});

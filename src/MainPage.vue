@@ -25,9 +25,15 @@
           </b-button-group>
 
           <b-button-group size="sm" class="right">
-            <b-button size="sm" :href="'/docs/'.concat(uiLanguage).concat('/terms-of-service')" variant="link"> {{ $t("fields.terms_of_service") }}</b-button>
-            <b-button size="sm"  variant="link" :href="'/docs/'.concat(uiLanguage).concat('/privacy')"> {{ $t("fields.privacy") }}</b-button>
-            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/about-us')"> {{ $t("fields.about") }}</b-button>
+            <b-button size="sm" :href="'/docs/'.concat(uiLanguage).concat('/terms-of-service')" variant="link">
+              {{ $t("fields.terms_of_service") }}
+            </b-button>
+            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/privacy')">
+              {{ $t("fields.privacy") }}
+            </b-button>
+            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/about-us')">
+              {{ $t("fields.about") }}
+            </b-button>
           </b-button-group>
 
         </div>
@@ -44,7 +50,7 @@ import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
-import {CONNEXION_MODE, get, getLocalToken, removeLocalToken, setLocalToken} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get, getLocalToken, removeLocalToken} from "@/_Hub/tools/https";
 import {CONFIG_URL, LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
@@ -67,7 +73,6 @@ export default defineComponent({
   data() {
     return {
       isLoading: true,
-      defaultToken: undefined,
       headerRoutes: undefined,
     };
   },
@@ -131,19 +136,19 @@ export default defineComponent({
         .then(async (userDataResponse) => {
           if (userDataResponse.data) {
             let user = userDataResponse.data;
-            const defaultToken = await this.getDefaultToken();
             let token;
             let connexion_mode = CONNEXION_MODE.CONNECTED;
             if (getLocalToken()) {
               token = getLocalToken();
               connexion_mode = CONNEXION_MODE.PRIVATE_TOKEN;
-              if (token === defaultToken) {
-                user = null;
-                connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
-              }
             } else {
-              const {access_token} = (await get(USER_INFO).then((res) => res.data));
-              token = access_token;
+              try {
+                const {access_token} = (await get(USER_INFO).then((res) => res.data));
+                token = access_token;
+              } catch (e) {
+                connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
+                console.log("default token");
+              }
             }
             this.$store.commit("setUserInfo", {user, token: token, mode: connexion_mode});
             this.isLoading = false;
@@ -153,33 +158,13 @@ export default defineComponent({
           }
         })
         .catch(() => {
-          this.defaultInit();
+          this.isLoading = false;
+          if ( !["Login", "Home"].includes(this.$route.name)  ) {
+            this.$router.push("/login");
+          }
         });
     },
 
-    async getDefaultToken() {
-      return get(CONFIG_URL).then((configResponse) => {
-        return configResponse.data?.gitlab?.oauth['default-token'];
-      });
-    },
-
-    async defaultInit() {
-      this.defaultToken = await this.getDefaultToken();
-      if (!this.defaultToken) {
-        this.isLoading = false;
-        if (this.$route.name !== "Login") {
-          this.$router.push("/login");
-        }
-      } else {
-        setLocalToken(this.defaultToken);
-        this.$store.commit("setUserInfo", {user: null, token: this.defaultToken, mode: CONNEXION_MODE.DEFAULT_TOKEN});
-        this.isLoading = false;
-        if (this.$route.fullPath === "") {
-          this.$router.push("/");
-        }
-      }
-
-    },
 
     async fetchTitles() {
       return get(CONFIG_URL).then((response) => {

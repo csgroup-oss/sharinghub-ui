@@ -1,6 +1,6 @@
 <script>
 import {defineComponent} from 'vue';
-import {CONNEXION_MODE, get, setLocalToken, removeLocalToken} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get, setLocalToken, } from "@/_Hub/tools/https";
 import {PROXY_URL, LOGIN_URL} from "@/_Hub/Endpoint";
 
 
