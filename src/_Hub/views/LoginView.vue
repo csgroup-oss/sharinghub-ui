@@ -29,9 +29,8 @@ export default defineComponent({
         .then(async (userDataResponse) => {
           if (userDataResponse.data) {
             let user = userDataResponse.data;
-            let connexion_mode = CONNEXION_MODE.HEADLESS;
+            let connexion_mode = CONNEXION_MODE.PRIVATE_TOKEN;
             this.$store.commit("setUserInfo", {user, token: this.privateToken, mode: connexion_mode});
-            removeLocalToken();
             this.isLoading = false;
             this.$router.push("/");
           }

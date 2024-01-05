@@ -1,54 +1,41 @@
 <template>
-  <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page p-jc-between">
-    <header-navbar v-if="!!headerRoutes" :routes="headerRoutes"/>
+  <div class="">
+    <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page">
+      <header-navbar v-if="!!headerRoutes" :routes="headerRoutes"/>
 
-    <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
-      <Awaiter :is-visible="isLoading"/>
+      <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
+        <Awaiter :is-visible="isLoading"/>
+      </div>
+
+      <div v-else class="w-100 h-100 p-pt-0">
+        <router-view/>
+      </div>
+
+
     </div>
 
-    <div v-else class="w-100 h-100 p-pt-0">
-      <router-view/>
-      <!--      <b-alert v-else show variant="danger" class="container">-->
-      <!--        <h4 class="alert-heading"><strong> {{ $t('errors.authFail.title') }}</strong></h4>-->
-      <!--        <p>-->
-      <!--          {{ $t('errors.authFail.description') }}-->
-      <!--        </p>-->
-      <!--        <p class="mb-0">-->
-      <!--          {{ $t('errors.authFail.information') }}-->
-      <!--          <div>-->
-      <!--            <a :href="login">-->
-      <!--              <b-button class="p-mt-2">-->
-      <!--                {{ $t('Login') }}-->
-      <!--              </b-button>-->
-      <!--            </a>-->
-      <!--            <hr>-->
+    <footer class="w-100 p-mt-6">
+      <div class="p-px-4 p-py-3 container footer">
 
-      <!--            <b-form @submit="go">-->
-      <!--              <b-form-group-->
-      <!--                id="select-token" :label="$t('index.specifyToken')" label-for="token"-->
-      <!--              >-->
-      <!--                <b-form-input id="token" type="password" :value="localToken" @input="setToken" placeholder="token..."/>-->
-      <!--                <small> {{ $t('index.specifyTokenDetail') }} </small>-->
-      <!--              </b-form-group>-->
+        <div class="p-d-flex p-jc-between">
+          <b-button-group size="sm" class="left">
+            <b-button size="sm" variant="link" disabled>
+              {{ $t("fields.copyright") }}
+            </b-button>
+          </b-button-group>
 
-      <!--              <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>-->
+          <b-button-group size="sm" class="right">
+            <b-button size="sm" :href="'/docs/'.concat(uiLanguage).concat('/terms-of-service')" variant="link"> {{ $t("fields.terms_of_service") }}</b-button>
+            <b-button size="sm"  variant="link" :href="'/docs/'.concat(uiLanguage).concat('/privacy')"> {{ $t("fields.privacy") }}</b-button>
+            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/about-us')"> {{ $t("fields.about") }}</b-button>
+          </b-button-group>
 
-      <!--            </b-form>-->
-
-      <!--          </div>-->
-      <!--        </p>-->
-      <!--      </b-alert>-->
-    </div>
-
-
-    <footer class="border-rose w-100 footer">
-      <div class="w-100 p-px-4 p-py-3 container">
-        <text-view type="Small-2" class="">
-          © Sharing HUB 2023
-        </text-view>
+        </div>
       </div>
     </footer>
+
   </div>
+
 </template>
 
 
@@ -56,7 +43,6 @@
 import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
-import TextView from "@/_Hub/components/TextView.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import {CONNEXION_MODE, get, getLocalToken, removeLocalToken, setLocalToken} from "@/_Hub/tools/https";
 import {CONFIG_URL, LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
@@ -76,7 +62,6 @@ export default defineComponent({
   name: "MainPage",
   components: {
     Awaiter,
-    TextView,
     HeaderNavbar,
   },
   data() {
@@ -151,7 +136,7 @@ export default defineComponent({
             let connexion_mode = CONNEXION_MODE.CONNECTED;
             if (getLocalToken()) {
               token = getLocalToken();
-              connexion_mode = CONNEXION_MODE.HEADLESS;
+              connexion_mode = CONNEXION_MODE.PRIVATE_TOKEN;
               if (token === defaultToken) {
                 user = null;
                 connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
@@ -180,12 +165,20 @@ export default defineComponent({
 
     async defaultInit() {
       this.defaultToken = await this.getDefaultToken();
-      setLocalToken(this.defaultToken);
-      this.$store.commit("setUserInfo", {user: null, token: this.defaultToken, mode: CONNEXION_MODE.DEFAULT_TOKEN});
-      this.isLoading = false;
-      if (this.$route.fullPath === "") {
-        this.$router.push("/");
+      if (!this.defaultToken) {
+        this.isLoading = false;
+        if (this.$route.name !== "Login") {
+          this.$router.push("/login");
+        }
+      } else {
+        setLocalToken(this.defaultToken);
+        this.$store.commit("setUserInfo", {user: null, token: this.defaultToken, mode: CONNEXION_MODE.DEFAULT_TOKEN});
+        this.isLoading = false;
+        if (this.$route.fullPath === "") {
+          this.$router.push("/");
+        }
       }
+
     },
 
     async fetchTitles() {
@@ -231,12 +224,14 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import "assets/colors";
+@import "theme/variables";
 
+footer {
+  bottom: 0;
+  border-top: 1px rgba(map-get($theme-colors, "secondary"), 0.1) solid;
+}
 
-.main-page {
-  .footer {
-    display: none;
-    background: rgba($grey-color, 1);
-  }
+.btn-sm {
+  font-size: 0.8rem;
 }
 </style>

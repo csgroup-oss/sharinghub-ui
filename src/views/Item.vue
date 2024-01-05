@@ -10,8 +10,7 @@
           </ReadMore>
         </section>
         <CollectionLink v-if="collectionLink" :link="collectionLink" />
-
-        <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
+        <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
       </b-col>
 
       <b-col cols="5" class="left">
@@ -28,8 +27,9 @@
           </b-card>
         </section>
         <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
-        <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
+
         <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
+          <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
       </b-col>
 
     </b-row>

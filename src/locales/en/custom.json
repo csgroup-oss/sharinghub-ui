@@ -12,6 +12,10 @@
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
     "no_data_found" : "No results",
-    "login" : "Log in"
+    "login" : "Log in",
+    "copyright" : "All rights reserved © Sharing HUB 2023",
+    "about" : "About",
+    "privacy" : "Privacy",
+    "terms_of_service" : "Terms of service"
   }
 }

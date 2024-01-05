@@ -2,13 +2,11 @@
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import {mapState} from "vuex";
-import ItemCard from "@/_Hub/components/ItemCard.vue";
+import ItemCard from "@/_Hub/components/ItemCard2.vue";
 import {get} from "@/_Hub/tools/https";
 import _ from "lodash";
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
-import I18N from "@radiantearth/stac-fields/I18N";
-import {loadMessages, translateFields} from "@/i18n";
 
 
 export default defineComponent({
@@ -22,7 +20,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['data', 'auth', 'entriesRoute','uiLanguage' ]),
+    ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage']),
   },
   watch: {
     $route: {
@@ -40,10 +38,10 @@ export default defineComponent({
         }
       }
     },
-     entriesRoute: {
+    entriesRoute: {
       immediate: true,
-      async handler(entries) {
-      this.dataList = [];
+      async handler() {
+        this.dataList = [];
         this.dataList = [...await this.fetchStac()];
       }
     }
@@ -52,7 +50,12 @@ export default defineComponent({
     async fetchStac(url = STAC_ROOT_URL) {
       this.loading = true;
       let route = this.$route.params.pathMatch;
-      const data = await get(url).then((response) => response.data);
+      const data = await get(url).then((response) => response.data)
+        .catch(() => {
+          if (this.$route.name !== "Login") {
+            this.$router.push("/login");
+          }
+        });
       const child = data.links?.filter((el) => el.rel === "child");
       const child_requests = child.map(async (el) => {
         return get(el.href).then((response) => {

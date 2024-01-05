@@ -1,9 +1,9 @@
 <template>
   <b-card no-body :key="extension" :class="['metadata-card', `ext-${extension}`]">
-    <b-card-title>
+    <h3>
       <span v-if="label" v-html="label" />
       <template v-else>{{ $t('metadata.general') }}</template>
-    </b-card-title>
+    </h3>
     <section class="border metadata-rows">
       <MetadataEntry v-for="(entry, key) in ignoreMetadata()" v-bind="entry" :field="key" :key="key" />
     </section>

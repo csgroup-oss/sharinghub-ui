@@ -63,7 +63,7 @@ export function removeLocalToken(){
    window.localStorage.removeItem("gitlab_token");
 }
 export const CONNEXION_MODE =  {
-  "HEADLESS" : "HEADLESS",
+  "PRIVATE_TOKEN" : "PRIVATE_TOKEN",
   "CONNECTED" : "CONNECTED",
   "DEFAULT_TOKEN" : "DEFAULT_TOKEN",
 };

@@ -8,11 +8,11 @@ import {PROXY_URL} from "@/_Hub/Endpoint";
 import Utils from "@/utils";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import {mapState} from "vuex";
-import linuxIco from "@/assets/img/linux.png";
+import linuxIco from "@/assets/img/confused-linux.jpg";
 import Description from "@/components/Description.vue";
 
 export default defineComponent({
-  name: "ItemCard_",
+  name: "ItemCard2",
   components: {
     Description,
     Awaiter,
@@ -102,72 +102,118 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="p-d-flex homeCard">
-     <template v-if="loading">
+  <div @click="seeModel($event, $props.metadata.href)"
+       v-if="!!this.stac" class="p-d-flex p-flex-column w-100 resource_card p-p-3 p-mt-5">
+    <template v-if="loading">
       <Awaiter type="small" :is-visible="loading"/>
     </template>
     <template v-else>
-      <div class="p-d-flex p-ai-center p-mb-1">
-        <img :src="getPreview()" class="p-mr-1"/>
-        <TextView>{{ this.stac.properties.title }}</TextView>
-      </div>
-      <div class="p-d-flex p-ai-center">
-        <div v-if="!!this.stac.properties.keywords" class="p-text-secondary p-d-flex p-ai-center">
-          <b-icon scale="0.8" icon="file-earmark-code"/>
-          <TextView type="Small-2">
-            {{ this.stac.properties.keywords[0] }}
-          </TextView>
-        </div>
-        <template v-if="!!this.stac.properties.updated">
-          <div class="p-text-secondary p-px-2">•</div>
-          <div class="p-text-secondary p-d-flex p-ai-center">
-            <TextView type="Small-2">
-              {{ updatedTime }}
-            </TextView>
-          </div>
-        </template>
-        <template v-if="!!rankRate">
-          <div class="p-text-secondary p-px-2">•</div>
-          <div class="p-text-secondary p-d-flex p-ai-center">
-            <TextView type="Small-1">
+      <div class="items-card">
+        <div>
+          <img :src="getPreview()">
+          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+            <b-badge variant="light">
+              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
               {{ rankRate }}
-            </TextView>
-            <b-icon-heart scale="0.65"/>
+            </b-badge>
           </div>
-        </template>
+          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap">
+            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="info" class="m-1">
+              {{ tag }}
+            </b-badge>
+          </div>
+
+        </div>
+        <div class="items-card__content p-px-3">
+          <div class="p-d-flex w-100 h-100 p-flex-column">
+            <h3 class="items-card__content__title">
+              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
+            </h3>
+
+            <div class="items-card__content__description">
+              <Description compact inline :description="getDescription"/>
+            </div>
+
+            <h3 class="p-d-flex p-jc-center mt-1">
+              <b-button size="sm" variant="primary"> {{ $t('showMore') }}</b-button>
+            </h3>
+
+            <div class="items-card__content__extra" v-if="!!stac.properties.updated">
+              <small class="">
+                <span class="p-text-secondary px-2">•</span>
+                {{ updatedTime }}</small>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </template>
   </div>
 </template>
 
 <style scoped lang="scss">
-.resource_card {
+@import "../../theme/variables.scss";
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.items-card {
+  $root: &;
+  width: 300px;
+  height: 320px;
+  position: relative;
+  overflow: hidden;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
-
-  &:after {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-
   cursor: pointer;
+  font-family: $headings-font-family;
   border-radius: 0.8rem;
   border: 1px #b5b9bb solid;
 
-  .pi {
-    font-size: 0.8rem;
-    margin-right: 2px;
-  }
+
 
   img {
-    border-radius: 0.25rem;
-    width: 1.275rem;
-    height: 1.275rem;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+    z-index: -1;
+    transform: scale(1);
+    transition: 0.35s 0.35s transform cubic-bezier(.1, .72, .4, .97);
+  }
+
+  &__content {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 45%;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__description {
+      font-size: 12px;
+    }
+  }
+
+  small {
+    font-size: 12px;
+  }
+
+  .btn-sm {
+    height: 20px;
+    font-size: 12px;
+    padding: 1px;
   }
 }
+
+
 </style>

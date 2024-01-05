@@ -12,7 +12,7 @@
             <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
-            <b-input-group-prepend>
+            <b-input-group-prepend style="height: 33px">
               <b-button @click="handleEnter()" variant="outline-primary">
                 <b-icon icon="search"/>
               </b-button>
@@ -154,6 +154,15 @@ export default defineComponent({
 
 .nav-bar {
   border-bottom: rgba($secondary-color, 0.05) 2px solid;
+  padding-top: 8px !important;
+  h3{
+    font-size:1.5rem;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  input{
+    height: 33px;
+  }
 
   .p-divider {
     border-left: solid 1px rgba($secondary-color, 0.4);

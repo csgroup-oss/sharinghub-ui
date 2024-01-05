@@ -12,7 +12,7 @@ body {
     flex-direction: column;
     //max-width: 100%; TODO removed
 	  height: 100%;
-    min-height: 100%;
+    min-height: 800px;
     gap: $block-margin;
 
     @include media-breakpoint-only(xxxl) {
