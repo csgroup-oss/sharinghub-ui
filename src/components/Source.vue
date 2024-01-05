@@ -24,7 +24,8 @@
             <span class="button-label"> {{ $t('source.share.label') }}</span>
           </TextView>
         </b-button>
-        <b-button  :disabled="!can_rate" size="sm" @click="has_rated ? starProject() : UnStarProject()" variant="outline-primary">
+        <b-button :disabled="!can_rate" size="sm" @click="has_rated ? starProject() : UnStarProject()"
+                  variant="outline-primary">
           <b-icon :icon="has_rated ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
           <TextView type="Small-1" v-html="has_rated ? ' Star' : ' Unstar'"></TextView>
         </b-button>
@@ -81,7 +82,7 @@ import URI from 'urijs';
 import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
-import {get, post} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get, post} from "@/_Hub/tools/https";
 import {PROXY_URL} from "@/_Hub/Endpoint";
 
 
@@ -234,6 +235,9 @@ export default {
       return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     },
     canUseJupyter() {
+      if (this.auth?.mode === CONNEXION_MODE.DEFAULT_TOKEN) {
+        return false;
+      }
       return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:jupyter") === "enable" : false;
     }
   },
@@ -248,10 +252,10 @@ export default {
           get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
             if (response.data) {
               this.rank_rate = response.data.length;
-              if(this.currentUser){
+              if (this.currentUser) {
                 this.can_rate = true;
                 this.has_rated = !response.data.some(el => el.user.username === this.currentUser.username
-                || el.user.web_url === this.currentUser.web_url);
+                  || el.user.web_url === this.currentUser.web_url);
               }
             }
           });

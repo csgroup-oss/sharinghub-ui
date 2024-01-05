@@ -13,7 +13,7 @@
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
             <b-input-group-prepend style="height: 33px">
-              <b-button @click="handleEnter()" :disabled="!isAuthenticated" variant="outline-primary">
+              <b-button @click="handleEnter()" :disabled="!canSearch" variant="outline-primary">
                 <b-icon icon="search"/>
               </b-button>
             </b-input-group-prepend>
@@ -75,7 +75,7 @@ import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
-import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get, getLocalToken} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
 
 
@@ -97,7 +97,8 @@ export default defineComponent({
       isAuthenticated: false,
       isLoading: false,
       value: null,
-      avatar_url: undefined
+      avatar_url: undefined,
+      canSearch : true,
     };
   },
   computed: {
@@ -107,7 +108,7 @@ export default defineComponent({
     },
     docs_url() {
       return DOCS_URL + this.$root.$i18n.locale;
-    }
+    },
   },
   watch: {
     auth: {
@@ -124,6 +125,13 @@ export default defineComponent({
           }
           this.isAuthenticated = !!data.user;
         }
+        if(data.mode === CONNEXION_MODE.CONNECTED){
+          this.canSearch = true;
+        }else if(data.mode === CONNEXION_MODE.PRIVATE_TOKEN){
+          this.canSearch = true;
+        }else {
+          this.canSearch = !! data.user;
+        }
       }
     },
   },
@@ -138,7 +146,7 @@ export default defineComponent({
       });
     },
     handleEnter() {
-      if(!this.isAuthenticated){
+      if(!this.canSearch){
         return;
       }
       if (this.$route.name !== "search") {
@@ -150,6 +158,7 @@ export default defineComponent({
       }
       this.value = null;
     },
+
   },
 
 });

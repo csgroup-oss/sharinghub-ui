@@ -147,7 +147,6 @@ export default defineComponent({
                 token = access_token;
               } catch (e) {
                 connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
-                console.log("default token");
               }
             }
             this.$store.commit("setUserInfo", {user, token: token, mode: connexion_mode});
