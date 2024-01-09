@@ -6,9 +6,9 @@ export default defineComponent({
   name: "HomeCard",
   components: {Description},
   props: {
-    topic: {
+    category: {
       type: String,
-      default: 0,
+      default: "",
     },
     index: {
       type: Number,
@@ -54,7 +54,7 @@ export default defineComponent({
           <h3> {{ title }} </h3>
           <Description v-if="!!description" :description="description"/>
         </div>
-        <b-button class="p-mb-2" :to="topic">  {{$t('showMore')}}</b-button>
+        <b-button class="p-mb-2" :to="category">  {{$t('showMore')}}</b-button>
       </div>
     </template>
     <template v-else>
@@ -64,7 +64,7 @@ export default defineComponent({
             <h3> {{ title }} </h3>
             <Description v-if="!!description" :description="description"/>
           </div>
-          <b-button class="p-mb-2" :to="topic"> {{$t('showMore')}}</b-button>
+          <b-button class="p-mb-2" :to="category"> {{$t('showMore')}}</b-button>
         </div>
         <div class="p-ml-6">
           <div class="illustration-2" :style="{backgroundImage: `url(${logo})`}">

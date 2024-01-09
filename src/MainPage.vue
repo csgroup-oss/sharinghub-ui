@@ -169,8 +169,8 @@ export default defineComponent({
       return get(CONFIG_URL).then((response) => {
         if (response.data) {
           let entries = {};
-          Object.entries(response.data.topics).forEach(([topic, values]) => {
-            entries[topic] = {...values['locales'], icon: values["icon"]};
+          Object.entries(response.data.categories).forEach(([category, values]) => {
+            entries[category] = {...values['locales'], icon: values["icon"]};
           });
           return entries;
         }

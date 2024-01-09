@@ -18,8 +18,7 @@ export default defineComponent({
       image: image,
       loading: true,
       config: undefined,
-      topics: []
-
+      categories: [],
     };
   },
   computed:{
@@ -58,11 +57,11 @@ export default defineComponent({
       get(CONFIG_URL).then((response) => {
         if (response.data) {
           let entries = {};
-          Object.entries(response.data?.topics).forEach(([topic, values]) => {
-            entries[topic] = Object.assign({logo: values['logo']}, values['locales']);
+          Object.entries(response.data?.categories).forEach(([category, values]) => {
+            entries[category] = Object.assign({logo: values['logo']}, values['locales']);
           });
-          this.topics = Object.entries(entries).map(([key, val]) => {
-            return Object.assign({topic:key, logo: val['logo']}, val[locale]);
+          this.categories = Object.entries(entries).map(([key, val]) => {
+            return Object.assign({category: key, logo: val['logo']}, val[locale]);
           });
           this.config =response.data.root.locales[locale];
           this.loading = false;
@@ -94,7 +93,7 @@ export default defineComponent({
     </div>
 
     <div class="w-100 p-d-flex p-justify-center p-flex-column p-ai-center">
-      <div v-for="(el, key) in topics" :key="key" class="p-mb-6 w-60">
+      <div v-for="(el, key) in categories" :key="key" class="p-mb-6 w-60">
         <div class="w-100">
           <home-card v-bind="el" :index="key"/>
         </div>
