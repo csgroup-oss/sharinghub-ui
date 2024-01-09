@@ -22,6 +22,10 @@ export default defineComponent({
     metadata: {
       type: Object,
       default: undefined
+    },
+    defaultPreview : {
+      type: String,
+      default: undefined
     }
   },
   data() {
@@ -47,7 +51,7 @@ export default defineComponent({
         return `${this.$t('fields.update_days', [Math.round(days)])}`;
       } else {
         const lang = ["fr", "en"].includes(this.uiLanguage) ? this.uiLanguage : "en";
-        return `${this.$t('fields.update_date', [date.setLocale(lang).toLocaleString( {
+        return `${this.$t('fields.update_date', [date.setLocale(lang).toLocaleString({
           month: 'long',
           day: 'numeric',
           year: "numeric"
@@ -57,7 +61,7 @@ export default defineComponent({
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties.description.replace(regex, "");
-      return r.substr(0, 120).concat(" ...");
+      return r.substr(0, 150).concat(" ...");
     }
   },
   async beforeMount() {
@@ -75,7 +79,7 @@ export default defineComponent({
     },
     getPreview() {
       let preview = this.stac.links.find(el => el.rel === "preview")?.href;
-      return preview || this.owner;
+      return preview || this.defaultPreview;
     },
     getStarProject(url) {
       this.loading = true;
@@ -97,22 +101,20 @@ export default defineComponent({
 
 <template>
   <div @click="seeModel($event, $props.metadata.href)"
-       v-if="!!this.stac" class="p-d-flex p-flex-column w-100 resource_card p-p-3 p-mt-5">
-    <template v-if="loading">
-      <Awaiter type="small" :is-visible="loading"/>
+       v-if="!!this.stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+    <template  v-if="loading">
+     <div class="loading">
+        <Awaiter  type="small" :is-visible="loading"/>
+     </div>
     </template>
     <template v-else>
       <div class="items-card">
-        <div>
+        <div class="background">
           <img :src="getPreview()">
           <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
-            <b-badge variant="light">
-              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
-              {{ rankRate }}
-            </b-badge>
           </div>
           <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
-            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="info" class="m-1">
+            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
               {{ tag }}
             </b-badge>
           </div>
@@ -124,18 +126,12 @@ export default defineComponent({
               <TextView type="header__b16">{{ stac.properties.title }}</TextView>
             </h3>
 
-            <div class="items-card__content__description">
+            <div class="items-card__content__description p-mb-3">
               <Description compact inline :description="getDescription"/>
             </div>
 
-            <h3 class="p-d-flex p-jc-center mt-1">
-              <b-button size="sm" variant="primary"> {{ $t('showMore') }}</b-button>
-            </h3>
-
             <div class="items-card__content__extra" v-if="!!stac.properties.updated">
-              <small class="">
-                <span class="p-text-secondary px-2">•</span>
-                {{ updatedTime }}</small>
+              <small class="">{{ updatedTime.charAt(0).toUpperCase()+updatedTime.slice(1) }}</small>
             </div>
 
           </div>
@@ -154,26 +150,35 @@ img {
   height: auto;
 }
 
+.loading {
+  width: 300px;
+  height: 360px;
+}
+
 .items-card {
   $root: &;
   width: 300px;
   height: 360px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  transition: box-shadow 0.3s ease-in-out;
   cursor: pointer;
   font-family: $headings-font-family;
   border-radius: 0.8rem;
   border: 1px #b5b9bb solid;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease-in-out;
 
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
 
   img {
     position: absolute;
+    filter: brightness(0.7);
     top: 0;
     width: 100%;
     height: 150px;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     z-index: -1;
     transform: scale(1.2);
@@ -200,6 +205,9 @@ img {
 
     &__tag {
       padding: 0 10px;
+      .badge{
+        margin:1px;
+      }
     }
   }
 

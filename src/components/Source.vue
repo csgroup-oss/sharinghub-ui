@@ -24,10 +24,10 @@
             <span class="button-label"> {{ $t('source.share.label') }}</span>
           </TextView>
         </b-button>
-        <b-button :disabled="!can_rate" size="sm" @click="has_rated ? starProject() : UnStarProject()"
+        <b-button :disabled="!can_rate" size="sm" @click="has_rated ?  UnStarProject() :starProject()"
                   variant="outline-primary">
-          <b-icon :icon="has_rated ? 'star' : 'star-fill'" scale="0.8" aria-hidden="true"></b-icon>
-          <TextView type="Small-1" v-html="has_rated ? ' Star' : ' Unstar'"></TextView>
+          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.8" aria-hidden="true"></b-icon>
+          <TextView type="Small-1" v-html="has_rated ? ' Unstar': ' Star'"></TextView>
         </b-button>
         <b-button size="sm" disabled variant="outline-dark"> {{ rank_rate }}</b-button>
       </template>
@@ -122,7 +122,7 @@ export default {
     return {
       can_rate: false,
       rank_rate: undefined,
-      has_rated: true,
+      has_rated: false,
       jupyter_link: undefined,
     };
   },
@@ -156,7 +156,7 @@ export default {
       }
     },
     currentUser() {
-      return this.$store.state.auth.user;
+      return !!this.auth.user && this.auth.mode !== CONNEXION_MODE.DEFAULT_TOKEN;
     },
     canValidate() {
       if (!this.stacLint || typeof this.stacUrl !== 'string') {
@@ -281,7 +281,7 @@ export default {
           }
 
         }
-      }
+      },
     },
   },
   methods: {
@@ -303,7 +303,7 @@ export default {
       post(PROXY_URL.concat(`projects/${projectID}/star`))
         .then((response) => {
           if (response.data) {
-            this.can_rate = false;
+            this.has_rated = true;
             this.rank_rate++;
           }
         });
@@ -316,10 +316,11 @@ export default {
       post(PROXY_URL.concat(`projects/${projectID}/unstar`))
         .then((response) => {
           if (response.data) {
-            this.can_rate = true;
-            this.rank_rate--;
+             this.rank_rate--;
+             this.has_rated = false;
           }
         });
+
     },
 
     openJupyterLink(ev, url) {

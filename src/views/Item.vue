@@ -5,7 +5,7 @@
         <section class="intro">
           <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
           <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
-          <ReadMore v-if="data.properties.description" :open="true" :lines="10" :text="$t('read.more')" :text-less="$t('read.less')">
+          <ReadMore v-if="data.properties.description" :open="true" :text="$t('read.more')" :text-less="$t('read.less')">
             <Description :description="data.properties.description" />
           </ReadMore>
         </section>
@@ -93,7 +93,6 @@ export default {
     data: {
       immediate: true,
       handler(data) {
-        console.log("data", data);
         try {
           let schema = createItemSchema(data, [this.collectionLink, this.parentLink], this.$store);
           addSchemaToDocument(document, schema);
