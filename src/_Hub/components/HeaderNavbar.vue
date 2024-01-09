@@ -4,7 +4,7 @@
       <div class="p-d-flex p-ai-center">
         <text-view class="p-mr-4">
           <router-link to="/" class="cursor">
-            <h3>SharingHUB</h3>
+            <h3><img width="40px" height="40px" :src="logo"> SharingHUB</h3>
           </router-link>
         </text-view>
         <div class="">
@@ -77,6 +77,7 @@ import {DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import {CONNEXION_MODE, get, getLocalToken} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
+import logoImage from "@/assets/img/logo.png";
 
 
 export default defineComponent({
@@ -99,6 +100,7 @@ export default defineComponent({
       value: null,
       avatar_url: undefined,
       canSearch : true,
+      logo: logoImage,
     };
   },
   computed: {
