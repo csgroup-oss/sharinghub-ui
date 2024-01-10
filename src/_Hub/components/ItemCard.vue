@@ -23,7 +23,7 @@ export default defineComponent({
       type: Object,
       default: undefined
     },
-    defaultPreview : {
+    defaultPreview: {
       type: String,
       default: undefined
     }
@@ -61,12 +61,18 @@ export default defineComponent({
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties.description.replace(regex, "");
-      return r.substr(0, 150).concat(" ...");
+      return r.substr(0, 160).concat(" ...");
     }
   },
   async beforeMount() {
     let url = this.$props.metadata.href;
-    this.stac = (await get(url)).data;
+    await get(url).then((response) => {
+      if (response.data) {
+        this.stac = response.data;
+      }
+    }).catch(() =>{
+      this.$refs.card.style.display = "none";
+    });
     const projectID = Utils.getProjectID(this.stac.id);
     if (projectID) {
       this.getStarProject(projectID);
@@ -79,7 +85,7 @@ export default defineComponent({
     },
     getPreview() {
       let preview = this.stac.links.find(el => el.rel === "preview")?.href;
-      return preview || this.defaultPreview;
+      return preview;
     },
     getStarProject(url) {
       this.loading = true;
@@ -100,46 +106,52 @@ export default defineComponent({
 </script>
 
 <template>
-  <div @click="seeModel($event, $props.metadata.href)"
-       v-if="!!this.stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
-    <template  v-if="loading">
-     <div class="loading">
-        <Awaiter  type="small" :is-visible="loading"/>
-     </div>
-    </template>
-    <template v-else>
-      <div class="items-card">
-        <div class="background">
-          <img :src="getPreview()">
-          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
-          </div>
-          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
-            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
-              {{ tag }}
-            </b-badge>
-          </div>
-
+  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div @click="seeModel($event, $props.metadata.href)"
+         v-if="!!this.stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+      <template v-if="loading">
+        <div class="loading">
+          <Awaiter type="small" :is-visible="loading"/>
         </div>
-        <div class="items-card__content p-px-3">
-          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-evenly">
-            <h3 class="items-card__content__title">
-              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
-            </h3>
-
-            <div class="items-card__content__description p-mb-3">
-              <Description compact inline :description="getDescription"/>
+      </template>
+      <template v-else>
+        <div class="items-card">
+          <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
+            <img v-if="getPreview()" :src="getPreview()">
+            <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+              <b-badge variant="secondary">
+                <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
+                {{ rankRate }}
+              </b-badge>
             </div>
-
-            <div class="items-card__content__extra" v-if="!!stac.properties.updated">
-              <small class="">{{ updatedTime.charAt(0).toUpperCase()+updatedTime.slice(1) }}</small>
+            <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
+              <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
+                {{ tag }}
+              </b-badge>
             </div>
 
           </div>
-        </div>
+          <div class="items-card__content p-px-3">
+            <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
+              <h3 class="items-card__content__title">
+                <TextView type="header__b16">{{ stac.properties.title }}</TextView>
+              </h3>
 
-      </div>
-    </template>
-  </div>
+              <div class="items-card__content__description p-mb-3">
+                <Description compact inline :description="getDescription"/>
+              </div>
+
+              <div class="items-card__content__extra" v-if="!!stac.properties.updated">
+                <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </template>
+    </div>
+  </b-col>
 </template>
 
 <style scoped lang="scss">
@@ -157,13 +169,15 @@ img {
 
 .items-card {
   $root: &;
-  width: 300px;
+  display: flex;
+  border-radius: 0.8rem;
+  flex-direction: column;
+  min-width: 300px;
   height: 360px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   font-family: $headings-font-family;
-  border-radius: 0.8rem;
   border: 1px #b5b9bb solid;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.3s ease-in-out;
@@ -172,13 +186,20 @@ img {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
 
+  .no-preview {
+    background: rgba(black, 0.5);
+  }
+
+  &__title {
+    height: 45%;
+  }
+
   img {
     position: absolute;
-    filter: brightness(0.7);
     top: 0;
     width: 100%;
     height: 150px;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     z-index: -1;
     transform: scale(1.2);
@@ -189,7 +210,7 @@ img {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 50%;
+    height: 54%;
 
     &__title {
       display: flex;
@@ -205,8 +226,9 @@ img {
 
     &__tag {
       padding: 0 10px;
-      .badge{
-        margin:1px;
+
+      .badge {
+        margin: 1px;
       }
     }
   }

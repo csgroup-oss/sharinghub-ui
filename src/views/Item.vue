@@ -1,16 +1,17 @@
 <template>
   <div class="item" :key="data.id">
     <b-row class="w-100">
-        <b-col cols="7" class="right">
+      <b-col cols="7" class="right">
         <section class="intro">
-          <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
-          <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
-          <ReadMore v-if="data.properties.description" :open="true" :text="$t('read.more')" :text-less="$t('read.less')">
-            <Description :description="data.properties.description" />
-          </ReadMore>
+          <DeprecationNotice v-if="data.properties.deprecated" :data="data"/>
+          <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']"/>
+          <Description v-if="data.properties.description" :description="data.properties.description"/>
+          <!--          <ReadMore on v-if="data.properties.description"  :lines="30" :text="$t('read.more')" :text-less="$t('read.less')">-->
+          <!--            <Description :description="data.properties.description" />-->
+          <!--          </ReadMore>-->
         </section>
-        <CollectionLink v-if="collectionLink" :link="collectionLink" />
-        <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
+        <CollectionLink v-if="collectionLink" :link="collectionLink"/>
+        <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks"/>
       </b-col>
 
       <b-col cols="5" class="left">
@@ -18,18 +19,18 @@
           <b-card no-body class="maps-preview">
             <b-tabs v-model="tab" ref="tabs" card pills vertical end>
               <b-tab :title="$t('map')" no-body>
-                <Map :stac="data" :stacLayerData="selectedAsset" @dataChanged="dataChanged" scrollWheelZoom />
+                <Map :stac="data" :stacLayerData="selectedAsset" @dataChanged="dataChanged" scrollWheelZoom/>
               </b-tab>
               <b-tab v-if="thumbnails.length > 0" :title="$t('thumbnails')" no-body>
-                <Thumbnails :thumbnails="thumbnails" />
+                <Thumbnails :thumbnails="thumbnails"/>
               </b-tab>
             </b-tabs>
           </b-card>
         </section>
-        <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
+        <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset"/>
 
-        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
-          <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
+        <Providers v-if="data.properties.providers" :providers="data.properties.providers"/>
+        <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields"/>
       </b-col>
 
     </b-row>
@@ -37,12 +38,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import {mapGetters, mapState} from 'vuex';
 import Description from '../components/Description.vue';
 import ReadMore from "vue-read-more-smooth";
 import ShowAssetMixin from '../components/ShowAssetMixin';
-import { BTabs, BTab } from 'bootstrap-vue';
-import { addSchemaToDocument, createItemSchema } from '../schema-org';
+import {BTab, BTabs} from 'bootstrap-vue';
+import {addSchemaToDocument, createItemSchema} from '../schema-org';
 import STAC from "@/models/stac";
 
 export default {
@@ -82,8 +83,8 @@ export default {
   computed: {
     ...mapState(['data', 'url']),
     ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink']),
-    canViewMap(){
-      if(this.data instanceof STAC){
+    canViewMap() {
+      if (this.data instanceof STAC) {
         return this.data.getMetadata("sharinghub:map-viewer") === "enable";
       }
       return false;

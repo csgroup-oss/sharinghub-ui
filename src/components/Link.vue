@@ -49,7 +49,7 @@ export default {
   async mounted() {
     if (Utils.isMlModeltrainData(this.link.rel)) {
       this.hrefBrowserLink = await Utils.browsifyUrl(this.link.href);
-      let base = Object.assign({}, this.link);
+      let base = Object.assign({target:"_blank"}, this.link);
       this.dataLink = Object.assign(base, {href: this.hrefBrowserLink});
     } else {
       this.dataLink = this.link;

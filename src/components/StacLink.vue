@@ -85,6 +85,8 @@ export default {
       return stacBrowserNavigatesTo.includes(this.link.rel);
     },
     attributes() {
+
+      console.log('hello link', this.$props.data);
       if (this.$props.data?.external) {
         return {
           href: this.$props.data.href,
@@ -93,7 +95,7 @@ export default {
         };
       }
       if (this.isStacBrowserLink || this.button) {
-        let href = this.$props.data.href
+        let href = this.$props.data.href;
         if (this.stac) {
           href = this.href;
         }
@@ -107,7 +109,7 @@ export default {
         let obj = {
           href: href,
           rel: this.rel,
-          target: '_blank',
+          target: this.$props.data?.target || '_self',
         };
         if (Utils.isObject(this.button)) {
           Object.assign(obj, this.button);
@@ -127,7 +129,7 @@ export default {
         }
         return {
           href: href,
-          target: '_blank',
+          target: this.$props.data?.target || '_self',
           rel: this.rel
         };
       }

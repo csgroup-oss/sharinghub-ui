@@ -52,13 +52,12 @@ export default defineComponent({
       get(url).then((response) => {
         if (response.data) {
           let entries = {};
-          Object.entries(response.data?.topics).forEach(([topic, values]) => {
+          Object.entries(response.data?.categories).forEach(([topic, values]) => {
             entries[topic] = Object.assign({logo: values['logo']});
           });
           const topic = Object.entries(entries).map(([key, val]) => {
             return Object.assign({topic: key, logo: val['logo']});
           });
-          console.log(topic.find(el => el.topic === this.$route.params.pathMatch));
           this.default_preview = topic.find(el => el.topic === this.$route.params.pathMatch)?.logo;
         }
       });
