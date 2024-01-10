@@ -23,7 +23,7 @@
 
       <div class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
-          <nav-item v-for="item in routes" class="p-mx-1 p-d-flex p-ai-center">
+          <nav-item v-for="item in routes" :class="['p-mx-1 p-d-flex p-ai-center', $route.params?.pathMatch===item.route && 'active']" >
             <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
             <b-icon v-else :icon="item.icon"/>
             <router-link class="mx-1" :to="`/${item.route}`">
@@ -75,7 +75,7 @@ import TextView from "@/_Hub/components/TextView.vue";
 import NavItem from "@/_Hub/components/HeaderNavbar/NavItem.vue";
 import {DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
-import {CONNEXION_MODE, get, getLocalToken} from "@/_Hub/tools/https";
+import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
 import logoImage from "@/assets/img/logo.png";
 
@@ -99,7 +99,7 @@ export default defineComponent({
       isLoading: false,
       value: null,
       avatar_url: undefined,
-      canSearch : true,
+      canSearch: true,
       logo: logoImage,
     };
   },
@@ -127,13 +127,14 @@ export default defineComponent({
           }
           this.isAuthenticated = !!data.user;
         }
-        if(data.mode === CONNEXION_MODE.CONNECTED){
+        if (data.mode === CONNEXION_MODE.CONNECTED) {
           this.canSearch = true;
-        }else if(data.mode === CONNEXION_MODE.PRIVATE_TOKEN){
+        } else if (data.mode === CONNEXION_MODE.PRIVATE_TOKEN) {
           this.canSearch = true;
-        }else {
-          this.canSearch = !! data.user;
+        } else {
+          this.canSearch = !!data.user;
         }
+        console.log(this.$route.params.pathMatch);
       }
     },
   },
@@ -148,7 +149,7 @@ export default defineComponent({
       });
     },
     handleEnter() {
-      if(!this.canSearch){
+      if (!this.canSearch) {
         return;
       }
       if (this.$route.name !== "search") {
@@ -168,6 +169,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import "../../assets/colors";
+@import "../../theme/variables";
 
 .nav-bar {
   border-bottom: rgba($secondary-color, 0.05) 2px solid;
@@ -192,6 +194,12 @@ export default defineComponent({
       text-decoration: none !important;
       text-underline: none !important;
     }
+  }
+
+  .active {
+    border-bottom: solid map-get($theme-colors, 'primary') 2px;
+    border-radius: 0 !important;
+    background-color: rgba(map-get($theme-colors, 'primary'), 0.3);
   }
 }
 

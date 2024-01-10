@@ -34,12 +34,12 @@ export default defineComponent({
 .nav-item {
   cursor: pointer;
   transition: background-color linear 0.2s;
-  border-radius: 16px;
+  //border-radius: 16px;
 
   &:hover {
     background: rgba($primary-color, 0.5);
     //color: $primary-color-inverted;
-    border-radius: 16px;
+    //border-radius: 16px;
     transition: background-color linear 0.2s;
   }
 
