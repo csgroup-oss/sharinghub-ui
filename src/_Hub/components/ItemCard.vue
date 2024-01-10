@@ -61,7 +61,7 @@ export default defineComponent({
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties.description.replace(regex, "");
-      return r.substr(0, 160).concat(" ...");
+      return r.substr(0, 130).concat(" ...");
     }
   },
   async beforeMount() {
@@ -172,7 +172,7 @@ img {
   display: flex;
   border-radius: 0.8rem;
   flex-direction: column;
-  min-width: 300px;
+  //min-width: 300px;
   height: 360px;
   position: relative;
   overflow: hidden;

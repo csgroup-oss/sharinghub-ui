@@ -134,7 +134,6 @@ export default defineComponent({
         } else {
           this.canSearch = !!data.user;
         }
-        console.log(this.$route.params.pathMatch);
       }
     },
   },
