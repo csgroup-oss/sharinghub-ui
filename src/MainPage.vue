@@ -51,7 +51,7 @@ import Vue, {defineComponent} from 'vue';
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import {CONNEXION_MODE, get, getLocalToken, removeLocalToken} from "@/_Hub/tools/https";
-import {CONFIG_URL, LOGIN_URL, PROXY_URL, USER_INFO} from "@/_Hub/Endpoint";
+import {CONFIG_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import I18N from "@radiantearth/stac-fields/I18N";
@@ -122,6 +122,7 @@ export default defineComponent({
   },
   beforeCreate() {
     removeLocalToken();
+    this.$store.commit("setBaseUrl", STAC_ROOT_URL);
   },
   beforeMount() {
     this.initWithUserCredentials().then(() => {
@@ -198,7 +199,6 @@ export default defineComponent({
       });
       return routes;
     }
-
 
   },
 });

@@ -80,12 +80,12 @@ export function getRoutes_2() {
       component: Search
     },
     {
-      path: "/metadata",
+      path: "/stac/*",
       component: StacBrowser,
       children: [
         {
           path: "/",
-          name: "catalog",
+          name: "featureItems",
           component: Browse
         }
       ]

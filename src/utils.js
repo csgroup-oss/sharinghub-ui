@@ -458,10 +458,8 @@ export default class Utils {
 
   static browsifyUrl(url) {
       const urlObject = new URL(url);
-      const prefix = urlObject.pathname.split("/").splice(1, 4).join("/");
-      const array = urlObject.pathname.split("/");
-      const url_to_resolve = array.splice(5).join("/");
-      return `${BASE_URL}${prefix}/${url_to_resolve}`;
+      const url_to_resolve = urlObject.pathname.split("/").splice(1).join("/");
+      return `${window.location.origin}/ui/${url_to_resolve}`;
   }
 
   static isMlModelCompliant(array) {

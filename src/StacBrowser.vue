@@ -24,13 +24,13 @@
 
         <b-tab class="p-pt-4">
           <template #title>
-            <TextView type="header__b16"> {{ $t('fields.reviews') }} </TextView>
+            <TextView type="header__b16"> {{ $t('fields.reviews') }}</TextView>
           </template>
           <TabSectionReview/>
         </b-tab>
 
 
-         <b-tab v-if="isMlModelCompliant && canDeploy" class="p-pt-4">
+        <b-tab v-if="isMlModelCompliant && canDeploy" class="p-pt-4">
           <template #title>
             <TextView type="header__b16">{{ $t('fields.model_deploy') }}</TextView>
           </template>
@@ -41,7 +41,7 @@
           <template #title>
             <TextView type="header__b16">STAC API</TextView>
           </template>
-          <TabSectionApiStac :title="title" :stacUrl="url" :stac="data" />
+          <TabSectionApiStac :title="title" :stacUrl="url" :stac="data"/>
         </b-tab>
 
       </b-tabs>
@@ -94,8 +94,6 @@ import TextView from "@/_Hub/components/TextView.vue";
 import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
 import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
 import TabSectionDeployment from "@/_Hub/views/sections/TabSectionDeployment.vue";
-
-import {CONNEXION_MODE} from "@/_Hub/tools/https";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -181,8 +179,8 @@ export default {
         return "";
       }
     },
-    canDeploy(){
-      if(this.data instanceof STAC){
+    canDeploy() {
+      if (this.data instanceof STAC) {
         return this.data.getMetadata("sharinghub:deployment") === "enable";
       }
       return false;
@@ -322,13 +320,6 @@ export default {
         this.onDataLoaded();
       }
     },
-    $route: {
-      immediate: true,
-      async handler() {
-
-      }
-
-    }
   },
   async created() {
     this.$router.onReady(() => {
@@ -355,14 +346,14 @@ export default {
       this.$store.commit(resetOp);
       this.parseQuery(to);
     });
-    let {external} = this.$route.query;
-    if (!external) {
-      this.$router.push({path: "/models"});
+    let external = this.$route.path;
+    let stacFeatureItem;
+    stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
+    console.log(stacFeatureItem);
+    if (!stacFeatureItem) {
+      throw new Error('error on stacFeatureItem');
     }
-    if(this.auth.mode !== CONNEXION_MODE.CONNECTED && !external.includes('?gitlab_token=')){
-     // external = external.concat(`?gitlab_token=${this.auth.token}`);
-    }
-    await this.$store.dispatch('load', {url: external, loadApi: true, show: true});
+    await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
   },
   mounted() {
     this.$root.$on('error', this.showError);

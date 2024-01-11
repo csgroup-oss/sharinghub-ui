@@ -1,13 +1,12 @@
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
-import {router} from "@/init";
 import {get} from "@/_Hub/tools/https";
 import {DateTime, Interval} from "luxon";
 import {PROXY_URL} from "@/_Hub/Endpoint";
 import Utils from "@/utils";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
-import {mapState} from "vuex";
+import {mapGetters, mapState} from "vuex";
 import linuxIco from "@/assets/img/confused-linux.jpg";
 import Description from "@/components/Description.vue";
 
@@ -23,10 +22,6 @@ export default defineComponent({
       type: Object,
       default: undefined
     },
-    defaultPreview: {
-      type: String,
-      default: undefined
-    }
   },
   data() {
     return {
@@ -37,7 +32,8 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'uiLanguage']),
+    ...mapState(['auth', 'uiLanguage', 'data']),
+    ...mapGetters(['toBrowserPath']),
     updatedTime() {
       const data = this.stac.properties.updated;
       const now = DateTime.now();
@@ -62,6 +58,10 @@ export default defineComponent({
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties.description.replace(regex, "");
       return r.substr(0, 130).concat(" ...");
+    },
+    getUrl() {
+      // console.table(this.toBrowserPath(this.metadata.href), "---", this.metadata.href)
+      return this.toBrowserPath(this.metadata.href);
     }
   },
   async beforeMount() {
@@ -70,7 +70,7 @@ export default defineComponent({
       if (response.data) {
         this.stac = response.data;
       }
-    }).catch(() =>{
+    }).catch(() => {
       this.$refs.card.style.display = "none";
     });
     const projectID = Utils.getProjectID(this.stac.id);
@@ -79,13 +79,14 @@ export default defineComponent({
     }
   },
   methods: {
-    seeModel(event, url) {
+    seeModel(event) {
       event.preventDefault();
-      router.push({path: `/metadata`, query: {"external": url}});
+      console.log("rr", this.getUrl);
+      this.$router.push({path: `/stac/${this.getUrl.split('/').splice(4).join("/")}`,});
     },
     getPreview() {
-      let preview = this.stac.links.find(el => el.rel === "preview")?.href;
-      return preview;
+      return this.stac.links.find(el => el.rel === "preview")?.href;
+
     },
     getStarProject(url) {
       this.loading = true;
@@ -107,8 +108,7 @@ export default defineComponent({
 
 <template>
   <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-    <div @click="seeModel($event, $props.metadata.href)"
-         v-if="!!this.stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+    <a :href="getUrl" @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
       <template v-if="loading">
         <div class="loading">
           <Awaiter type="small" :is-visible="loading"/>
@@ -150,17 +150,22 @@ export default defineComponent({
 
         </div>
       </template>
-    </div>
+    </a>
   </b-col>
 </template>
 
 <style scoped lang="scss">
 @import "../../theme/variables.scss";
 
+a {
+  all: none;
+}
+
 img {
   max-width: 100%;
   height: auto;
 }
+
 
 .loading {
   width: 300px;

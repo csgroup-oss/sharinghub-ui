@@ -154,7 +154,7 @@ export default defineComponent({
       if (this.$route.name !== "search") {
         this.$router.push(
           {
-            path: `/search/external/${this.catalogUrl}`,
+            path: `/search/`,
             query: {q: this.value}
           });
       }
