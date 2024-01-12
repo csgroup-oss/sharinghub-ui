@@ -108,7 +108,7 @@ export default defineComponent({
 
 <template>
   <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-    <a :href="getUrl" @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+    <div :href="getUrl" @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
       <template v-if="loading">
         <div class="loading">
           <Awaiter type="small" :is-visible="loading"/>
@@ -150,7 +150,7 @@ export default defineComponent({
 
         </div>
       </template>
-    </a>
+    </div>
   </b-col>
 </template>
 

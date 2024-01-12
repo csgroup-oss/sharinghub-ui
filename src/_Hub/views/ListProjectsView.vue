@@ -130,7 +130,7 @@ export default defineComponent({
       <awaiter :is-visible="loading" />
     </template>
     <div v-else class="section p-ml-5">
-      <div class="col-2 filter pt-5">
+      <div class="col-xl-2 col-md-2 col-lg-2  col-sm-12 filter pt-5">
         <div class="p-d-flex p-flex-wrap p-ai-center ">
           <b-badge v-for="topic in topics" variant="light" pill
                    @click="filterTopicWith(topic)"
@@ -139,7 +139,7 @@ export default defineComponent({
           </b-badge>
         </div>
       </div>
-      <div class="col-10" v-if="dataList.length !== 0">
+      <div class="col-xl-10 col-md-10 col-lg-10 col-sm-12 " v-if="dataList.length !== 0">
         <b-row class="p-d-flex p-flex-wrap p-ai-center">
           <item-card :default-preview="default_preview" v-for="dataset in dataList" :metadata="dataset"/>
         </b-row>
