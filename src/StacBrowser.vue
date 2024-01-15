@@ -312,7 +312,7 @@ export default {
       }
     },
     data(data) {
-      this.isMlModelCompliant = Utils.isMlModelCompliant(data.stac_extensions);
+      this.isMlModelCompliant = data?.stac_extensions ? Utils.isMlModelCompliant(data.stac_extensions) : false;
       if (!this.onDataLoaded) {
         return;
       }

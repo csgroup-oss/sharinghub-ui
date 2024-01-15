@@ -21,11 +21,11 @@ export default defineComponent({
       categories: [],
     };
   },
-  computed:{
+  computed: {
     ...mapState(['uiLanguage'])
   },
-  watch:{
-     uiLanguage: {
+  watch: {
+    uiLanguage: {
       immediate: true,
       async handler(locale) {
         if (!locale) {
@@ -63,7 +63,7 @@ export default defineComponent({
           this.categories = Object.entries(entries).map(([key, val]) => {
             return Object.assign({category: key, logo: val['logo']}, val[locale]);
           });
-          this.config =response.data.root.locales[locale];
+          this.config = response.data.root.locales[locale];
           this.loading = false;
         }
       });
@@ -77,17 +77,19 @@ export default defineComponent({
 
   <div class="container p-pt-4">
     <div class="p-d-flex p-justify-center p-mb-6">
-      <div class="p-d-flex p-justify-between p-ai-baseline" style="width: 65%">
-        <div>
-          <h1 class="p-mb-4"> SharingHUB community </h1>
-          <h2 class="p-mb-3"> {{ config?.title }} </h2>
-          <Description v-if="!loading" :description="config?.description"/>
-        </div>
-        <div>
-          <img height="350px" :src="image"/>
-        </div>
-      </div>
+
+     <b-row class="p-flex-md-row p-flex-lg-row ">
+         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+            <h1 class="p-mb-4"> SharingHUB community </h1>
+            <h2 class="p-mb-3"> {{ config?.title }} </h2>
+            <Description v-if="!loading" :description="config?.description"/>
+          </div>
+          <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-d-sm-none p-d-md-none  p-d-xl-inline p-d-lg-inline">
+            <img height="350px" :src="image"/>
+          </div>
+     </b-row>
     </div>
+
     <div class="p-d-flex p-justify-center p-my-6 ">
       <div class="p-divider--horizontal w-50"/>
     </div>

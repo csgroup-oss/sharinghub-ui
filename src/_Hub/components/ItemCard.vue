@@ -73,7 +73,7 @@ export default defineComponent({
     }).catch(() => {
       this.$refs.card.style.display = "none";
     });
-    const projectID = Utils.getProjectID(this.stac.id);
+    const projectID = Utils.getProjectID(this.stac?.id);
     if (projectID) {
       this.getStarProject(projectID);
     }

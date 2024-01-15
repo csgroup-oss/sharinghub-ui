@@ -34,8 +34,8 @@ export default defineComponent({
   data() {
     return {};
   },
-  computed:{
-    links(){
+  computed: {
+    links() {
       return ""
     },
   },
@@ -44,6 +44,7 @@ export default defineComponent({
 
 <template>
   <div class="p-d-flex homeCard">
+
     <template v-if="index % 2 === 0">
       <div class="p-mr-6">
         <div class="illustration" :style="{backgroundImage: `url(${logo})`}">
@@ -54,9 +55,10 @@ export default defineComponent({
           <h3> {{ title }} </h3>
           <Description v-if="!!description" :description="description"/>
         </div>
-        <b-button class="p-mb-2" :to="category">  {{$t('showMore')}}</b-button>
+        <b-button class="p-mb-2" :to="category"> {{ $t('showMore') }}</b-button>
       </div>
     </template>
+
     <template v-else>
       <div class="p-d-flex w-100 p-justify-end">
         <div class="text-block-2">
@@ -64,7 +66,7 @@ export default defineComponent({
             <h3> {{ title }} </h3>
             <Description v-if="!!description" :description="description"/>
           </div>
-          <b-button class="p-mb-2" :to="category"> {{$t('showMore')}}</b-button>
+          <b-button class="p-mb-2" :to="category"> {{ $t('showMore') }}</b-button>
         </div>
         <div class="p-ml-6">
           <div class="illustration-2" :style="{backgroundImage: `url(${logo})`}">
@@ -166,7 +168,7 @@ export default defineComponent({
   .text-block-2 {
     flex: 2;
     margin-left: 32px;
-     display: flex;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: start;
