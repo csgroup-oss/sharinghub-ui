@@ -25,13 +25,13 @@
           </b-button-group>
 
           <b-button-group size="sm" class="right">
-            <b-button size="sm" :href="'/docs/'.concat(uiLanguage).concat('/terms-of-service')" variant="link">
+            <b-button size="sm" :href="docs('/legal/terms-of-service')" variant="link">
               {{ $t("fields.terms_of_service") }}
             </b-button>
-            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/privacy')">
+            <b-button size="sm" variant="link" :href="docs('/legal/privacy')">
               {{ $t("fields.privacy") }}
             </b-button>
-            <b-button size="sm" variant="link" :href="'/docs/'.concat(uiLanguage).concat('/about-us')">
+            <b-button size="sm" variant="link" :href="docs('legal/about-us')">
               {{ $t("fields.about") }}
             </b-button>
           </b-button-group>
@@ -51,7 +51,7 @@ import Vue, {defineComponent} from 'vue';
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
 import {CONNEXION_MODE, get, getLocalToken, removeLocalToken} from "@/_Hub/tools/https";
-import {CONFIG_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from "@/_Hub/Endpoint";
+import {CONFIG_URL, DOCS_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import I18N from "@radiantearth/stac-fields/I18N";
@@ -131,6 +131,9 @@ export default defineComponent({
 
   },
   methods: {
+    docs(path) {
+      return DOCS_URL.concat(path);
+    },
     async initWithUserCredentials() {
       this.isLoading = true;
       get(PROXY_URL.concat('user'))

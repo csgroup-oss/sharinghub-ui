@@ -102,15 +102,13 @@ export default defineComponent({
       avatar_url: undefined,
       canSearch: true,
       logo: logoImage,
+      docs_url: DOCS_URL,
     };
   },
   computed: {
     ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url']),
     login() {
       return LOGIN_URL;
-    },
-    docs_url() {
-      return DOCS_URL + this.$root.$i18n.locale;
     },
   },
   watch: {
