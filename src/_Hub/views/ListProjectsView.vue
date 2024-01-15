@@ -46,6 +46,17 @@ export default defineComponent({
         this.dataList = [];
         this.dataList = [...await this.fetchCollectionsItems()];
       }
+    },
+    filtered_topic: {
+      immediate: true,
+      async handler(newVal, oldVal) {
+        if (newVal.length === 0 && !oldVal) {
+          return;
+        }
+        this.dataList = [];
+        this.dataList = [...await this.fetchCollectionsItems()];
+
+      }
     }
   },
   beforeMount() {
@@ -59,9 +70,20 @@ export default defineComponent({
       page = page || 1;
       let route = this.$route.params.pathMatch;
       this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
-      url = url.concat(`?collections=${route}&limit=12&page=${page}`);
+      url = url.concat(`?collections=${route}&page=${page}`);
+      if (this.filtered_topic.length !== 0) {
+        url = url.concat(`&topics=`);
+        this.filtered_topic.forEach((topic, index) => {
+          if (index !== this.filtered_topic.length - 1) {
+            url = url.concat(`${topic.name},`);
+          } else {
+            url = url.concat(`${topic.name}`);
+          }
+        });
+      }
       const data = await get(url).then((response) => {
-        this.pagination = response.data.context.matched / response.data.context.limit;
+        this.pagination = Math.ceil(response.data.context.matched / response.data.context.limit);
+        this.pagination  = this.pagination > 1 ? this.pagination : 1;
         return response.data;
       })
         .catch(() => {
@@ -89,7 +111,7 @@ export default defineComponent({
       }
     },
     linkGen(pageNum) {
-      return pageNum === 1 ? '?' : `?page=${pageNum}`
+      return pageNum === 1 ? '?' : `?page=${pageNum}`;
     }
   },
 

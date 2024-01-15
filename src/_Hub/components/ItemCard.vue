@@ -49,7 +49,7 @@ export default defineComponent({
     },
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
-      const r = this.stac.properties?.description?.replace(regex, "");
+      const r = this.stac.properties?.description?.replace(regex, "") || " ";
       return r.substr(0, 130).concat(" ...");
     },
     getUrl() {

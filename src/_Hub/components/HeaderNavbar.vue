@@ -23,23 +23,24 @@
 
       <div class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
-          <nav-item v-for="item in routes" :class="['p-mx-1 p-d-flex p-ai-center', $route.params?.pathMatch===item.route && 'active']" >
-            <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
-            <b-icon v-else :icon="item.icon"/>
-            <router-link class="mx-1" :to="`/${item.route}`">
+          <router-link v-for="item in routes" class="mx-1" :to="`/${item.route}`">
+            <nav-item :class="['p-mx-1 p-d-flex p-ai-center', $route.params?.pathMatch===item.route && 'active']">
+              <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
+              <b-icon v-else :icon="item.icon"/>
               <text-view type="header__b14"> {{ item.title }}</text-view>
-            </router-link>
-          </nav-item>
+            </nav-item>
+          </router-link>
         </template>
         <div class="p-divider--vertical"/>
 
         <div class="p-d-flex p-ai-center">
-          <nav-item class="p-mx-1">
-            <b-icon icon="book"/>
-            <a :href="docs_url" target="_blank">
+          <a :href="docs_url" target="_blank">
+            <nav-item class="p-mx-1">
+              <b-icon icon="book"/>
               <text-view type="header__b14"> Docs</text-view>
-            </a>
-          </nav-item>
+            </nav-item>
+          </a>
+
           <Localisation/>
 
           <b-dropdown v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
