@@ -349,7 +349,6 @@ export default {
     let external = this.$route.path;
     let stacFeatureItem;
     stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
-    console.log(stacFeatureItem);
     if (!stacFeatureItem) {
       throw new Error('error on stacFeatureItem');
     }

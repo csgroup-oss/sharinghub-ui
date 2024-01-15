@@ -1,11 +1,7 @@
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
-import {get} from "@/_Hub/tools/https";
 import {DateTime, Interval} from "luxon";
-import {PROXY_URL} from "@/_Hub/Endpoint";
-import Utils from "@/utils";
-import Awaiter from "@/_Hub/components/Awaiter.vue";
 import {mapGetters, mapState} from "vuex";
 import linuxIco from "@/assets/img/confused-linux.jpg";
 import Description from "@/components/Description.vue";
@@ -14,11 +10,10 @@ export default defineComponent({
   name: "ItemCard",
   components: {
     Description,
-    Awaiter,
     TextView,
   },
   props: {
-    metadata: {
+    stac: {
       type: Object,
       default: undefined
     },
@@ -26,8 +21,6 @@ export default defineComponent({
   data() {
     return {
       owner: linuxIco,
-      stac: undefined,
-      loading: true,
       rankRate: 0,
     };
   },
@@ -35,7 +28,7 @@ export default defineComponent({
     ...mapState(['auth', 'uiLanguage', 'data']),
     ...mapGetters(['toBrowserPath']),
     updatedTime() {
-      const data = this.stac.properties.updated;
+      const data = this.stac.properties.datetime;
       const now = DateTime.now();
       const date = DateTime.fromISO(data);
       const interval = Interval.fromDateTimes(date, now);
@@ -60,96 +53,63 @@ export default defineComponent({
       return r.substr(0, 130).concat(" ...");
     },
     getUrl() {
-      // console.table(this.toBrowserPath(this.metadata.href), "---", this.metadata.href)
-      return this.toBrowserPath(this.metadata.href);
+      return this.toBrowserPath(this.stac.links.find(el => el.rel === "self").href);
+    },
+    starsProject() {
+      return this.stac.properties['sharinghub:stars'];
     }
   },
   async beforeMount() {
-    let url = this.$props.metadata.href;
-    await get(url).then((response) => {
-      if (response.data) {
-        this.stac = response.data;
-      }
-    }).catch(() => {
-      this.$refs.card.style.display = "none";
-    });
-    const projectID = Utils.getProjectID(this.stac?.id);
-    if (projectID) {
-      this.getStarProject(projectID);
-    }
   },
   methods: {
     seeModel(event) {
       event.preventDefault();
-      console.log("rr", this.getUrl);
       this.$router.push({path: `/stac/${this.getUrl.split('/').splice(4).join("/")}`,});
     },
     getPreview() {
       return this.stac.links.find(el => el.rel === "preview")?.href;
-
     },
-    getStarProject(url) {
-      this.loading = true;
-      get(PROXY_URL.concat(`projects/${url}/starrers`))
-        .then((response) => {
-          if (response.data) {
-            this.rankRate = response.data.length;
-            this.loading = false;
-          }
-        }).catch(reason => {
-        console.log('error', reason);
-        this.loading = false;
-      });
-    },
-
   }
 });
 </script>
 
 <template>
   <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-    <div :href="getUrl" @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
-      <template v-if="loading">
-        <div class="loading">
-          <Awaiter type="small" :is-visible="loading"/>
-        </div>
-      </template>
-      <template v-else>
-        <div class="items-card">
-          <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
-            <img v-if="getPreview()" :src="getPreview()">
-            <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
-              <b-badge variant="secondary">
-                <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
-                {{ rankRate }}
-              </b-badge>
-            </div>
-            <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
-              <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
-                {{ tag }}
-              </b-badge>
-            </div>
-
+    <div @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+      <div class="items-card">
+        <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
+          <img v-if="getPreview()" :src="getPreview()">
+          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+            <b-badge variant="secondary">
+              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
+              {{ starsProject }}
+            </b-badge>
           </div>
-          <div class="items-card__content p-px-3">
-            <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
-              <h3 class="items-card__content__title">
-                <TextView type="header__b16">{{ stac.properties.title }}</TextView>
-              </h3>
-
-              <div class="items-card__content__description p-mb-3">
-                <Description compact inline :description="getDescription"/>
-              </div>
-
-              <div class="items-card__content__extra" v-if="!!stac.properties.updated">
-                <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
-              </div>
-
-            </div>
+          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
+            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
+              {{ tag }}
+            </b-badge>
           </div>
 
         </div>
-      </template>
+        <div class="items-card__content p-px-3">
+          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
+            <h3 class="items-card__content__title">
+              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
+            </h3>
+
+            <div class="items-card__content__description p-mb-3">
+              <Description compact inline :description="getDescription"/>
+            </div>
+
+            <div class="items-card__content__extra" v-if="!!updatedTime">
+              <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
   </b-col>
 </template>

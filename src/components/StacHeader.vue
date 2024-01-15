@@ -22,16 +22,6 @@
             </small>
           </template>
         </i18n>
-        <b-button-group>
-          <template>
-            <b-button v-if="collectionLink" :to="toBrowserPath(collectionLink.href)" :title="collectionLinkTitle"
-                      variant="outline-primary" size="sm">
-              <b-icon-folder-symlink/>
-              <span class="button-label prio">{{ $t('goToCollection.label') }}</span>
-            </b-button>
-
-          </template>
-        </b-button-group>
       </text-view>
 
       <b-col cols="12">
@@ -73,13 +63,7 @@ export default {
   computed: {
     ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title',]),
     ...mapGetters(['canSearch', 'root', 'parentLink', 'collectionLink', 'toBrowserPath']),
-    collectionLinkTitle() {
-      if (this.collectionLink && Utils.hasText(this.collectionLink.title)) {
-        return this.$t('goToCollection.descriptionWithTitle', this.collectionLink);
-      } else {
-        return this.$t('goToCollection.description');
-      }
-    },
+
     icon() {
       if (this.data instanceof STAC) {
         let icons = this.data.getIcons();
@@ -100,7 +84,7 @@ export default {
         } else {
           const provider = this.data?.getMetadata("providers").find(el => el.roles.includes("host"));
           const href = provider ? provider.url : this.root.getAbsoluteUrl();
-          const title = `${STAC.getDisplayTitle(this.root)} / ${this.getProjectPath(this.data?._url)}`;
+          const title = `${this.data?.getMetadata("sharinghub:name")}`;
           return {
             href: href,
             rel: 'root',

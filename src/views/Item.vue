@@ -6,11 +6,8 @@
           <DeprecationNotice v-if="data.properties.deprecated" :data="data"/>
           <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']"/>
           <Description v-if="data.properties.description" :description="data.properties.description"/>
-          <!--          <ReadMore on v-if="data.properties.description"  :lines="30" :text="$t('read.more')" :text-less="$t('read.less')">-->
-          <!--            <Description :description="data.properties.description" />-->
-          <!--          </ReadMore>-->
         </section>
-        <CollectionLink v-if="collectionLink" :link="collectionLink"/>
+        <CollectionLink v-if="collectionLink & false" :link="collectionLink"/>
         <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks"/>
       </b-col>
 
