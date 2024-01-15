@@ -94,9 +94,9 @@
     "serverError": "Le serveur a rencontré un problème. @:errors.contactProvider",
     "unauthorized": "La requête requiert des informations d'authentification, comme par exemple un jeton API. Veuillez fournir vos informations d'authentification et réessayer",
     "authFail": {
-      "title" : "Authentification requise",
-      "description" : "Veuillez vous connectez pour avoir accès aux ressources de la plateforme.",
-      "information" : "Si vous êtes déjà connecté et le problème persiste veuillez contacter le support."
+      "title": "Authentification requise",
+      "description": "Veuillez vous connectez pour avoir accès aux ressources de la plateforme.",
+      "information": "Si vous êtes déjà connecté et le problème persiste veuillez contacter le support."
     }
   },
   "featureExperimental": "Cette fonctionnalité est encore expérimentale et peut donner des résultats inattendus!",
@@ -235,6 +235,7 @@
     "notSupported": "La recherche d'éléments n'est pas pris en charge par l'API.",
     "placeholder": "Rechercher...",
     "selectCollections": "Sélectionnez une ou plusieurs collections...",
+    "selectTopics": "Sélectionnez une ou plusieurs étiquettes...",
     "selectForItemSearch": "Sélectionner pour la recherche d'élément",
     "sortOptions": {
       "datetime": "Date et heure",
@@ -303,6 +304,7 @@
   "stacAssets": "Ressource | Ressources",
   "stacCatalog": "Catalogue | Catalogues",
   "stacCollection": "Collection | Collections",
+  "stacTag": "Étiquette | Étiquettes",
   "stacItem": "Élément | Éléments",
   "submit": "Soumettre",
   "table": {

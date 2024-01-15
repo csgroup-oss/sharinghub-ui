@@ -41,6 +41,31 @@
             @input="setCollections"
             @tag="addCollection"
             @search-change="searchCollections"
+            ref="multiselect"
+          >
+            <template #noOptions>{{ $t('search.noOptions') }}</template>
+            <template v-if="additionalCollectionCount > 0" #afterList>
+              <li>
+                <strong class="multiselect__option multiselect__option--disabled">
+                  {{ $t("multiselect.andMore", {count: additionalCollectionCount}) }}
+                </strong>
+              </li>
+            </template>
+          </multiselect>
+        </b-form-group>
+
+        <!-- #filter tags -->
+        <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
+          <multiselect
+            :id="ids.topics"
+            multiple taggable
+            :value="this.selectedTopics"
+            :options="topics"
+            label="text" trackBy="value"
+            :placeholder="$t('search.selectTopics')"
+            :tagPlaceholder="$t('search.addItemIds')"
+            :noOptions="$t('search.addItemIds')"
+            @input="setTags"
           >
             <template #noOptions>{{ $t('search.noOptions') }}</template>
             <template v-if="additionalCollectionCount > 0" #afterList>
@@ -156,6 +181,8 @@ import CqlValue from '../models/cql2/value';
 import CqlLogicalOperator from '../models/cql2/operators/logical';
 import {CqlEqual} from '../models/cql2/operators/comparison';
 import {stacRequest} from '../store/utils';
+import {PROXY_URL} from "@/_Hub/Endpoint";
+import {get} from "@/_Hub/tools/https";
 
 function getQueryDefaults() {
   return {
@@ -166,7 +193,9 @@ function getQueryDefaults() {
     ids: [],
     collections: [],
     sortby: null,
-    filters: null
+    filters: null,
+    topics: [],
+
   };
 }
 
@@ -178,7 +207,8 @@ function getDefaults() {
     query: getQueryDefaults(),
     filtersAndOr: 'and',
     filters: [],
-    selectedCollections: []
+    selectedCollections: [],
+    selectedTopics: [],
   };
 }
 
@@ -231,12 +261,13 @@ export default {
       queryables: null,
       hasAllCollections: false,
       collections: [],
+      topics: [],
       collectionsLoadingTimer: null,
       additionalCollectionCount: 0
     }, getDefaults());
   },
   computed: {
-    ...mapState(['itemsPerPage', 'uiLanguage']),
+    ...mapState(['itemsPerPage', 'uiLanguage', 'entriesRoute']),
     ...mapGetters(['canSearchCollections', 'supportsConformance']),
     collectionSelectOptions() {
       let taggable = !this.hasAllCollections;
@@ -268,7 +299,7 @@ export default {
     },
     ids() {
       let obj = {};
-      ['q', 'datetime', 'bbox', 'collections', 'ids', 'sort', 'limit']
+      ['q', 'datetime', 'bbox', 'collections', 'ids', 'sort', 'limit', "topics"]
         .forEach(field => obj[field] = field + formId);
       return obj;
     },
@@ -330,6 +361,17 @@ export default {
           });
         }
       }
+    },
+    entriesRoute:{
+      immediate:true,
+      handler(newVal){
+        if(newVal?.length > 0 ){
+          this.collections = this.translateCollections(this.collections, newVal);
+          this.setCollections(this.translateCollections(this.collections, newVal));
+
+        }
+      }
+
     }
   },
   beforeCreate() {
@@ -344,11 +386,14 @@ export default {
           .catch(error => console.error(error))
       );
     }
+    promises.push(this.loadTopicsForTags().then((data) => {
+      this.preSelectTag(data);
+    }));
     if ((this.type === 'Collections' || this.conformances.CollectionIdFilter) && this.stac) {
       promises.push(
         this.loadCollections(this.stac.getApiCollectionsLink())
           .then(({collections, queryableLink}) => {
-            this.collections = collections;
+            this.collections = this.translateCollections(collections, this.entriesRoute);
             if (this.collections.length > 0) {
               this.hasAllCollections = true;
             }
@@ -357,18 +402,26 @@ export default {
           .catch(error => console.error(error))
       );
     }
-    Promise.all(promises).finally(() => this.loaded = true);
-     const {q} = this.$route.query;
+    Promise.all(promises).finally(() => {
+      this.loaded = true;
+      if (this.selectedTopics.length > 0) {
+        this.setCollections(this.collections);
+        this.onSubmit();
+      }
+    });
+    const {q} = this.$route.query;
     if (q) {
       this.query.q = [q];
-      this.onSubmit()
+      this.onSubmit();
     }
+
   },
   methods: {
     resetSearchCollection() {
       clearTimeout(this.collectionsLoadingTimer);
       this.collectionsLoadingTimer = null;
     },
+    // not used
     searchCollections(text) {
       if (!this.canSearchCollectionsFreeText || this.hasAllCollections) {
         return;
@@ -428,6 +481,28 @@ export default {
         }
       }
       return data;
+    },
+    async loadTopicsForTags(link = PROXY_URL.concat('topics')) {
+      return get(link).then((response) => {
+        if (response.data) {
+          this.topics = response.data.map(el => (
+            {value: el.title, text: el.title}
+          )).sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage));
+          return this.topics;
+        }
+      }).catch(() => {
+        if (this.$route.name !== "Login") {
+          this.$router.push("/login");
+        }
+      });
+    },
+    preSelectTag(topics) {
+      const {tags: _preSelectTopics} = this.$route.query;
+      let selected_topic = topics.find(el => el.value === _preSelectTopics);
+      if (selected_topic) {
+        this.setTags([selected_topic]);
+      }
+
     },
     updateApiCollections() {
       if (!this.parent) {
@@ -593,7 +668,24 @@ export default {
       } else {
         return null;
       }
-    }
+    },
+    setTags(topics) {
+      this.selectedTopics = topics;
+      this.$set(this.query, 'topics', topics.map(c => c.value));
+    },
+    translateCollections(_collections = [], _entriesRoute){
+      if(!Array.isArray(_collections) || !Array.isArray(_entriesRoute) ){
+        return _collections;
+      }
+      return _collections.map((el) =>{
+        const equal = _entriesRoute.find(eq => eq.route === el.value);
+        return {
+          value:equal.route,
+          text:equal.title
+        };
+      });
+    },
+
   }
 };
 </script>

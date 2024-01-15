@@ -236,6 +236,7 @@
     "notSupported": "Item Search is not supported by the API.",
     "placeholder": "Search...",
     "selectCollections": "Select one or multiple collections...",
+    "selectTopics": "Select one or multiple Tags...",
     "selectForItemSearch": "Select for Item Search",
     "sortOptions": {
       "datetime": "Date and Time",
@@ -304,6 +305,7 @@
   "stacAssets": "Asset | Assets",
   "stacCatalog": "Catalog | Catalogs",
   "stacCollection": "Collection | Collections",
+  "stacTag": "Tag | Tags",
   "stacItem": "Item | Items",
   "submit": "Submit",
   "table": {

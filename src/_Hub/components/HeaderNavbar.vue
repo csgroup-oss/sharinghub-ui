@@ -55,8 +55,8 @@
           </b-dropdown>
 
           <template v-else>
-            <div v-if="$route.name !== 'Login'" class="p-ml-3">
-              <b-button size="sm" to="login" variant="dark">
+            <div class="p-ml-3">
+              <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
                 {{ $t('fields.login') }}
                 <b-icon-box-arrow-in-right/>
               </b-button>

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="keywords d-flex flex-wrap">
-      <b-badge v-for="(keyword, index) in keywords" :key="keyword"
-               :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2">
+      <b-badge  v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
+               :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2 cursor">
         <b-icon v-if="!!getIcon(keyword)" font-scale="1.25"
                 :icon="getIcon(keyword)"/>
         {{ keyword }}
@@ -24,6 +24,16 @@
   </div>
 
 </template>
+
+<style lang="scss" scoped>
+  .badge{
+    opacity: 0.8;
+    transition: all linear 0.2s;
+    &:hover{
+      opacity: 1;
+    }
+  }
+</style>
 
 <script>
 import _ from "lodash";
@@ -105,6 +115,10 @@ export default {
       const regex = /<a href=\"(.*?)\".*>/g;
       const match = regex.exec(text);
       return match[1];
+    },
+
+    filterByTags(keyword){
+      this.$router.push({path :"/search/", query:{tags:keyword}});
     }
 
   },
