@@ -17,7 +17,7 @@ export default defineComponent({
       title: "",
       loading: true,
       topics: [],
-      collection: undefined,
+      pagination: 1,
       filtered_topic: [],
     };
   },
@@ -55,15 +55,20 @@ export default defineComponent({
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
       let results = [];
+      let {page} = this.$route.query;
+      page = page || 1;
       let route = this.$route.params.pathMatch;
       this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
-      url = url.concat(`?collections=${route}`);
-      const data = await get(url).then((response) => response.data)
+      url = url.concat(`?collections=${route}&limit=12&page=${page}`);
+      const data = await get(url).then((response) => {
+        this.pagination = response.data.context.matched / response.data.context.limit;
+        return response.data;
+      })
         .catch(() => {
-        if (this.$route.name !== "Login") {
-          this.$router.push("/login");
-        }
-      });
+          if (this.$route.name !== "Login") {
+            this.$router.push("/login");
+          }
+        });
       results = data?.features || [];
       this.loading = false;
       return results;
@@ -73,15 +78,18 @@ export default defineComponent({
         if (response.data) {
           this.topics = response.data;
         }
-      }).catch(() =>{ });
+      }).catch(() => {
+      });
     },
-
     filterTopicWith(item) {
       if (!this.filtered_topic.includes(item)) {
         this.filtered_topic.push(item);
       } else {
         this.filtered_topic = this.filtered_topic.filter(el => el !== item);
       }
+    },
+    linkGen(pageNum) {
+      return pageNum === 1 ? '?' : `?page=${pageNum}`
     }
   },
 
@@ -94,12 +102,9 @@ export default defineComponent({
 <template>
   <div class="w-100 container">
     <text-view class="p-ml-5" type="header__b20"> {{ $t('fields.list_of', [title]) }}</text-view>
-    <template v-if="loading">
 
-      <awaiter :is-visible="loading"/>
-    </template>
-    <div v-else class="section p-ml-5">
-      <div class="col-xl-2 col-md-2 col-lg-2  col-sm-12 filter pt-5">
+    <div class="section p-ml-5">
+      <div class="col-xl-2 col-md-3 col-lg-2  col-sm-12 filter pt-5">
         <div class="p-d-flex p-flex-wrap p-ai-center ">
           <b-badge v-for="topic in topics" variant="light" pill
                    @click="filterTopicWith(topic)"
@@ -108,11 +113,23 @@ export default defineComponent({
           </b-badge>
         </div>
       </div>
-      <div class="col-xl-10 col-md-10 col-lg-10 col-sm-12 ">
-        <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
-          <item-card v-for="dataset in dataList" :stac="dataset"/>
-        </b-row>
-        <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
+      <div class="col-xl-10 col-md-9 col-lg-10 col-sm-12 ">
+        <template v-if="loading">
+          <awaiter :is-visible="loading"/>
+        </template>
+        <template v-else>
+          <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
+            <item-card v-for="dataset in dataList" :stac="dataset"/>
+          </b-row>
+          <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
+          <b-row class="p-d-flex p-flex-wrap  p-jc-center">
+            <div class="overflow-auto mt-3">
+              <b-pagination-nav :link-gen="linkGen" :number-of-pages="pagination" use-router></b-pagination-nav>
+            </div>
+          </b-row>
+
+        </template>
+
       </div>
 
     </div>
