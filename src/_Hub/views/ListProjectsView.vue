@@ -70,14 +70,16 @@ export default defineComponent({
 
       if (this.filtered_topic.length !== 0) {
         searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
-      }else {
-        if(topics){
-            searchUrl = this.addTopicsToUrl(searchUrl, [{name:topics}]);
+      } else {
+        if (topics) {
+          this.addFilterTopic({name: topics});
+          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
         }
       }
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
       }
+       // console.log("this topics",this.filtered_topic);
 
       const data = await get(searchUrl).then((response) => {
         this.pagination = Math.ceil(response.data.context.matched / response.data.context.limit);
@@ -115,12 +117,14 @@ export default defineComponent({
       if (!this.filtered_topic.includes(item)) {
         this.filtered_topic.push(item);
       } else {
-        this.filtered_topic = this.filtered_topic.filter(el => el !== item);
+        this.filtered_topic = this.filtered_topic.filter(el => el.name !== item.name);
       }
     },
-    handleFilterTopic(item){
+    async handleFilterTopic(item) {
       this.addFilterTopic(item);
-      this.fetchCollectionsItems();
+      this.dataList = [];
+      this.dataList = [...await this.fetchCollectionsItems()];
+
     },
     linkGen(pageNum) {
       return pageNum === 1 ? '?' : `?page=${pageNum}`;
@@ -142,7 +146,7 @@ export default defineComponent({
         <div class="p-d-flex p-flex-wrap p-ai-center ">
           <b-badge v-for="topic in topics" variant="light" pill
                    @click="handleFilterTopic(topic)"
-                   :class="['m-1 cursor p-2', filtered_topic.includes(topic) && 'active']">
+                   :class="['m-1 cursor p-2', filtered_topic.find(el => el.name === topic.name) && 'active']">
             {{ topic.title }}
           </b-badge>
         </div>
