@@ -76,23 +76,24 @@ export function getRoutes_2() {
 
     {
       path: "/search/*",
-      name: "search",
+      name: "Search",
       component: Search
     },
     {
       path: "/stac/*",
       component: StacBrowser,
+      name:"Stac",
       children: [
         {
           path: "/",
-          name: "featureItems",
+          name: "FeatureItems",
           component: Browse
         }
       ]
     },
     {
       path: "/*",
-      name: "dynamicListSTAC",
+      name: "DynamicListSTAC",
       component: ListProjectsView,
     },
   ];

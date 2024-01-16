@@ -1,4 +1,3 @@
-//export const BASE_URL  = "http://localhost/";
 export const BASE_URL  = window.location.origin.concat("/");
 export const STAC_ROOT_URL = BASE_URL.concat("stac/");
 export const STAC_SEARCH = BASE_URL.concat("stac/search/");

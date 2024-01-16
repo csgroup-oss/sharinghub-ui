@@ -183,6 +183,7 @@ import {CqlEqual} from '../models/cql2/operators/comparison';
 import {stacRequest} from '../store/utils';
 import {PROXY_URL} from "@/_Hub/Endpoint";
 import {get} from "@/_Hub/tools/https";
+import _ from "lodash"
 
 function getQueryDefaults() {
   return {
@@ -362,12 +363,15 @@ export default {
         }
       }
     },
-    entriesRoute:{
-      immediate:true,
-      handler(newVal){
-        if(newVal?.length > 0 ){
+    entriesRoute: {
+      immediate: true,
+      handler(newVal, oldValue) {
+        console.log("hello", newVal, oldValue);
+        if (oldValue?.length > 0 && !_.isEqual(newVal, oldValue)) {
           this.collections = this.translateCollections(this.collections, newVal);
-          this.setCollections(this.translateCollections(this.collections, newVal));
+          if (this.selectedCollections.length > 0) {
+            this.setCollections(this.translateCollections(this.selectedCollections, newVal));
+          }
 
         }
       }
@@ -673,15 +677,15 @@ export default {
       this.selectedTopics = topics;
       this.$set(this.query, 'topics', topics.map(c => c.value));
     },
-    translateCollections(_collections = [], _entriesRoute){
-      if(!Array.isArray(_collections) || !Array.isArray(_entriesRoute) ){
+    translateCollections(_collections = [], _entriesRoute) {
+      if (!Array.isArray(_collections) || !Array.isArray(_entriesRoute)) {
         return _collections;
       }
-      return _collections.map((el) =>{
+      return _collections.map((el) => {
         const equal = _entriesRoute.find(eq => eq.route === el.value);
         return {
-          value:equal.route,
-          text:equal.title
+          value: equal.route,
+          text: equal.title
         };
       });
     },

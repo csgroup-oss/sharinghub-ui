@@ -6,6 +6,7 @@ import ItemCard from "@/_Hub/components/ItemCard.vue";
 import {get} from "@/_Hub/tools/https";
 import {PROXY_URL, STAC_SEARCH} from "@/_Hub/Endpoint";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
+import _ from "lodash";
 
 
 export default defineComponent({
@@ -28,62 +29,59 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler() {
+        this.filtered_topic = [];
         this.dataList = [];
         this.dataList = [...await this.fetchCollectionsItems()];
-      }
-    },
-    auth: {
-      immediate: true,
-      async handler(data) {
-        if (data?.user) {
-          this.dataList = await this.fetchCollectionsItems();
-        }
       }
     },
     entriesRoute: {
       immediate: true,
-      async handler() {
-        this.dataList = [];
-        this.dataList = [...await this.fetchCollectionsItems()];
+      async handler(newVal, oldValue) {
+        if (oldValue?.length > 0 && !_.isEqual(newVal, oldValue)) {
+          this.dataList = [];
+          this.dataList = [...await this.fetchCollectionsItems()];
+        }
       }
     },
-    filtered_topic: {
-      immediate: true,
-      async handler(newVal, oldVal) {
-        if (newVal.length === 0 && !oldVal) {
-          return;
-        }
-        this.dataList = [];
-        this.dataList = [...await this.fetchCollectionsItems()];
-
-      }
-    }
   },
-  beforeMount() {
+  async beforeMount() {
     this.getTopics();
   },
   methods: {
+    async getTopics() {
+      return get(PROXY_URL.concat('topics')).then((response) => {
+        if (response.data) {
+          this.topics = response.data;
+        }
+        return response.data;
+      }).catch(() => {
+      });
+    },
+
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
       let results = [];
-      let {page} = this.$route.query;
-      page = page || 1;
+      let {page, q, topics} = this.$route.query;
       let route = this.$route.params.pathMatch;
-      this.title = this.entriesRoute.find(el => el.route === route)?.title || this.entriesRoute[0].title;
-      url = url.concat(`?collections=${route}&page=${page}`);
+      const topic = this.entriesRoute.find(el => el.route === route);
+      this.title = topic ? this.$t('fields.list_of', [topic.title]) : this.$t('fields.results');
+
+      let searchUrl = url.concat(`?collections=${route}&page=${page || 1}`);
+
       if (this.filtered_topic.length !== 0) {
-        url = url.concat(`&topics=`);
-        this.filtered_topic.forEach((topic, index) => {
-          if (index !== this.filtered_topic.length - 1) {
-            url = url.concat(`${topic.name},`);
-          } else {
-            url = url.concat(`${topic.name}`);
-          }
-        });
+        searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+      }else {
+        if(topics){
+            searchUrl = this.addTopicsToUrl(searchUrl, [{name:topics}]);
+        }
       }
-      const data = await get(url).then((response) => {
+      if (q) {
+        searchUrl = this.addQueryToUrl(searchUrl, q);
+      }
+
+      const data = await get(searchUrl).then((response) => {
         this.pagination = Math.ceil(response.data.context.matched / response.data.context.limit);
-        this.pagination  = this.pagination > 1 ? this.pagination : 1;
+        this.pagination = this.pagination > 1 ? this.pagination : 1;
         return response.data;
       })
         .catch(() => {
@@ -91,24 +89,38 @@ export default defineComponent({
             this.$router.push("/login");
           }
         });
+
       results = data?.features || [];
       this.loading = false;
       return results;
     },
-    async getTopics() {
-      get(PROXY_URL.concat('topics')).then((response) => {
-        if (response.data) {
-          this.topics = response.data;
-        }
-      }).catch(() => {
-      });
+
+    addQueryToUrl(_url, q) {
+      return _url.concat(`&q=${q}`);
     },
-    filterTopicWith(item) {
+    addTopicsToUrl(_url, topics = []) {
+      let url = _url.concat(`&topics=`);
+      topics.forEach((topic, index) => {
+        if (index !== this.topics.length - 1) {
+          url = url.concat(`${topic.name},`);
+        } else {
+          url = url.concat(`${topic.name}`);
+        }
+      });
+      return url;
+    },
+
+
+    addFilterTopic(item) {
       if (!this.filtered_topic.includes(item)) {
         this.filtered_topic.push(item);
       } else {
         this.filtered_topic = this.filtered_topic.filter(el => el !== item);
       }
+    },
+    handleFilterTopic(item){
+      this.addFilterTopic(item);
+      this.fetchCollectionsItems();
     },
     linkGen(pageNum) {
       return pageNum === 1 ? '?' : `?page=${pageNum}`;
@@ -123,13 +135,13 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <text-view class="p-ml-5" type="header__b20"> {{ $t('fields.list_of', [title]) }}</text-view>
+    <text-view class="p-ml-5" type="header__b20"> {{ title }}</text-view>
 
     <div class="section p-ml-5">
       <div class="col-xl-2 col-md-3 col-lg-2  col-sm-12 filter pt-5">
         <div class="p-d-flex p-flex-wrap p-ai-center ">
           <b-badge v-for="topic in topics" variant="light" pill
-                   @click="filterTopicWith(topic)"
+                   @click="handleFilterTopic(topic)"
                    :class="['m-1 cursor p-2', filtered_topic.includes(topic) && 'active']">
             {{ topic.title }}
           </b-badge>

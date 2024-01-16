@@ -67,7 +67,20 @@ export default {
     };
   },
   computed: {
-    ...mapState(['data'])
+    ...mapState(['data','entriesRoute'])
+  },
+  beforeMount() {
+    const dataFormatted = this.formatData();
+    if (dataFormatted.length > 0) {
+      const generalMetadata = dataFormatted.find(el => el.extension === "");
+      this.license = generalMetadata.properties.license;
+      const sciMetadata = dataFormatted.find(el => el.extension === "sci");
+      if (sciMetadata) {
+        this.doi = sciMetadata.properties["sci:doi"];
+      }
+    }
+
+
   },
   methods: {
     getRandomColor(index) {
@@ -118,21 +131,9 @@ export default {
     },
 
     filterByTags(keyword){
-      this.$router.push({path :"/search/", query:{tags:keyword}});
+      const router = this.entriesRoute.map(el =>el.route).join(',');
+      this.$router.push({path :`/${router}`, query:{topics:keyword}});
     }
-
-  },
-  beforeMount() {
-    const dataFormatted = this.formatData();
-    if (dataFormatted.length > 0) {
-      const generalMetadata = dataFormatted.find(el => el.extension === "");
-      this.license = generalMetadata.properties.license;
-      const sciMetadata = dataFormatted.find(el => el.extension === "sci");
-      if (sciMetadata) {
-        this.doi = sciMetadata.properties["sci:doi"];
-      }
-    }
-
 
   }
 

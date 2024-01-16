@@ -46,7 +46,7 @@
 
 
 <script>
-import Vue, {defineComponent} from 'vue';
+import Vue, {computed, defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
@@ -162,12 +162,11 @@ export default defineComponent({
         })
         .catch(() => {
           this.isLoading = false;
-          if ( !["Login", "Home"].includes(this.$route.name)  ) {
+          if (!["Login", "Home"].includes(this.$route.name)) {
             this.$router.push("/login");
           }
         });
     },
-
 
     async fetchTitles() {
       return get(CONFIG_URL).then((response) => {
@@ -201,7 +200,8 @@ export default defineComponent({
         routes.push({...val, route: key, ico: value["icon"] || icon});
       });
       return routes;
-    }
+    },
+
 
   },
 });

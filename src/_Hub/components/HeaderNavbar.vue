@@ -24,7 +24,7 @@
       <div class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
           <router-link v-for="item in routes" class="mx-1" :to="`/${item.route}`">
-            <nav-item :class="['p-mx-1 p-d-flex p-ai-center', $route.params?.pathMatch===item.route && 'active']">
+            <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
               <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
               <b-icon v-else :icon="item.icon"/>
               <text-view type="header__b14"> {{ item.title }}</text-view>
@@ -146,16 +146,36 @@ export default defineComponent({
         }
       });
     },
+    isActiveRoute(routeKey){
+      return this.$route.path.split("/")[3] ===routeKey || routeKey === this.$route.params?.pathMatch;
+    },
     handleEnter() {
       if (!this.canSearch) {
         return;
       }
-      if (this.$route.name !== "search") {
-        this.$router.push(
-          {
-            path: `/search/`,
-            query: {q: this.value}
-          });
+      const routeName = this.$route.name;
+      let path = "";
+      switch (routeName) {
+        case "Home":
+          path = "/search/";
+          break;
+        case "FeatureItems":
+          path = "/search/";
+          break;
+        case "DynamicListSTAC":
+          path = "";
+          break;
+        case "search":
+        default:
+          this.value = null;
+          return;
+
+      }
+      if(this.value !== null){
+         this.$router.push({path, query: {q: this.value}});
+      }else {
+         path = "/search/";
+         this.$router.push({path});
       }
       this.value = null;
     },
