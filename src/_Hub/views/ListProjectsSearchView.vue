@@ -211,23 +211,5 @@ export default defineComponent({
   flex-wrap: wrap;
   justify-content: space-between;
 
-  .badge {
-    //background-color: rgba($secondary-color,1) !important;
-    border: 1px rgba($secondary-color, 1) solid;
-  }
-
-
-  .filter {
-    width: 100%;
-    //border-right: 2px red solid;
-    border-radius: 12px;
-    background: red;
-    background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
-
-    .active {
-      color: #FFFFFF;
-      background-color: map-get($theme-colors, "primary") !important;
-    }
-  }
 }
 </style>

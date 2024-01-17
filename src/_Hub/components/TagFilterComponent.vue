@@ -78,6 +78,9 @@ export default defineComponent({
   .badge {
     //background-color: rgba($secondary-color,1) !important;
     border: 1px rgba($secondary-color, 1) solid;
+    max-width:240px;
+    overflow-x: hidden;
+
   }
 
   .active {

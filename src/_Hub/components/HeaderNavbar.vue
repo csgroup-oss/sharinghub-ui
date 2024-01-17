@@ -9,7 +9,7 @@
         </text-view>
         <div class="">
           <b-input-group size="md" class="100">
-            <b-form-input type="text" v-model="value" @keyup.enter="handleEnter()"
+            <b-form-input :disabled="!canSearch" type="text" v-model="value" @keyup.enter="handleEnter()"
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
             <b-input-group-prepend style="height: 33px">
@@ -17,6 +17,15 @@
                 <b-icon icon="search"/>
               </b-button>
             </b-input-group-prepend>
+            <b-input-group-prepend style="height: 33px">
+              <b-button :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
+                        variant="outline-secondary">
+                <b-icon icon="sliders"/>
+              </b-button>
+            </b-input-group-prepend>
+            <b-tooltip target="tooltip-target-advance-research" triggers="hover">
+              <text-view>{{ $t('fields.advanced_search') }}</text-view>
+            </b-tooltip>
           </b-input-group>
         </div>
       </div>
@@ -158,13 +167,9 @@ export default defineComponent({
       let path = "";
       switch (routeName) {
         case "Home":
+        case "FeatureItems":
           path = "/simple-search";
           this.$router.push({path, query: {q: this.value, collections: this.routes.map(el => el.route).join(",")}});
-          this.value = null;
-          break;
-        case "FeatureItems":
-          path = "/search/";
-          this.$router.push({path, query: {q: this.value}});
           this.value = null;
           break;
         case "SimpleSearch":
@@ -172,7 +177,7 @@ export default defineComponent({
           path = "";
           let _query = {};
           if (this.value !== null) {
-             const {collections, topics} = this.$route.query;
+            const {collections, topics} = this.$route.query;
             if (collections) {
               _query = {collections};
             }
