@@ -146,24 +146,42 @@ export default defineComponent({
         }
       });
     },
-    isActiveRoute(routeKey){
-      return this.$route.path.split("/")[3] ===routeKey || routeKey === this.$route.params?.pathMatch;
+    isActiveRoute(routeKey) {
+      return this.$route.path.split("/")[3] === routeKey || routeKey === this.$route.params?.pathMatch;
     },
     handleEnter() {
       if (!this.canSearch) {
         return;
       }
       const routeName = this.$route.name;
+
       let path = "";
       switch (routeName) {
         case "Home":
-          path = "/search/";
+          path = "/simple-search";
+          this.$router.push({path, query: {q: this.value, collections: this.routes.map(el => el.route).join(",")}});
+          this.value = null;
           break;
         case "FeatureItems":
           path = "/search/";
+          this.$router.push({path, query: {q: this.value}});
+          this.value = null;
           break;
+        case "SimpleSearch":
         case "DynamicListSTAC":
           path = "";
+          let _query = {};
+          if (this.value !== null) {
+             const {collections, topics} = this.$route.query;
+            if (collections) {
+              _query = {collections};
+            }
+            if (topics) {
+              _query = {..._query, topics};
+            }
+            this.$router.push({path, query: {q: this.value, ..._query}});
+            this.value = null;
+          }
           break;
         case "search":
         default:
@@ -171,13 +189,7 @@ export default defineComponent({
           return;
 
       }
-      if(this.value !== null){
-         this.$router.push({path, query: {q: this.value}});
-      }else {
-         path = "/search/";
-         this.$router.push({path});
-      }
-      this.value = null;
+
     },
 
   },

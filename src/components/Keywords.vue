@@ -132,7 +132,7 @@ export default {
 
     filterByTags(keyword){
       const router = this.entriesRoute.map(el =>el.route).join(',');
-      this.$router.push({path :`/${router}`, query:{topics:keyword}});
+      this.$router.push({path :`/simple-search`, query:{topics:keyword, collections: router}});
     }
 
   }

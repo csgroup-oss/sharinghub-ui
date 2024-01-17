@@ -1,6 +1,7 @@
 import Browse from '../views/Browse.vue';
 import StacBrowser from "@/StacBrowser.vue";
 import ListProjectsView from "@/_Hub/views/ListProjectsView.vue";
+import ListProjectsSearchView from "@/_Hub/views/ListProjectsSearchView.vue";
 import Search from "@/views/Search.vue";
 import Home from "@/views/Home.vue";
 import LoginView from "@/_Hub/views/LoginView.vue";
@@ -90,6 +91,11 @@ export function getRoutes_2() {
           component: Browse
         }
       ]
+    },
+    {
+      path: "/simple-search",
+      name: "SimpleSearch",
+      component: ListProjectsSearchView,
     },
     {
       path: "/*",

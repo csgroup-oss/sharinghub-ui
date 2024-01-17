@@ -8,16 +8,16 @@
     "update_hours": "mis à jour il y a {0} heure(s)",
     "search_placeholder": "recherchez mots clés, models ...",
     "list_of": "Liste des {0}",
-    "asset_card" : "Détails",
-    "reviews" : "Commentaires",
-    "model_deploy" : "Déploiement de modèles",
-    "no_data_found" : "Aucun résultats",
-    "login" : "Se connecter",
-    "copyright" : "Tous droits réserves © Sharing HUB 2023",
-    "about" : "A propos",
-    "privacy" : "Confidentialité",
-    "terms_of_service" : "Mentions légales",
-    "results" : "Résultats"
-
+    "asset_card": "Détails",
+    "reviews": "Commentaires",
+    "model_deploy": "Déploiement de modèles",
+    "no_data_found": "Aucun résultats",
+    "login": "Se connecter",
+    "copyright": "Tous droits réserves © Sharing HUB 2023",
+    "about": "A propos",
+    "privacy": "Confidentialité",
+    "terms_of_service": "Mentions légales",
+    "results": "Résultats",
+    "keyword_search": "Résultat de recherche du mot clé ({0})"
   }
 }

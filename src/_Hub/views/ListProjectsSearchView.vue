@@ -11,7 +11,7 @@ import TagFilterComponent from "@/_Hub/components/TagFilterComponent.vue";
 
 
 export default defineComponent({
-  name: "ListProjectsView",
+  name: "ListProjectsSearchView",
   components: {TagFilterComponent, Awaiter, ItemCard, TextView},
   data() {
     return {
@@ -25,7 +25,7 @@ export default defineComponent({
   },
   computed: {
     ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage']),
-    keywordSearched(){
+    keywordSearched() {
       return this.$route.query?.q;
     }
   },
@@ -65,17 +65,18 @@ export default defineComponent({
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
       let results = [];
-      let {page, q} = this.$route.query;
-      let route = this.$route.params.pathMatch;
-      const topic = this.entriesRoute.find(el => el.route === route);
-      this.title = this.$t('fields.list_of', [topic.title]) || " " ;
-
-      let searchUrl = url.concat(`?collections=${route}&page=${page || 1}`);
+      let {page, q, topics, collections} = this.$route.query;
+      // let route = this.$route.params.pathMatch;
+      let searchUrl = url.concat(`?collections=${collections}&page=${page || 1}`);
 
       if (this.filtered_topic.length !== 0) {
         searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+      } else {
+        if (topics) {
+          this.addFilterTopic({name: topics});
+          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+        }
       }
-
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
       }
@@ -99,7 +100,6 @@ export default defineComponent({
     addQueryToUrl(_url, q) {
       return _url.concat(`&q=${q}`);
     },
-
     addTopicsToUrl(_url, topics = []) {
       let url = _url.concat(`&topics=`);
       topics.forEach((topic, index) => {
@@ -112,34 +112,39 @@ export default defineComponent({
       return url;
     },
 
+
     addFilterTopic(item) {
-      if (!this.filtered_topic.includes(item)) {
+      if (!this.filtered_topic.some(el => el.name === item.name)) {
         this.filtered_topic.push(item);
       } else {
         this.filtered_topic = this.filtered_topic.filter(el => el.name !== item.name);
+        const {collections, topics} = this.$route.query;
+        if (topics && collections) {
+          const _collections = this.entriesRoute.map(el => el.route).join(",");
+          this.$router.push({path: "", query: {collections: _collections}});
+        }
+
       }
     },
-
     async handleFilterTopic(item) {
       this.addFilterTopic(item);
       this.dataList = [];
       this.dataList = [...await this.fetchCollectionsItems()];
-    },
 
+    },
     linkGen(pageNum) {
       return pageNum === 1 ? '?' : `?page=${pageNum}`;
     },
-
-    handleResetKeywordCriteriaSearch(){
+    handleResetKeywordCriteriaSearch() {
       const {topics, collections} = this.$route.query;
       let _query = {};
-      if(topics){
+      if (topics) {
         _query = {topics};
       }
-      if(collections){
-         _query = {..._query, collections};
+      if (collections) {
+        _query = {..._query, collections};
       }
-      this.$router.push({path:"", query:{..._query}});
+      this.$router.push({path: "", query: {..._query}});
     }
   },
 
@@ -151,11 +156,10 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <text-view class="p-ml-5" type="header__b20"> {{ title }}</text-view>
+    <text-view class="p-ml-5" type="header__b20"> {{ $t('fields.results') }}</text-view>
 
     <div class="section p-ml-5">
       <div class="col-xl-2 col-md-3 col-lg-2  col-sm-12 filter pt-5">
-
         <TagFilterComponent
           :handle-filter-topic="handleFilterTopic"
           :filtered-topic="filtered_topic"
@@ -169,10 +173,14 @@ export default defineComponent({
         <template v-else>
 
           <b-row v-if="!!keywordSearched" class="p-d-flex p-flex-wrap p-ai-baseline p-pl-5">
-            <TextView type="header__b20" class="text-primary"> {{ $t("fields.keyword_search", [keywordSearched] ) }} :</TextView>
-            <b-badge @click="handleResetKeywordCriteriaSearch" variant="secondary" class="cursor p-ml-5 p-px-2" size="lg"> {{ $t("reset") }} <b-icon-arrow-repeat/>
+            <TextView type="header__b20" class="text-primary"> {{ $t("fields.keyword_search", [keywordSearched]) }} :
+            </TextView>
+            <b-badge @click="handleResetKeywordCriteriaSearch" variant="secondary" class="cursor p-ml-5 p-px-2"
+                     size="lg"> {{ $t("reset") }}
+              <b-icon-arrow-repeat/>
             </b-badge>
           </b-row>
+
           <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
             <item-card v-for="dataset in dataList" :stac="dataset"/>
           </b-row>
@@ -202,5 +210,24 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  .badge {
+    //background-color: rgba($secondary-color,1) !important;
+    border: 1px rgba($secondary-color, 1) solid;
+  }
+
+
+  .filter {
+    width: 100%;
+    //border-right: 2px red solid;
+    border-radius: 12px;
+    background: red;
+    background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
+
+    .active {
+      color: #FFFFFF;
+      background-color: map-get($theme-colors, "primary") !important;
+    }
+  }
 }
 </style>

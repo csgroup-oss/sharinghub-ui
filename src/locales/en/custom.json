@@ -17,6 +17,7 @@
     "about" : "About",
     "privacy" : "Privacy",
     "terms_of_service" : "Terms of service",
-    "results" : "Results"
+    "results" : "Results",
+    "keyword_search" : "Search result for keyword ({0})"
   }
 }
