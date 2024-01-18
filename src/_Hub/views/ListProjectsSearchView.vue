@@ -111,8 +111,6 @@ export default defineComponent({
       });
       return url;
     },
-
-
     addFilterTopic(item) {
       if (!this.filtered_topic.some(el => el.name === item.name)) {
         this.filtered_topic.push(item);
@@ -145,6 +143,9 @@ export default defineComponent({
         _query = {..._query, collections};
       }
       this.$router.push({path: "", query: {..._query}});
+    },
+    getCategory(stacFeatureItem){
+      return this.entriesRoute.find(el => el.route === stacFeatureItem.properties['sharinghub:category'])?.title;
     }
   },
 
@@ -182,7 +183,7 @@ export default defineComponent({
           </b-row>
 
           <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
-            <item-card v-for="dataset in dataList" :stac="dataset"/>
+            <item-card v-for="dataset in dataList" :stac="dataset" :category="getCategory(dataset)"/>
           </b-row>
           <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
           <b-row class="p-d-flex p-flex-wrap  p-jc-center">

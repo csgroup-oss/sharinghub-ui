@@ -7,20 +7,20 @@
             <h3><img width="40px" height="40px" :src="logo"> SharingHUB</h3>
           </router-link>
         </text-view>
-        <div class="">
-          <b-input-group size="md" class="100">
+        <div class="" v-if="['md','lg'].includes(size)">
+          <b-input-group size="md" class="">
             <b-form-input :disabled="!canSearch" type="text" v-model="value" @keyup.enter="handleEnter()"
                           :placeholder="$t('fields.search_placeholder') ">
             </b-form-input>
             <b-input-group-prepend style="height: 33px">
               <b-button @click="handleEnter()" :disabled="!canSearch" variant="outline-primary">
-                <b-icon icon="search"/>
+                <b-icon style="padding-bottom: 3px;" icon="search"/>
               </b-button>
             </b-input-group-prepend>
             <b-input-group-prepend style="height: 33px">
               <b-button :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
                         variant="outline-secondary">
-                <b-icon icon="sliders"/>
+                <b-icon style="padding-bottom: 3px;" icon="sliders"/>
               </b-button>
             </b-input-group-prepend>
             <b-tooltip target="tooltip-target-advance-research" triggers="hover">
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="p-d-flex p-ai-center p-jc-between">
+      <div v-if="['lg'].includes(size)" class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
           <router-link v-for="item in routes" class="mx-1" :to="`/${item.route}`">
             <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
@@ -51,30 +51,74 @@
           </a>
 
           <Localisation/>
+        </div>
+        <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+          <template #button-content>
+            <b-avatar size="40" variant="info" :src="avatar_url"/>
+          </template>
+          <b-dropdown-item>
+            <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
+          </b-dropdown-item>
+          <b-dropdown-divider/>
+          <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
+        </b-dropdown>
+        <div v-else class="p-ml-3">
+          <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
+            {{ $t('fields.login') }}
+            <b-icon-box-arrow-in-right/>
+          </b-button>
+        </div>
+      </div>
 
-          <b-dropdown v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
-            <template #button-content>
-              <b-avatar size="40" variant="info" :src="avatar_url"/>
-            </template>
-            <b-dropdown-item>
-              <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
-            </b-dropdown-item>
-            <b-dropdown-divider/>
-            <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
-          </b-dropdown>
 
-          <template v-else>
-            <div class="p-ml-3">
+      <div v-if="['md','sm'].includes(size)" class="p-d-flex p-ai-center">
+        <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+          <template class="" #button-content>
+            <b-avatar size="40" variant="info" :src="avatar_url"/>
+          </template>
+          <b-dropdown-item>
+            <text-view class="" type="">{{ auth?.user?.name }}</text-view>
+          </b-dropdown-item>
+          <b-dropdown-divider/>
+          <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
+        </b-dropdown>
+        <b-button variant="outline-dark" class="mx-3" size="sm"
+                  v-b-toggle.sidebar-menu>
+          <b-icon icon="justify"/>
+        </b-button>
+      </div>
+
+
+      <b-sidebar id="sidebar-menu" sidebar-class="border-right">
+        <div class="px-3 py-2 p-d-flex p-flex-column">
+          <template v-if="routes.length > 0">
+            <router-link v-for="item in routes" class="mx-1 mt-3" :to="`/${item.route}`">
+              <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
+                <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
+                <b-icon v-else :icon="item.icon"/>
+                <text-view type="header__b14"> {{ item.title }}</text-view>
+              </nav-item>
+            </router-link>
+          </template>
+
+          <div class="mx-1 mt-3">
+            <a :href="docs_url" target="_blank">
+              <nav-item class="p-mx-1">
+                <b-icon icon="book"/>
+                <text-view type="header__b14"> Docs</text-view>
+              </nav-item>
+            </a>
+            <Localisation class="mt-3"/>
+            <div v-if="!isAuthenticated" class="mt-5">
               <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
                 {{ $t('fields.login') }}
                 <b-icon-box-arrow-in-right/>
               </b-button>
             </div>
-          </template>
+          </div>
+
         </div>
-
-
-      </div>
+      </b-sidebar>
     </div>
   </header>
 </template>
@@ -112,6 +156,7 @@ export default defineComponent({
       canSearch: true,
       logo: logoImage,
       docs_url: DOCS_URL,
+      size: "lg",
     };
   },
   computed: {
@@ -145,6 +190,13 @@ export default defineComponent({
       }
     },
   },
+  beforeMount() {
+    this.updateNavbar({width:window.innerWidth});
+    window.onresize = (ev) => {
+      const {innerWidth : width} = ev.currentTarget;
+      this.updateNavbar({width});
+    };
+  },
   methods: {
     async logout() {
       get(LOGOUT_URL).then((response) => {
@@ -165,6 +217,7 @@ export default defineComponent({
       const routeName = this.$route.name;
 
       let path = "";
+      let _query = {};
       switch (routeName) {
         case "Home":
         case "FeatureItems":
@@ -175,7 +228,6 @@ export default defineComponent({
         case "SimpleSearch":
         case "DynamicListSTAC":
           path = "";
-          let _query = {};
           if (this.value !== null) {
             const {collections, topics} = this.$route.query;
             if (collections) {
@@ -196,7 +248,15 @@ export default defineComponent({
       }
 
     },
-
+    updateNavbar({width}) {
+      if (width <= 800) {
+        this.size = "sm";
+      } else if (width <= 1500) {
+        this.size = "md";
+      } else {
+        this.size = "lg";
+      }
+    }
   },
 
 });

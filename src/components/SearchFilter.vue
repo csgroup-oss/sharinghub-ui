@@ -366,7 +366,6 @@ export default {
     entriesRoute: {
       immediate: true,
       handler(newVal, oldValue) {
-        console.log("hello", newVal, oldValue);
         if (oldValue?.length > 0 && !_.isEqual(newVal, oldValue)) {
           this.collections = this.translateCollections(this.collections, newVal);
           if (this.selectedCollections.length > 0) {

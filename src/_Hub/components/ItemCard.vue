@@ -17,6 +17,10 @@ export default defineComponent({
       type: Object,
       default: undefined
     },
+    category: {
+      type: String,
+      default: undefined,
+    }
   },
   data() {
     return {
@@ -91,6 +95,12 @@ export default defineComponent({
             </b-badge>
           </div>
 
+          <div class="w-100 p-d-flex p-ai-center p-pl-2 items-card__category" v-if="!!category">
+            <text-view type="header__13">
+              <small>{{ category }}</small>
+            </text-view>
+          </div>
+
         </div>
         <div class="items-card__content p-px-3">
           <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
@@ -152,11 +162,23 @@ img {
   }
 
   .no-preview {
-    background: rgba(black, 0.5);
+    background: rgba(black, 0.6);
+  }
+
+  &__category{
+    background: rgba(black, 0.6);
+    color: white;
+    top:135px;
+    position:absolute;
+    height: 30px;
+    small{
+      font-variant-caps: small-caps;
+      font-size:15px !important;
+    }
   }
 
   &__title {
-    height: 45%;
+    height: 46%;
   }
 
   img {

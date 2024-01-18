@@ -20,13 +20,8 @@ export default defineComponent({
     return {};
   },
   computed: {
-    detectTypo: function () {
-      switch (this.$props.type) {
-        case "Title-1":
-          return `text__Title-1`;
-        default:
-          return `text__${this.$props.type}`;
-      }
+    detectTypo () {
+       return `text__${this.$props.type}`;
     }
   },
   mounted() {

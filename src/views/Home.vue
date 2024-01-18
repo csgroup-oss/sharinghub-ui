@@ -95,7 +95,7 @@ export default defineComponent({
     </div>
 
     <div class="w-100 p-d-flex p-justify-center p-flex-column p-ai-center">
-      <div v-for="(el, key) in categories" :key="key" class="p-mb-6 w-60">
+      <div v-for="(el, key) in categories" :key="key" class="p-mb-6  col-xl-7 col-lg-10 col-md-12 col-sm-12  ">
         <div class="w-100">
           <home-card v-bind="el" :index="key"/>
         </div>
