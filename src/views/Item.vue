@@ -82,7 +82,7 @@ export default {
     ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink']),
     canViewMap() {
       if (this.data instanceof STAC) {
-        return this.data.getMetadata("sharinghub:map-viewer") === "enable";
+        return this.data.getMetadata("sharinghub:map-viewer") === "enable" && !!this.data.bbox ;
       }
       return false;
     }
