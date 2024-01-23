@@ -159,6 +159,10 @@ export default class GitlabV4 {
         });
         return normalizeIssue(data);
     }
+    async closeIssue(issue) {
+        const { data } = await this.$http.put(`projects/${this._encodedRepo}/issues/${issue.id}?state_event=close`, {});
+        return normalizeIssue(data);
+    }
     /**
      * Get comments of this page according to the issue id
      *

@@ -19,6 +19,7 @@ export interface ResponseIssue {
     iid: number;
     title: string;
     description: string;
+    state: string;
     web_url: string;
 }
 export interface ResponseComment {

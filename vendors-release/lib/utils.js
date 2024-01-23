@@ -14,6 +14,7 @@ export function normalizeIssue(issue) {
         title: issue.title,
         content: issue.description,
         link: issue.web_url,
+        state: issue.state,
     };
 }
 export function normalizeComment(comment) {

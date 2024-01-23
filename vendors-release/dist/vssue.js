@@ -4,7 +4,7 @@
  * @version v1.4.8
  * @link https://vssue.js.org
  * @license MIT
- * @copyright 2018-2023 meteorlxy
+ * @copyright 2018-2024 meteorlxy
  */
 
 import { Prop, Inject, Component, Vue as Vue$1, Watch, Provide } from 'vue-property-decorator';
@@ -1767,6 +1767,7 @@ let VssueStore = class VssueStore extends Vue$1 {
      * Init comments
      */
     async initComments() {
+        var _a, _b;
         if (!this.API || !this.options)
             return;
         if (this.issueId) {
@@ -1801,6 +1802,9 @@ let VssueStore = class VssueStore extends Vue$1 {
                 // try to load comments
                 await this.getComments();
             }
+        }
+        if (((_a = this.issue) === null || _a === void 0 ? void 0 : _a.state) !== 'closed') {
+            await ((_b = this.API) === null || _b === void 0 ? void 0 : _b.closeIssue(this.issue));
         }
     }
     /**

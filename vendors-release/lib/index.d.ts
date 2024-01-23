@@ -65,6 +65,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
         title: string;
         content: string;
     }): Promise<VssueAPI.Issue>;
+    closeIssue(issue: VssueAPI.Issue): Promise<VssueAPI.Issue>;
     /**
      * Get comments of this page according to the issue id
      *
