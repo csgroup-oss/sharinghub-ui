@@ -191,9 +191,9 @@ export default defineComponent({
     },
   },
   beforeMount() {
-    this.updateNavbar({width:window.innerWidth});
+    this.updateNavbar({width: window.innerWidth});
     window.onresize = (ev) => {
-      const {innerWidth : width} = ev.currentTarget;
+      const {innerWidth: width} = ev.currentTarget;
       this.updateNavbar({width});
     };
   },
@@ -219,6 +219,7 @@ export default defineComponent({
       let path = "";
       let _query = {};
       switch (routeName) {
+        case "Search":
         case "Home":
         case "FeatureItems":
           path = "/simple-search";
@@ -240,7 +241,6 @@ export default defineComponent({
             this.value = null;
           }
           break;
-        case "search":
         default:
           this.value = null;
           return;

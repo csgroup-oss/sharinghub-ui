@@ -54,7 +54,7 @@ export default defineComponent({
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
       const r = this.stac.properties?.description?.replace(regex, "") || " ";
-      return r.substr(0, 130).concat(" ...");
+      return r.substr(0, 120).concat(" ...");
     },
     getUrl() {
       return this.toBrowserPath(this.stac.links.find(el => el.rel === "self").href);
@@ -166,7 +166,7 @@ img {
   }
 
   &__category{
-    background: rgba(black, 0.6);
+    background: rgba(map-get($theme-colors, "primary"), 0.6);
     color: white;
     top:135px;
     position:absolute;

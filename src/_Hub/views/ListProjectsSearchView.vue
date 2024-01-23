@@ -18,9 +18,9 @@ export default defineComponent({
       dataList: [],
       title: "",
       loading: true,
-      topics: [],
+      tags: undefined,
       pagination: 1,
-      filtered_topic: [],
+      filtered_tags: [],
     };
   },
   computed: {
@@ -33,7 +33,7 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler() {
-        this.filtered_topic = [];
+        this.filtered_tags = [];
         this.dataList = [];
         this.dataList = [...await this.fetchCollectionsItems()];
       }
@@ -53,9 +53,9 @@ export default defineComponent({
   },
   methods: {
     async getTopics() {
-      return get(PROXY_URL.concat('topics')).then((response) => {
+      return get(PROXY_URL.concat('tags')).then((response) => {
         if (response.data) {
-          this.topics = response.data;
+          this.tags = response.data;
         }
         return response.data;
       }).catch(() => {
@@ -69,12 +69,12 @@ export default defineComponent({
       // let route = this.$route.params.pathMatch;
       let searchUrl = url.concat(`?collections=${collections}&page=${page || 1}`);
 
-      if (this.filtered_topic.length !== 0) {
-        searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+      if (this.filtered_tags.length !== 0) {
+        searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
       } else {
         if (topics) {
-          this.addFilterTopic({name: topics});
-          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+          this.addFilterTag(topics);
+          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
         }
       }
       if (q) {
@@ -103,29 +103,28 @@ export default defineComponent({
     addTopicsToUrl(_url, topics = []) {
       let url = _url.concat(`&topics=`);
       topics.forEach((topic, index) => {
-        if (index !== this.topics.length - 1) {
-          url = url.concat(`${topic.name},`);
+        if (index !== topics.length - 1) {
+          url = url.concat(`${topic},`);
         } else {
-          url = url.concat(`${topic.name}`);
+          url = url.concat(`${topic}`);
         }
       });
       return url;
     },
-    addFilterTopic(item) {
-      if (!this.filtered_topic.some(el => el.name === item.name)) {
-        this.filtered_topic.push(item);
+    addFilterTag(item) {
+      if (!this.filtered_tags.includes(item)) {
+        this.filtered_tags.push(item);
       } else {
-        this.filtered_topic = this.filtered_topic.filter(el => el.name !== item.name);
+        this.filtered_tags = this.filtered_tags.filter(el => el !== item);
         const {collections, topics} = this.$route.query;
         if (topics && collections) {
           const _collections = this.entriesRoute.map(el => el.route).join(",");
           this.$router.push({path: "", query: {collections: _collections}});
         }
-
       }
     },
-    async handleFilterTopic(item) {
-      this.addFilterTopic(item);
+    async handleFilterTag(item) {
+      this.addFilterTag(item);
       this.dataList = [];
       this.dataList = [...await this.fetchCollectionsItems()];
 
@@ -144,7 +143,7 @@ export default defineComponent({
       }
       this.$router.push({path: "", query: {..._query}});
     },
-    getCategory(stacFeatureItem){
+    getCategory(stacFeatureItem) {
       return this.entriesRoute.find(el => el.route === stacFeatureItem.properties['sharinghub:category'])?.title;
     }
   },
@@ -160,14 +159,15 @@ export default defineComponent({
     <text-view class="p-ml-5" type="header__b20"> {{ $t('fields.results') }}</text-view>
 
     <div class="section p-ml-5">
-      <div class="col-xl-2 col-md-3 col-lg-2  col-sm-12 filter pt-5">
+      <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter pt-5">
         <TagFilterComponent
-          :handle-filter-topic="handleFilterTopic"
-          :filtered-topic="filtered_topic"
-          :topics="topics"
+            v-if="!!tags"
+          :handle-filter-tags="handleFilterTag"
+          :filtered-tags="filtered_tags"
+          :tags="tags"
         />
       </div>
-      <div class="col-xl-10 col-md-9 col-lg-10 col-sm-12 ">
+      <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12 ">
         <template v-if="loading">
           <awaiter :is-visible="loading"/>
         </template>

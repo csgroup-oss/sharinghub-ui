@@ -18,9 +18,9 @@ export default defineComponent({
       dataList: [],
       title: "",
       loading: true,
-      topics: [],
+      tags: undefined,
       pagination: 1,
-      filtered_topic: [],
+      filtered_tags: [],
     };
   },
   computed: {
@@ -33,7 +33,7 @@ export default defineComponent({
     $route: {
       immediate: true,
       async handler() {
-        this.filtered_topic = [];
+        this.filtered_tags = [];
         this.dataList = [];
         this.dataList = [...await this.fetchCollectionsItems()];
       }
@@ -53,15 +53,14 @@ export default defineComponent({
   },
   methods: {
     async getTopics() {
-      return get(PROXY_URL.concat('topics')).then((response) => {
+      return get(PROXY_URL.concat('tags')).then((response) => {
         if (response.data) {
-          this.topics = response.data;
+          this.tags = response.data;
         }
         return response.data;
       }).catch(() => {
       });
     },
-
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
       let results = [];
@@ -72,8 +71,8 @@ export default defineComponent({
 
       let searchUrl = url.concat(`?collections=${route}&page=${page || 1}`);
 
-      if (this.filtered_topic.length !== 0) {
-        searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_topic);
+      if (this.filtered_tags.length !== 0) {
+        searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
       }
 
       if (q) {
@@ -103,25 +102,25 @@ export default defineComponent({
     addTopicsToUrl(_url, topics = []) {
       let url = _url.concat(`&topics=`);
       topics.forEach((topic, index) => {
-        if (index !== this.topics.length - 1) {
-          url = url.concat(`${topic.name},`);
+        if (index !== topics.length - 1) {
+          url = url.concat(`${topic},`);
         } else {
-          url = url.concat(`${topic.name}`);
+          url = url.concat(`${topic}`);
         }
       });
       return url;
     },
 
-    addFilterTopic(item) {
-      if (!this.filtered_topic.includes(item)) {
-        this.filtered_topic.push(item);
+    addFilterTag(item) {
+      if (!this.filtered_tags.includes(item)) {
+        this.filtered_tags.push(item);
       } else {
-        this.filtered_topic = this.filtered_topic.filter(el => el.name !== item.name);
+        this.filtered_tags = this.filtered_tags.filter(el => el !== item);
       }
     },
 
-    async handleFilterTopic(item) {
-      this.addFilterTopic(item);
+    async handleFilterTag(item) {
+      this.addFilterTag(item);
       this.dataList = [];
       this.dataList = [...await this.fetchCollectionsItems()];
     },
@@ -154,15 +153,16 @@ export default defineComponent({
     <text-view class="p-ml-5" type="header__b20"> {{ title }}</text-view>
 
     <div class="section p-ml-5">
-      <div class="col-xl-2 col-md-3 col-lg-2  col-sm-12 filter pt-5">
+      <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter pt-5">
 
         <TagFilterComponent
-          :handle-filter-topic="handleFilterTopic"
-          :filtered-topic="filtered_topic"
-          :topics="topics"
+          v-if="!!tags"
+          :handle-filter-tags="handleFilterTag"
+          :filtered-tags="filtered_tags"
+          :tags="tags"
         />
       </div>
-      <div class="col-xl-10 col-md-9 col-lg-10 col-sm-12 ">
+      <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12 ">
         <template v-if="loading">
           <awaiter :is-visible="loading"/>
         </template>
@@ -173,6 +173,7 @@ export default defineComponent({
             <b-badge @click="handleResetKeywordCriteriaSearch" variant="secondary" class="cursor p-ml-5 p-px-2" size="lg"> {{ $t("reset") }} <b-icon-arrow-repeat/>
             </b-badge>
           </b-row>
+
           <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
             <item-card v-for="dataset in dataList" :stac="dataset"/>
           </b-row>
