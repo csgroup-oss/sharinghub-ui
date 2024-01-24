@@ -1,7 +1,11 @@
 <template>
   <div class="">
     <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page">
-      <header-navbar v-if="!!headerRoutes" :routes="headerRoutes"/>
+      <header-navbar
+        v-if="!!headerRoutes"
+        :routes="headerRoutes"
+        :external-links="headerExternalLinks"
+      />
 
       <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
         <Awaiter :is-visible="isLoading"/>
@@ -74,6 +78,7 @@ export default defineComponent({
     return {
       isLoading: true,
       headerRoutes: undefined,
+      headerExternalLinks: undefined,
     };
   },
   computed: {
@@ -90,8 +95,9 @@ export default defineComponent({
           if (data.mode !== old_data?.mode && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
             removeLocalToken();
             this.initWithUserCredentials().then(async () => {
-              const config = await this.getConfig();
-              this.headerRoutes = this.buildRouting(config, this.uiLanguage);
+              const {categories, external_urls} = await this.getConfig();
+              this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
+              this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
               this.$store.commit("setEntriesRoutes", this.headerRoutes);
             });
           }
@@ -118,7 +124,9 @@ export default defineComponent({
 
         // Update the HTML lang tag
         document.documentElement.setAttribute("lang", locale);
-        this.headerRoutes = this.buildRouting(this.provideConfig, locale);
+        const {categories, external_urls} = this.provideConfig;
+        this.headerRoutes = this.buildRouting(categories, locale);
+        this.headerExternalLinks = this.buildExternalLinks(external_urls, locale);
         this.$store.commit("setEntriesRoutes", this.headerRoutes);
       }
     }
@@ -129,8 +137,9 @@ export default defineComponent({
   },
   async beforeMount() {
     this.initWithUserCredentials().then(async () => {
-      const config = await this.getConfig();
-      this.headerRoutes = this.buildRouting(config, this.uiLanguage);
+      const {categories, external_urls} = await this.getConfig();
+      this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
+      this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
       this.$store.commit("setEntriesRoutes", this.headerRoutes);
     });
 
@@ -185,10 +194,10 @@ export default defineComponent({
       });
     },
 
-    buildRouting(config = {}, locale = 'en') {
+    buildRouting(categories = {}, locale = 'en') {
       let entries = {};
       let routes = [];
-      Object.entries(config.categories).forEach(([category, values]) => {
+      Object.entries(categories).forEach(([category, values]) => {
         entries[category] = {...values['locales'], icon: values["icon"]};
       });
 
@@ -210,6 +219,22 @@ export default defineComponent({
         routes.push({...val, route: key, ico: value["icon"] || icon});
       });
       return routes;
+    },
+
+    buildExternalLinks(external_urls = [], locale = 'en') {
+
+      const normalize_link = (link = {}) => {
+        if (!link.dropdown) {
+          let result = {...link, ...link.locales[locale]};
+          delete result.locales;
+          return result;
+        } else {
+          let result = {...link, ...link.locales[locale], dropdown: link.dropdown.map(normalize_link)};
+          delete result.locales;
+          return result;
+        }
+      };
+      return external_urls.map(normalize_link);
     },
 
 

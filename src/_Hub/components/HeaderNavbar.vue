@@ -32,24 +32,41 @@
 
       <div v-if="['lg'].includes(size)" class="p-d-flex p-ai-center p-jc-between">
         <template v-if="routes.length > 0">
-          <router-link v-for="item in routes" class="mx-1" :to="`/${item.route}`">
+          <router-link v-for="item in routes" class="" :to="`/${item.route}`">
             <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
               <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
               <b-icon v-else :icon="item.icon"/>
-              <text-view type="header__b14"> {{ item.title }}</text-view>
+              <text-view type="header__b13"> {{ item.title }}</text-view>
             </nav-item>
           </router-link>
+
         </template>
         <div class="p-divider--vertical"/>
-
         <div class="p-d-flex p-ai-center">
-          <a :href="docs_url" target="_blank">
-            <nav-item class="p-mx-1">
-              <b-icon icon="book"/>
-              <text-view type="header__b14"> Docs</text-view>
-            </nav-item>
-          </a>
+          <div v-for="link in externalLinks">
+            <a v-if="link.url" :href="link.url" target="_blank">
+              <nav-item class="p-mx-1">
+                <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
+                <text-view type="header__b13"> {{ link.name }}</text-view>
+              </nav-item>
+            </a>
+            <b-dropdown v-if="link.dropdown" right size="sm" variant="link" toggle-class="text-decoration-none"
+                        no-caret>
+              <template #button-content>
+                <nav-item class="p-mx-1">
+                  <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
+                  <text-view type="header__b13"> {{ link.name }}</text-view>
+                </nav-item>
+              </template>
+              <b-dropdown-item v-for="sublink in link.dropdown" :href="sublink.url">
+                <img v-if="!!sublink.icon" width="20px" height="20px" :src="sublink.icon"/>
+                {{ sublink.name }}
+              </b-dropdown-item>
 
+
+            </b-dropdown>
+
+          </div>
           <Localisation/>
         </div>
         <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
@@ -102,12 +119,28 @@
           </template>
 
           <div class="mx-1 mt-3">
-            <a :href="docs_url" target="_blank">
-              <nav-item class="p-mx-1">
-                <b-icon icon="book"/>
-                <text-view type="header__b14"> Docs</text-view>
-              </nav-item>
-            </a>
+            <template v-for="link in externalLinks">
+              <a v-if="link.url" :href="link.url" target="_blank">
+                <nav-item class="p-mx-1">
+                  <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
+                  <text-view type="header__b14"> {{ link.name }}</text-view>
+                </nav-item>
+              </a>
+              <b-dropdown v-if="link.dropdown" left size="sm" variant="link" toggle-class="text-decoration-none"
+                          no-caret>
+                <template #button-content>
+                  <nav-item class="p-mx-1">
+                    <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
+                    <text-view type="header__b14"> {{ link.name }}</text-view>
+                  </nav-item>
+                </template>
+                <b-dropdown-item v-for="sublink in link.dropdown" :href="sublink.url">
+                  <img v-if="!!sublink.icon" width="20px" height="20px" :src="sublink.icon"/>
+                  {{ sublink.name }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </template>
+
             <Localisation class="mt-3"/>
             <div v-if="!isAuthenticated" class="mt-5">
               <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
@@ -145,6 +178,10 @@ export default defineComponent({
     routes: {
       type: Array,
       required: true
+    },
+    externalLinks: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -160,7 +197,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url']),
+    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig']),
     login() {
       return LOGIN_URL;
     },
@@ -251,7 +288,7 @@ export default defineComponent({
     updateNavbar({width}) {
       if (width <= 800) {
         this.size = "sm";
-      } else if (width <= 1500) {
+      } else if (width <= 1584) {
         this.size = "md";
       } else {
         this.size = "lg";

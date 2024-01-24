@@ -42,12 +42,12 @@ export default defineComponent({
 
   &__header {
     &__13 {
-      font-size: 13px;
+      font-size: 13.5px;
     }
 
     &__b13 {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 13.5px;
+      font-weight: 800;
     }
 
     &__14 {
