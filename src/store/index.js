@@ -70,6 +70,7 @@ function getStore(config, router) {
         mode : CONNEXION_MODE.DEFAULT_TOKEN
       },
       entriesRoute: {},
+      provideConfig: null
     }),
     getters: {
       loading: state => !state.url || !state.data || state.database[state.url] instanceof Loading,
@@ -609,7 +610,6 @@ function getStore(config, router) {
           state.catalogUrl = url;
         }
       },
-
       setUserInfo(state, payload) {
         if (payload) {
           const {user, token , mode} = payload;
@@ -618,10 +618,12 @@ function getStore(config, router) {
           state.auth = payload;
         }
       },
-
       setEntriesRoutes(state, payload) {
          state.entriesRoute = payload;
-      }
+      },
+      setProvideConfig(state, payload) {
+         state.provideConfig = payload;
+      },
 
 
     },

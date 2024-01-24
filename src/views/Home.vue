@@ -1,8 +1,6 @@
 <script>
 import {defineComponent} from 'vue';
 import image from "@/assets/img/illustre_1.svg";
-import {CONFIG_URL} from "@/_Hub/Endpoint";
-import {get} from "@/_Hub/tools/https";
 import Description from "@/components/Description.vue";
 import HomeCard from "@/_Hub/components/HomeCard.vue";
 import "@/assets/base.scss";
@@ -22,7 +20,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['uiLanguage'])
+    ...mapState(['uiLanguage', 'provideConfig'])
   },
   watch: {
     uiLanguage: {
@@ -44,29 +42,25 @@ export default defineComponent({
 
         // Update the HTML lang tag
         document.documentElement.setAttribute("lang", locale);
-        this.getConfig(locale);
+        this.setConfig(locale);
       }
     }
   },
   async created() {
-    this.getConfig();
+    this.setConfig();
 
   },
   methods: {
-    async getConfig(locale = "en") {
-      get(CONFIG_URL).then((response) => {
-        if (response.data) {
-          let entries = {};
-          Object.entries(response.data?.categories).forEach(([category, values]) => {
-            entries[category] = Object.assign({logo: values['logo']}, values['locales']);
-          });
-          this.categories = Object.entries(entries).map(([key, val]) => {
-            return Object.assign({category: key, logo: val['logo']}, val[locale]);
-          });
-          this.config = response.data.root.locales[locale];
-          this.loading = false;
-        }
+    async setConfig(locale = "en") {
+      let entries = {};
+      Object.entries(this.provideConfig?.categories).forEach(([category, values]) => {
+        entries[category] = Object.assign({logo: values['logo']}, values['locales']);
       });
+      this.categories = Object.entries(entries).map(([key, val]) => {
+        return Object.assign({category: key, logo: val['logo']}, val[locale]);
+      });
+      this.config = this.provideConfig.root.locales[locale];
+      this.loading = false;
     },
 
   }
@@ -78,16 +72,16 @@ export default defineComponent({
   <div class="container p-pt-4">
     <div class="p-d-flex p-justify-center p-mb-6">
 
-     <b-row class="p-flex-md-row p-flex-lg-row ">
-         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
-            <h1 class="p-mb-4"> SharingHUB community </h1>
-            <h2 class="p-mb-3"> {{ config?.title }} </h2>
-            <Description v-if="!loading" :description="config?.description"/>
-          </div>
-          <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-d-sm-none p-d-md-none  p-d-xl-inline p-d-lg-inline">
-            <img height="350px" :src="image"/>
-          </div>
-     </b-row>
+      <b-row class="p-flex-md-row p-flex-lg-row ">
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+          <h1 class="p-mb-4"> SharingHUB community </h1>
+          <h2 class="p-mb-3"> {{ config?.title }} </h2>
+          <Description v-if="!loading" :description="config?.description"/>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-d-sm-none p-d-md-none  p-d-xl-inline p-d-lg-inline">
+          <img height="350px" :src="image"/>
+        </div>
+      </b-row>
     </div>
 
     <div class="p-d-flex p-justify-center p-my-6 ">

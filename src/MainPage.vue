@@ -46,7 +46,7 @@
 
 
 <script>
-import Vue, {computed, defineComponent} from 'vue';
+import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
@@ -77,7 +77,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'conformsTo', 'uiLanguage']),
+    ...mapState(['auth', 'conformsTo', 'uiLanguage', 'provideConfig']),
     login() {
       return LOGIN_URL;
     }
@@ -86,19 +86,23 @@ export default defineComponent({
     auth: {
       immediate: true,
       async handler(data, old_data) {
-        this.isLoading = false;
-        if (data.mode !== old_data?.mode && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
-          removeLocalToken();
-          this.initWithUserCredentials().then(() => {
-            this.fetchTitles();
-          });
+        if (!this.isLoading) {
+          if (data.mode !== old_data?.mode && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
+            removeLocalToken();
+            this.initWithUserCredentials().then(async () => {
+              const config = await this.getConfig();
+              this.headerRoutes = this.buildRouting(config, this.uiLanguage);
+              this.$store.commit("setEntriesRoutes", this.headerRoutes);
+            });
+          }
         }
+
       }
     },
     uiLanguage: {
       immediate: true,
       async handler(locale) {
-        if (!locale) {
+        if (!locale || !this.provideConfig) {
           return;
         }
 
@@ -114,8 +118,7 @@ export default defineComponent({
 
         // Update the HTML lang tag
         document.documentElement.setAttribute("lang", locale);
-        const entries = await this.fetchTitles();
-        this.headerRoutes = this.buildRouting(entries, locale);
+        this.headerRoutes = this.buildRouting(this.provideConfig, locale);
         this.$store.commit("setEntriesRoutes", this.headerRoutes);
       }
     }
@@ -124,9 +127,11 @@ export default defineComponent({
     removeLocalToken();
     this.$store.commit("setBaseUrl", STAC_ROOT_URL);
   },
-  beforeMount() {
-    this.initWithUserCredentials().then(() => {
-      this.fetchTitles();
+  async beforeMount() {
+    this.initWithUserCredentials().then(async () => {
+      const config = await this.getConfig();
+      this.headerRoutes = this.buildRouting(config, this.uiLanguage);
+      this.$store.commit("setEntriesRoutes", this.headerRoutes);
     });
 
   },
@@ -158,6 +163,7 @@ export default defineComponent({
             if (this.$route.fullPath === "") {
               this.$router.push("/");
             }
+            this.isLoading = false;
           }
         })
         .catch(() => {
@@ -168,20 +174,24 @@ export default defineComponent({
         });
     },
 
-    async fetchTitles() {
-      return get(CONFIG_URL).then((response) => {
-        if (response.data) {
-          let entries = {};
-          Object.entries(response.data.categories).forEach(([category, values]) => {
-            entries[category] = {...values['locales'], icon: values["icon"]};
-          });
-          return entries;
+    async getConfig() {
+      return get(CONFIG_URL).then(async (response) => {
+        const {data} = response;
+        if (data) {
+          await this.$store.commit("setProvideConfig", data);
+          return data;
         }
+        return undefined;
       });
     },
 
-    buildRouting(entries, locale = 'en') {
+    buildRouting(config = {}, locale = 'en') {
+      let entries = {};
       let routes = [];
+      Object.entries(config.categories).forEach(([category, values]) => {
+        entries[category] = {...values['locales'], icon: values["icon"]};
+      });
+
       if (typeof entries !== "object") {
         throw new Error("entries point are undefined");
       }

@@ -41,8 +41,6 @@ import StacLink from './StacLink.vue';
 import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from "@/components/Keywords.vue";
-import {get} from "@/_Hub/tools/https";
-import {CONFIG_URL} from "@/_Hub/Endpoint";
 import TextView from "@/_Hub/components/TextView.vue";
 
 
@@ -61,7 +59,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title',]),
+    ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title', 'provideConfig']),
     ...mapGetters(['canSearch', 'root', 'parentLink', 'collectionLink', 'toBrowserPath']),
 
     icon() {
@@ -100,18 +98,10 @@ export default {
     },
   },
   async beforeMount() {
-    get(CONFIG_URL).then((response) => {
-      if (response.data) {
-        this.jupyterLabUrl = response.data.jupyterlab?.url;
-        this.loading = false;
-      }
-    });
+    this.jupyterLabUrl = this.provideConfig.jupyterlab?.url;
+     this.loading = false;
   },
-  methods: {
-    getProjectPath() {
-      return this.data?.getMetadata('sharinghub:project-path');
-    }
-  }
+  methods: {}
 };
 </script>
 
