@@ -11,16 +11,17 @@
     "asset_card": "Details",
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
-    "no_data_found" : "No results",
-    "login" : "Log in",
-    "copyright" : "All rights reserved © Sharing HUB 2023",
-    "about" : "About",
-    "privacy" : "Privacy",
-    "terms_of_service" : "Terms of service",
-    "results" : "Results",
-    "keyword_search" : "Search result for keyword ({0})",
-    "advanced_search" : "Advanced search",
-    "common_tag" : "Common tags",
-    "others" : "Others"
+    "no_data_found": "No results",
+    "login": "Log in",
+    "copyright": "All rights reserved © Sharing HUB 2023",
+    "about": "About",
+    "privacy": "Privacy",
+    "terms_of_service": "Terms of service",
+    "results": "Results",
+    "keyword_search": "Search result for keyword ({0})",
+    "advanced_search": "Advanced search",
+    "common_tag": "Common tags",
+    "others": "Others",
+    "i_understand": "I understand"
   }
 }

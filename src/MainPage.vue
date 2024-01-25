@@ -7,6 +7,28 @@
         :external-links="headerExternalLinks"
       />
 
+      <div v-if="!!alert_message" class="container">
+        <b-alert class="" show :variant="alert_message.type" fade dismissible @dismissed="closeAlert">
+          <div class="p-d-flex p-ai-start">
+            <div class="mr-2">
+              <b-icon icon="exclamation-circle-fill" variant="dark"/>
+            </div>
+            <div>
+              <text-view class="p-d-block" type="header__b14">{{ alert_message.title }}</text-view>
+              <text-view class="p-d-block" type="header__13">{{ alert_message.message }}</text-view>
+              <b-button v-if="alert_message.url"
+                        size="sm" class="mt-2"
+                        variant="light"
+                        @click="$event => closeAlert(alert_message.url)"
+              >
+                {{ $t('fields.i_understand') }}
+              </b-button>
+
+            </div>
+          </div>
+        </b-alert>
+      </div>
+
       <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
         <Awaiter :is-visible="isLoading"/>
       </div>
@@ -54,7 +76,14 @@ import Vue, {defineComponent} from 'vue';
 
 import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
 import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
-import {CONNEXION_MODE, get, getLocalToken, removeLocalToken} from "@/_Hub/tools/https";
+import {
+  CONNEXION_MODE,
+  get,
+  getAlertLastDate,
+  getLocalToken,
+  removeLocalToken,
+  setAlertLastDate
+} from "@/_Hub/tools/https";
 import {CONFIG_URL, DOCS_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from "@/_Hub/Endpoint";
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
@@ -64,6 +93,8 @@ import "./assets/base.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
+import {DateTime, Interval} from "luxon";
+import TextView from "@/_Hub/components/TextView.vue";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -71,6 +102,7 @@ Vue.use(BootstrapVueIcons);
 export default defineComponent({
   name: "MainPage",
   components: {
+    TextView,
     Awaiter,
     HeaderNavbar,
   },
@@ -79,6 +111,8 @@ export default defineComponent({
       isLoading: true,
       headerRoutes: undefined,
       headerExternalLinks: undefined,
+      alert_message: undefined,
+      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN,
     };
   },
   computed: {
@@ -94,12 +128,11 @@ export default defineComponent({
         if (!this.isLoading) {
           if (data.mode !== old_data?.mode && old_data?.mode !== CONNEXION_MODE.DEFAULT_TOKEN) {
             removeLocalToken();
-            this.initWithUserCredentials().then(async () => {
-              const {categories, external_urls} = await this.getConfig();
-              this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
-              this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
-              this.$store.commit("setEntriesRoutes", this.headerRoutes);
-            });
+            const {categories, external_urls} = await this.getConfig();
+            this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
+            this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
+            await this.initWithUserCredentials();
+            this.$store.commit("setEntriesRoutes", this.headerRoutes);
           }
         }
 
@@ -124,10 +157,27 @@ export default defineComponent({
 
         // Update the HTML lang tag
         document.documentElement.setAttribute("lang", locale);
-        const {categories, external_urls} = this.provideConfig;
+        const {categories, external_urls, alert_info} = this.provideConfig;
         this.headerRoutes = this.buildRouting(categories, locale);
         this.headerExternalLinks = this.buildExternalLinks(external_urls, locale);
         this.$store.commit("setEntriesRoutes", this.headerRoutes);
+        if (!this.isLoading && this.showAlert(alert_info)) {
+          this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
+        }
+      }
+    },
+    $route: {
+      immediate: true,
+      handler() {
+        if (!this.isLoading) {
+          const {alert_info} = this.provideConfig;
+          const alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
+          const connexion_mode = this.auth.mode;
+          if (this.showAlert(alert_message, connexion_mode)) {
+            this.alert_message = alert_message;
+          }
+
+        }
       }
     }
   },
@@ -136,12 +186,14 @@ export default defineComponent({
     this.$store.commit("setBaseUrl", STAC_ROOT_URL);
   },
   async beforeMount() {
-    this.initWithUserCredentials().then(async () => {
-      const {categories, external_urls} = await this.getConfig();
-      this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
-      this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
-      this.$store.commit("setEntriesRoutes", this.headerRoutes);
-    });
+    const {categories, external_urls, alert_info} = await this.getConfig();
+    this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
+    this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
+    this.$store.commit("setEntriesRoutes", this.headerRoutes);
+    const connexion_mode = await this.initWithUserCredentials();
+    if (this.showAlert(alert_info, connexion_mode)) {
+      this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
+    }
 
   },
   methods: {
@@ -150,7 +202,7 @@ export default defineComponent({
     },
     async initWithUserCredentials() {
       this.isLoading = true;
-      get(PROXY_URL.concat('user'))
+      return get(PROXY_URL.concat('user'))
         .then(async (userDataResponse) => {
           if (userDataResponse.data) {
             let user = userDataResponse.data;
@@ -167,13 +219,11 @@ export default defineComponent({
                 connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
               }
             }
-            this.$store.commit("setUserInfo", {user, token: token, mode: connexion_mode});
+            await this.$store.commit("setUserInfo", {user, token: token, mode: connexion_mode});
             this.isLoading = false;
-            if (this.$route.fullPath === "") {
-              this.$router.push("/");
-            }
-            this.isLoading = false;
+            return connexion_mode;
           }
+          return undefined;
         })
         .catch(() => {
           this.isLoading = false;
@@ -236,6 +286,47 @@ export default defineComponent({
       };
       return external_urls.map(normalize_link);
     },
+
+    buildAlertInfo(alert_info = {}, locale = 'en') {
+      let entries = {};
+      const {locales, ...rest} = alert_info;
+      entries = {...rest, ...locales[locale]};
+      return entries;
+    },
+
+    showAlert(alert_message = {}, connexion_mode) {
+      const route_name = this.$route.name;
+      if (['Login', 'Home'].includes(route_name)
+        || connexion_mode === CONNEXION_MODE.CONNECTED) {
+        this.alert_message = undefined;
+        return false;
+      }
+      const {timeout} = alert_message;
+      const last_date_showed = getAlertLastDate();
+      if (!last_date_showed) {
+        return true;
+      }
+      const now = DateTime.now();
+      const date = DateTime.fromISO(last_date_showed);
+      const interval = Interval.fromDateTimes(date, now);
+      const interval_days = interval.length('days');
+      return interval_days ? interval_days >= timeout : false;
+    },
+
+    closeAlert(url) {
+      const isValidUrl = (string) => {
+        let regex = new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+          '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
+        return !!regex.test(string);
+      };
+      this.alert_message = undefined;
+      setAlertLastDate(DateTime.now().toISO());
+      if (isValidUrl(url)) {
+        window.open(url);
+      } else {
+        this.$router.push(url);
+      }
+    }
 
 
   },

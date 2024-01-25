@@ -67,3 +67,14 @@ export const CONNEXION_MODE =  {
   "CONNECTED" : "CONNECTED",
   "DEFAULT_TOKEN" : "DEFAULT_TOKEN",
 };
+
+
+export function setAlertLastDate(date){
+  if(!date) throw new Error("token is undefined");
+  window.localStorage.clear();
+  window.localStorage.setItem("alert_last_date", date);
+}
+
+export function getAlertLastDate(){
+  return window.localStorage.getItem("alert_last_date");
+}
