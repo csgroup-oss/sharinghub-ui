@@ -294,6 +294,14 @@
       "enabled": "Open in Jupyter",
       "disabled": "Login to open in Jupyter"
     },
+    "dvc": {
+      "label": "DVC",
+      "hover": "DVC help",
+      "title": "DVC informations",
+      "description": "Link to the DVC remote with SharingHub:",
+      "docs": "Docs",
+      "tutorial": "Tutorial"
+    },
     "stacExtension": "STAC Extension",
     "stacVersion": "STAC Version",
     "statistics": "Statistics",

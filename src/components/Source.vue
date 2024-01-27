@@ -18,6 +18,18 @@
             <span class="button-label"> {{ $t("source.jupyter.open") }}</span>
           </TextView>
         </b-button>
+        <b-button
+          v-if="canUseDVC"
+          id="popover-dvc-btn"
+          variant="outline-dark"
+          size="sm"
+          :title="$t('source.dvc.hover')"
+        >
+          <b-icon-info-circle/>
+          <TextView class="button-label" type="Small-1">
+            <span class="button-label"> {{ $t('source.dvc.label') }} </span>
+          </TextView>
+        </b-button>
         <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
           <b-icon-share/>
           <TextView class="button-label" type="Small-1">
@@ -57,6 +69,18 @@
 
     </b-button-group>
 
+    <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom" :title="$t('source.dvc.title')">
+      <Url id="dvcUrl" :url="dvcUrl()" :label="$t('source.dvc.description')" :open="false" />
+      <hr>
+      <b-button variant="primary" class="mr-1" href="https://dvc.org/doc" target="_blank">
+        <b-icon-book />
+        {{ $t('source.dvc.docs') }}
+      </b-button>
+      <b-button variant="secondary" :href="dvcDocsUrl" target="_blank">
+        <b-icon-lightbulb />
+        {{ $t('source.dvc.tutorial') }}
+      </b-button>
+    </b-popover>
     <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
                container="stac-browser" :title="$t('source.share.title')">
       <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false"/>
@@ -83,7 +107,7 @@ import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import {CONNEXION_MODE, get, post} from "@/_Hub/tools/https";
-import {PROXY_URL} from "@/_Hub/Endpoint";
+import {DOCS_URL, PROXY_URL, STORE_DVC_URL} from "@/_Hub/Endpoint";
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -179,6 +203,9 @@ export default {
     message() {
       return this.$t('source.share.message', {title: this.title, url: this.browserUrl()});
     },
+    dvcDocsUrl() {
+      return DOCS_URL.concat("tutorials/manage_dataset_with_dvc/");
+    },
     twitterUrl() {
       let text = encodeURIComponent(this.message);
       return `https://twitter.com/intent/tweet?text=${text}`;
@@ -239,6 +266,10 @@ export default {
         return false;
       }
       return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:jupyter") === "enable" : false;
+    },
+    canUseDVC() {
+      return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:store-s3") === "enable" : false
+      && this.dvcUrl() != null;
     }
   },
   watch: {
@@ -295,6 +326,13 @@ export default {
     browserUrl() {
       return window.location.toString();
     },
+    dvcUrl() {
+      let stac_id = this.data?.id;
+      if (!stac_id) return null;
+      const projectID = Utils.getProjectID(stac_id);
+      if (!projectID) return null;
+      return STORE_DVC_URL + projectID;
+    },
     starProject() {
       let stac_id = this.data?.id;
       if (!stac_id) throw  new Error('stac_id is wrong');
@@ -331,7 +369,7 @@ export default {
 </script>
 
 <style lang="scss">
-#popover-link, #popover-root, #popover-share {
+#popover-link, #popover-root, #popover-share, #popover-dvc {
   width: 80%;
   max-width: 800px;
 
@@ -340,6 +378,9 @@ export default {
     overflow-x: hidden;
     max-height: 80vh;
   }
+}
+#popover-dvc {
+  max-width: 300px;
 }
 
 #popover-link .stac-id .copy-button {

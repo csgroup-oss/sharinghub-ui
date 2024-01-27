@@ -7,3 +7,4 @@ export const USER_INFO = BASE_URL.concat("auth/info");
 export const PROXY_URL = BASE_URL.concat("api/");
 export const CONFIG_URL = BASE_URL.concat("config/");
 export const DOCS_URL = BASE_URL.concat("docs/");
+export const STORE_DVC_URL = BASE_URL.concat("store/");
