@@ -17,7 +17,7 @@
         <b-button v-if="is_loading" variant="outline-primary">
           <b-icon style="padding-bottom: 3px;" icon="circle-fill" animation="throb"/>
         </b-button>
-        <b-button  v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
+        <b-button v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
                   variant="outline-secondary">
           <b-icon style="padding-bottom: 3px;" icon="sliders"/>
         </b-button>
@@ -162,10 +162,17 @@ export default defineComponent({
     itemLink(links = []) {
       return links.find(el => el.rel === "self").href;
     },
-    handleSelectResult(event, url) {
+    async handleSelectResult(event, url) {
       event.preventDefault();
       event.stopPropagation();
-      this.$router.push({path: `/stac/${this.toBrowserPath(url).split('/').splice(4).join("/")}`,});
+      const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join("/")}`;
+      let stacFeatureItem;
+      stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
+      this.$router.push({path: external});
+      if (!stacFeatureItem) {
+        throw new Error('error on stacFeatureItem');
+      }
+      await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
     },
 
     handleOpenSearchResult() {
@@ -199,7 +206,7 @@ export default defineComponent({
     margin-top: 8px;
     position: absolute;
     width: 19.3%;
-    min-width:400px;
+    min-width: 400px;
     //min-height: 80%;
     height: fit-content;
     background: map-get($theme-colors, "light");

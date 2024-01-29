@@ -18,7 +18,7 @@
     "privacy": "Privacy",
     "terms_of_service": "Terms of service",
     "results": "Results",
-    "keyword_search": "Search result for keyword ({0})",
+    "keyword_search": "Search result \"{0}\"",
     "advanced_search": "Advanced search",
     "common_tag": "Common tags",
     "others": "Others",
