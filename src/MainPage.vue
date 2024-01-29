@@ -8,7 +8,7 @@
       />
 
       <div v-if="!!alert_message" class="container">
-        <b-alert class="" show :variant="alert_message.type" fade dismissible @dismissed="closeAlert">
+        <b-alert class="" show :variant="alert_message.type" fade dismissible @dismissed="closeAlert(alert_message.url)">
           <div class="p-d-flex p-ai-start">
             <div class="mr-2">
               <b-icon icon="exclamation-circle-fill" variant="dark"/>

@@ -15,7 +15,7 @@ export default defineComponent({
   components: {TagFilterComponent, Awaiter, ItemCard, TextView},
   data() {
     return {
-      dataList: [],
+      dataList: undefined,
       title: "",
       loading: true,
       tags: undefined,
@@ -34,16 +34,14 @@ export default defineComponent({
       immediate: true,
       async handler() {
         this.filtered_tags = [];
-        this.dataList = [];
-        this.dataList = [...await this.fetchCollectionsItems()];
+        this.dataList = await this.fetchCollectionsItems();
       }
     },
     entriesRoute: {
       immediate: true,
       async handler(newVal, oldValue) {
         if (oldValue?.length > 0 && !_.isEqual(newVal, oldValue)) {
-          this.dataList = [];
-          this.dataList = [...await this.fetchCollectionsItems()];
+           this.dataList = await this.fetchCollectionsItems();
         }
       }
     },
@@ -64,10 +62,9 @@ export default defineComponent({
 
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
-      let results = [];
-      let {page, q, topics, collections} = this.$route.query;
-      // let route = this.$route.params.pathMatch;
-      let searchUrl = url.concat(`?collections=${collections}&page=${page || 1}`);
+
+      let {q, topics} = this.$route.query;
+      let searchUrl = url.concat(`?`);
 
       if (this.filtered_tags.length !== 0) {
         searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
@@ -81,20 +78,37 @@ export default defineComponent({
         searchUrl = this.addQueryToUrl(searchUrl, q);
       }
 
-      const data = await get(searchUrl).then((response) => {
-        this.pagination = Math.ceil(response.data.context.matched / response.data.context.limit);
-        this.pagination = this.pagination > 1 ? this.pagination : 1;
-        return response.data;
-      })
-        .catch(() => {
+      const all_collections_to_fetch = this.entriesRoute.map(el => el.route);
+
+      const requests = all_collections_to_fetch.map((collection) => {
+        return get(searchUrl.concat(`&collections=${collection}`))
+          .then((response) => {
+            if (response.data) {
+              const {features} = response.data;
+              return {
+                [collection]: features
+              };
+            } else {
+              return [];
+            }
+          });
+      });
+
+      const results = await Promise.all(requests)
+        .then((response) => {
+          return response;
+        }).catch(() => {
           if (this.$route.name !== "Login") {
             this.$router.push("/login");
           }
         });
-
-      results = data?.features || [];
       this.loading = false;
       return results;
+    },
+    async handleFilterTag(item) {
+      this.addFilterTag(item);
+      this.dataList = await this.fetchCollectionsItems();
+
     },
 
     addQueryToUrl(_url, q) {
@@ -123,15 +137,6 @@ export default defineComponent({
         }
       }
     },
-    async handleFilterTag(item) {
-      this.addFilterTag(item);
-      this.dataList = [];
-      this.dataList = [...await this.fetchCollectionsItems()];
-
-    },
-    linkGen(pageNum) {
-      return pageNum === 1 ? '?' : `?page=${pageNum}`;
-    },
     handleResetKeywordCriteriaSearch() {
       const {topics, collections} = this.$route.query;
       let _query = {};
@@ -143,6 +148,7 @@ export default defineComponent({
       }
       this.$router.push({path: "", query: {..._query}});
     },
+
     getCategory(stacFeatureItem) {
       return this.entriesRoute.find(el => el.route === stacFeatureItem.properties['sharinghub:category'])?.title;
     }
@@ -161,7 +167,7 @@ export default defineComponent({
     <div class="section p-ml-5">
       <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter pt-5">
         <TagFilterComponent
-            v-if="!!tags"
+          v-if="!!tags"
           :handle-filter-tags="handleFilterTag"
           :filtered-tags="filtered_tags"
           :tags="tags"

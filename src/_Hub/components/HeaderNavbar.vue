@@ -7,26 +7,10 @@
             <h3><img width="40px" height="40px" :src="logo"> SharingHUB</h3>
           </router-link>
         </text-view>
-        <div class="" v-if="['md','lg'].includes(size)">
-          <b-input-group size="md" class="">
-            <b-form-input :disabled="!canSearch" type="text" v-model="value" @keyup.enter="handleEnter()"
-                          :placeholder="$t('fields.search_placeholder') ">
-            </b-form-input>
-            <b-input-group-prepend style="height: 33px">
-              <b-button @click="handleEnter()" :disabled="!canSearch" variant="outline-primary">
-                <b-icon style="padding-bottom: 3px;" icon="search"/>
-              </b-button>
-            </b-input-group-prepend>
-            <b-input-group-prepend style="height: 33px">
-              <b-button :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
-                        variant="outline-secondary">
-                <b-icon style="padding-bottom: 3px;" icon="sliders"/>
-              </b-button>
-            </b-input-group-prepend>
-            <b-tooltip target="tooltip-target-advance-research" triggers="hover">
-              <text-view>{{ $t('fields.advanced_search') }}</text-view>
-            </b-tooltip>
-          </b-input-group>
+        <div class="" v-if="['md','lg','sm'].includes(size)">
+          <research-bar
+            :canSearch="canSearch"
+            :categories="routes"/>
         </div>
       </div>
 
@@ -165,11 +149,13 @@ import {mapState} from "vuex";
 import {CONNEXION_MODE, get} from "@/_Hub/tools/https";
 import Localisation from "@/components/Localisation.vue";
 import logoImage from "@/assets/img/logo.png";
+import ResearchBar from "@/_Hub/components/HeaderNavbar/ResearchBar.vue";
 
 
 export default defineComponent({
   name: "HeaderNavbar",
   components: {
+    ResearchBar,
     Localisation,
     NavItem,
     TextView,
@@ -188,12 +174,12 @@ export default defineComponent({
     return {
       isAuthenticated: false,
       isLoading: false,
-      value: null,
       avatar_url: undefined,
       canSearch: true,
       logo: logoImage,
       docs_url: DOCS_URL,
       size: "lg",
+      research:undefined
     };
   },
   computed: {
@@ -246,44 +232,6 @@ export default defineComponent({
     },
     isActiveRoute(routeKey) {
       return this.$route.path.split("/")[3] === routeKey || routeKey === this.$route.params?.pathMatch;
-    },
-    handleEnter() {
-      if (!this.canSearch) {
-        return;
-      }
-      const routeName = this.$route.name;
-
-      let path = "";
-      let _query = {};
-      switch (routeName) {
-        case "Search":
-        case "Home":
-        case "FeatureItems":
-          path = "/simple-search";
-          this.$router.push({path, query: {q: this.value, collections: this.routes.map(el => el.route).join(",")}});
-          this.value = null;
-          break;
-        case "SimpleSearch":
-        case "DynamicListSTAC":
-          path = "";
-          if (this.value !== null) {
-            const {collections, topics} = this.$route.query;
-            if (collections) {
-              _query = {collections};
-            }
-            if (topics) {
-              _query = {..._query, topics};
-            }
-            this.$router.push({path, query: {q: this.value, ..._query}});
-            this.value = null;
-          }
-          break;
-        default:
-          this.value = null;
-          return;
-
-      }
-
     },
     updateNavbar({width}) {
       if (width <= 800) {

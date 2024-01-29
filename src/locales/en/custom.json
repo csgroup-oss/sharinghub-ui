@@ -11,7 +11,7 @@
     "asset_card": "Details",
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
-    "no_data_found": "No results",
+    "no_data_found": "No results found {0}",
     "login": "Log in",
     "copyright": "All rights reserved © Sharing HUB 2023",
     "about": "About",
@@ -22,6 +22,8 @@
     "advanced_search": "Advanced search",
     "common_tag": "Common tags",
     "others": "Others",
-    "i_understand": "I understand"
+    "i_understand": "I understand",
+    "see_more": "See more '{0}' results for '{1}'",
+    "filter_by_name": "Filter by name..."
   }
 }

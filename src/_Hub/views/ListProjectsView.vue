@@ -1,5 +1,5 @@
 <script>
-import {defineComponent} from 'vue';
+import {computed, defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
 import {mapState} from "vuex";
 import ItemCard from "@/_Hub/components/ItemCard.vue";
@@ -21,11 +21,15 @@ export default defineComponent({
       tags: undefined,
       pagination: 1,
       filtered_tags: [],
+      next_link: undefined,
+      over_loading: false,
+      term_filter: null,
+      nameSearchTimeout: null,
     };
   },
   computed: {
     ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage']),
-    keywordSearched(){
+    keywordSearched() {
       return this.$route.query?.q;
     }
   },
@@ -52,6 +56,7 @@ export default defineComponent({
     this.getTopics();
   },
   methods: {
+    computed,
     async getTopics() {
       return get(PROXY_URL.concat('tags')).then((response) => {
         if (response.data) {
@@ -63,36 +68,42 @@ export default defineComponent({
     },
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
-      let results = [];
-      let {page, q} = this.$route.query;
+      let {q, topics} = this.$route.query;
       let route = this.$route.params.pathMatch;
       const topic = this.entriesRoute.find(el => el.route === route);
-      this.title = this.$t('fields.list_of', [topic.title]) || " " ;
+      this.title = this.$t('fields.list_of', [topic.title]) || " ";
 
-      let searchUrl = url.concat(`?collections=${route}&page=${page || 1}`);
+      let searchUrl = url.concat(`?collections=${route}&limit=30`);
 
       if (this.filtered_tags.length !== 0) {
         searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
+      } else {
+        if (topics) {
+          this.addFilterTag(topics);
+          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
+        }
       }
 
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
       }
 
-      const data = await get(searchUrl).then((response) => {
-        this.pagination = Math.ceil(response.data.context.matched / response.data.context.limit);
-        this.pagination = this.pagination > 1 ? this.pagination : 1;
-        return response.data;
-      })
-        .catch(() => {
-          if (this.$route.name !== "Login") {
-            this.$router.push("/login");
-          }
-        });
+      return get(searchUrl).then((response) => {
+        if (response.data) {
+          const {features, links} = response.data;
+          this.next_link = links.find(el => el.rel === "next")?.href;
+          this.loading = false;
+          return features || [];
+        } else {
+          this.next_link = undefined;
+          return [];
+        }
 
-      results = data?.features || [];
-      this.loading = false;
-      return results;
+      }).catch(() => {
+        if (this.$route.name !== "Login") {
+          this.$router.push("/login");
+        }
+      });
     },
 
     addQueryToUrl(_url, q) {
@@ -116,6 +127,13 @@ export default defineComponent({
         this.filtered_tags.push(item);
       } else {
         this.filtered_tags = this.filtered_tags.filter(el => el !== item);
+        const {topics, q} = this.$route.query;
+        if (q) {
+          this.$router.push({path: ""});
+        } else if (topics) {
+          this.$router.push({path: ""});
+        }
+
       }
     },
 
@@ -125,20 +143,47 @@ export default defineComponent({
       this.dataList = [...await this.fetchCollectionsItems()];
     },
 
-    linkGen(pageNum) {
-      return pageNum === 1 ? '?' : `?page=${pageNum}`;
-    },
-
-    handleResetKeywordCriteriaSearch(){
+    handleResetKeywordCriteriaSearch() {
       const {topics, collections} = this.$route.query;
       let _query = {};
-      if(topics){
+      if (topics) {
         _query = {topics};
       }
-      if(collections){
-         _query = {..._query, collections};
+      if (collections) {
+        _query = {..._query, collections};
       }
-      this.$router.push({path:"", query:{..._query}});
+      this.$router.push({path: "", query: {..._query}});
+    },
+
+    async loadItemsData(url) {
+      return get(url).then((response) => {
+        if (response.data) {
+          const {features, links} = response.data;
+          this.next_link = links.find(el => el.rel === "next")?.href;
+          return features || [];
+        }
+      });
+    },
+    async handleLoadMoreItems(url) {
+      this.over_loading = true;
+      const more_data = await this.loadItemsData(url);
+      this.dataList = [...this.dataList, ...more_data];
+      this.over_loading = false;
+    },
+    async handleFilterByTerms(term_query) {
+      clearTimeout(this.nameSearchTimeout);
+      const {q} = this.$route.query;
+      if (term_query?.length < 3 && q ) {
+        this.nameSearchTimeout = setTimeout(() => {
+          this.$router.push({path: ""});
+        }, 250);
+      }else {
+         this.nameSearchTimeout = setTimeout(() => {
+          this.$router.push({path: "", query: {q: term_query}});
+        }, 250);
+      }
+
+
     }
   },
 
@@ -150,7 +195,7 @@ export default defineComponent({
 
 <template>
   <div class="w-100 container">
-    <text-view class="p-ml-5" type="header__b20"> {{ title }}</text-view>
+
 
     <div class="section p-ml-5">
       <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter pt-5">
@@ -159,6 +204,8 @@ export default defineComponent({
           v-if="!!tags"
           :handle-filter-tags="handleFilterTag"
           :filtered-tags="filtered_tags"
+          :termFilter="computed(() => term_filter)"
+          @handleTermFilter="handleFilterByTerms"
           :tags="tags"
         />
       </div>
@@ -168,21 +215,36 @@ export default defineComponent({
         </template>
         <template v-else>
 
-          <b-row v-if="!!keywordSearched" class="p-d-flex p-flex-wrap p-ai-baseline p-pl-5">
-            <TextView type="header__b20" class="text-primary"> {{ $t("fields.keyword_search", [keywordSearched] ) }} :</TextView>
-            <b-badge @click="handleResetKeywordCriteriaSearch" variant="secondary" class="cursor p-ml-5 p-px-2" size="lg"> {{ $t("reset") }} <b-icon-arrow-repeat/>
-            </b-badge>
-          </b-row>
+          <b-overlay :show="over_loading" rounded="sm">
 
-          <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
-            <item-card v-for="dataset in dataList" :stac="dataset"/>
-          </b-row>
-          <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found') }}</h3>
-          <b-row class="p-d-flex p-flex-wrap  p-jc-center">
-            <div class="overflow-auto mt-3">
-              <b-pagination-nav :link-gen="linkGen" :number-of-pages="pagination" use-router></b-pagination-nav>
+            <div>
+              <text-view class="p-pl-3" type="header__b20"> {{ title }}</text-view>
             </div>
-          </b-row>
+            <div v-if="!!keywordSearched" class="p-d-flex p-flex-wrap p-ai-baseline p-pl-3 mt-2k">
+              <TextView type="header__b14" class="text-primary"> {{ $t("fields.keyword_search", [keywordSearched]) }} :
+              </TextView>
+              <b-badge
+                @click="handleResetKeywordCriteriaSearch"
+                variant="secondary"
+                class="cursor p-ml-5 p-px-2" size="lg">
+                {{ $t("reset") }}
+                <b-icon-arrow-repeat/>
+              </b-badge>
+            </div>
+
+            <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
+              <item-card v-for="dataset in dataList" :stac="dataset"/>
+            </b-row>
+            <h3 class="p-mt-6" v-else> {{ $t('fields.no_data_found', [':(']) }}</h3>
+            <b-row v-if="!!next_link" class="p-d-flex p-flex-wrap  p-jc-center mt-3">
+              <b-button
+                @click="$event => handleLoadMoreItems(next_link)"
+                variant="outline-primary"
+                size="sm">
+                {{ $t('showMore') }}
+              </b-button>
+            </b-row>
+          </b-overlay>
 
         </template>
 

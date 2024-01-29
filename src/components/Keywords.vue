@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="keywords d-flex flex-wrap">
-      <b-badge  v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
+      <b-badge v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
                :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2 cursor">
         <b-icon v-if="!!getIcon(keyword)" font-scale="1.25"
                 :icon="getIcon(keyword)"/>
         {{ keyword }}
       </b-badge>
-         <b-badge v-if="!!license" variant="secondary" target="_blank"
+      <b-badge v-if="!!license" variant="secondary" target="_blank"
                :href="extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2">
         <b-icon font-scale="1.25" icon="bank2"/>
         License : {{ license.value }}
@@ -26,13 +26,14 @@
 </template>
 
 <style lang="scss" scoped>
-  .badge{
-    opacity: 0.8;
-    transition: all linear 0.2s;
-    &:hover{
-      opacity: 1;
-    }
+.badge {
+  opacity: 0.8;
+  transition: all linear 0.2s;
+
+  &:hover {
+    opacity: 1;
   }
+}
 </style>
 
 <script>
@@ -67,7 +68,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['data','entriesRoute'])
+    ...mapState(['data', 'entriesRoute'])
   },
   beforeMount() {
     const dataFormatted = this.formatData();
@@ -84,7 +85,7 @@ export default {
   },
   methods: {
     getRandomColor(index) {
-      const colors = ["primary", "secondary", "success", "danger", "warning", "info", "dark"] ;
+      const colors = ["primary", "secondary", "success", "danger", "warning", "info", "dark"];
       return colors[index % colors.length];
     },
     getIcon(keyword = null) {
@@ -130,9 +131,9 @@ export default {
       return match[1];
     },
 
-    filterByTags(keyword){
-      const router = this.entriesRoute.map(el =>el.route).join(',');
-      this.$router.push({path :`/simple-search`, query:{topics:keyword, collections: router}});
+    filterByTags(keyword) {
+      const collection = this.$route.path.split("/")[3];
+      this.$router.push({path: `/${collection}`, query: {topics: keyword,}});
     }
 
   }
