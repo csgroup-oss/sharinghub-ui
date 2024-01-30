@@ -1,3 +1,54 @@
+<template>
+  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+      <div class="items-card">
+        <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
+          <img v-if="getPreview()" :src="getPreview()">
+          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+            <b-badge variant="secondary">
+              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
+              {{ starsProject }}
+            </b-badge>
+          </div>
+          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
+            <b-badge
+              v-for="tag in stac.properties.keywords.slice(0,6)"
+              variant="primary"
+              @click="$event =>handleFilterByTag($event, tag)"
+            >
+              {{ tag }}
+            </b-badge>
+          </div>
+
+          <div class="w-100 p-d-flex p-ai-center p-pl-2 items-card__category" v-if="!!category">
+            <text-view type="header__13">
+              <small>{{ category }}</small>
+            </text-view>
+          </div>
+
+        </div>
+        <div class="items-card__content p-px-3">
+          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
+            <h3 class="items-card__content__title">
+              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
+            </h3>
+
+            <div class="items-card__content__description p-mb-3">
+              <Description compact inline :description="getDescription"/>
+            </div>
+
+            <div class="items-card__content__extra" v-if="!!updatedTime">
+              <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </b-col>
+</template>
+
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
@@ -73,56 +124,18 @@ export default defineComponent({
     getPreview() {
       return this.stac.links.find(el => el.rel === "preview")?.href;
     },
+    handleFilterByTag(event, tag) {
+      event.stopImmediatePropagation();
+      const {topics} = this.$route.query;
+      if (topics && topics === tag) {
+        return;
+      }
+      this.$router.push({path: "", query: {topics: tag}});
+    }
   }
 });
 </script>
 
-<template>
-  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-    <div @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
-      <div class="items-card">
-        <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
-          <img v-if="getPreview()" :src="getPreview()">
-          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
-            <b-badge variant="secondary">
-              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
-              {{ starsProject }}
-            </b-badge>
-          </div>
-          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
-            <b-badge v-for="tag in stac.properties.keywords.slice(0,6)" variant="primary" class="">
-              {{ tag }}
-            </b-badge>
-          </div>
-
-          <div class="w-100 p-d-flex p-ai-center p-pl-2 items-card__category" v-if="!!category">
-            <text-view type="header__13">
-              <small>{{ category }}</small>
-            </text-view>
-          </div>
-
-        </div>
-        <div class="items-card__content p-px-3">
-          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
-            <h3 class="items-card__content__title">
-              <TextView type="header__b16">{{ stac.properties.title }}</TextView>
-            </h3>
-
-            <div class="items-card__content__description p-mb-3">
-              <Description compact inline :description="getDescription"/>
-            </div>
-
-            <div class="items-card__content__extra" v-if="!!updatedTime">
-              <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </b-col>
-</template>
 
 <style scoped lang="scss">
 @import "../../theme/variables.scss";
@@ -147,7 +160,6 @@ img {
   display: flex;
   border-radius: 0.8rem;
   flex-direction: column;
-  //min-width: 300px;
   height: 360px;
   position: relative;
   overflow: hidden;
@@ -165,15 +177,16 @@ img {
     background: rgba(black, 0.6);
   }
 
-  &__category{
+  &__category {
     background: rgba(map-get($theme-colors, "primary"), 0.6);
     color: white;
-    top:135px;
-    position:absolute;
+    top: 135px;
+    position: absolute;
     height: 30px;
-    small{
+
+    small {
       font-variant-caps: small-caps;
-      font-size:15px !important;
+      font-size: 15px !important;
     }
   }
 
@@ -216,6 +229,11 @@ img {
 
       .badge {
         margin: 1px;
+        opacity: 0.9;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
   }
