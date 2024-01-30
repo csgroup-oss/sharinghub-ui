@@ -8,7 +8,8 @@
       />
 
       <div v-if="!!alert_message" class="container">
-        <b-alert class="" show :variant="alert_message.type" fade dismissible @dismissed="closeAlert(alert_message.url)">
+        <b-alert class="" show :variant="alert_message.type" fade dismissible
+                 @dismissed="closeAlert(alert_message.url)">
           <div class="p-d-flex p-ai-start">
             <div class="mr-2">
               <b-icon icon="exclamation-circle-fill" variant="dark"/>
@@ -161,7 +162,8 @@ export default defineComponent({
         this.headerRoutes = this.buildRouting(categories, locale);
         this.headerExternalLinks = this.buildExternalLinks(external_urls, locale);
         this.$store.commit("setEntriesRoutes", this.headerRoutes);
-        if (!this.isLoading && this.showAlert(alert_info)) {
+        const connexion_mode = this.auth.mode;
+        if (!this.isLoading && this.showAlert(alert_info, connexion_mode)) {
           this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
         }
       }
@@ -173,7 +175,7 @@ export default defineComponent({
           const {alert_info} = this.provideConfig;
           const alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
           const connexion_mode = this.auth.mode;
-          if (this.showAlert(alert_message, connexion_mode)) {
+          if (!this.isLoading && this.showAlert(alert_message, connexion_mode)) {
             this.alert_message = alert_message;
           }
 
@@ -296,7 +298,7 @@ export default defineComponent({
 
     showAlert(alert_message = {}, connexion_mode) {
       const route_name = this.$route.name;
-      if (['Login', 'Home'].includes(route_name)
+      if (['Login'].includes(route_name)
         || connexion_mode === CONNEXION_MODE.CONNECTED) {
         this.alert_message = undefined;
         return false;
