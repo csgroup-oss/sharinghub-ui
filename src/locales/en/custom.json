@@ -23,7 +23,7 @@
     "common_tag": "Common tags",
     "others": "Others",
     "i_understand": "I understand",
-    "see_more": "See more '{0}' results for '{1}'",
+    "see_more": "See {0} \"{1}\" results for \"{2}\"",
     "filter_by_name": "Filter by name..."
   }
 }

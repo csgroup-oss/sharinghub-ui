@@ -29,21 +29,25 @@
 
     <div v-if="open_search" ref="search_container" class="research-bar__results">
       <div v-if="!search_result_is_empty" class="p-d-flex p-flex-column p-mt-3">
-        <div v-for="(result,index) in search_results">
-          <template v-for="([key, val]) in Object.entries(result)">
-            <div class="p-my-1" v-if="Array.isArray(val) && val.length!==0">
-              <text-view type="header__b14" :class="['p-d-block p-px-3', `text-${getRandomColor(index)}`]">
+        <div v-for="(result, idx) in search_results">
+          <template v-for="([key, val] ) in Object.entries(result)">
+            <div :class="['p-mt-2']" v-if="Array.isArray(val.features) && val.features.length!==0">
+              <text-view type="header__b14" :class="['p-d-block p-px-3', `text-${getRandomColor(idx)}`]">
                 {{ translateCategories(key) }}
               </text-view>
-              <a v-for="el in val"
-                 class="research-bar__results__item p-px-4"
+              <a v-for="(el) in val.features.slice(0,4)"
+                 :class="['research-bar__results__item p-px-4']"
                  @click="$event => handleSelectResult($event, itemLink(el.links))"
                  :href="itemLink(el.links)">
-                <small> {{ el.properties['title'] }}</small>
+                <small> {{ el.properties['title'] }}
+                </small>
               </a>
-              <router-link v-if="val.length > 5 && value.length > 2 "
-                           class="research-bar__results__item p-px-4" :to="`/${key}?q=${value}`">
-                <small> {{ $t('fields.see_more', [translateCategories(key), value]) }} </small>
+              <router-link v-if="val.numberMatched > 4  && value.length > 2 "
+                           class="research-bar__results__item p-px-4 see_more"
+                           :to="`/${key}?q=${value}`">
+                <small class="">
+                  <b-icon icon="arrow-right-short"/>
+                  {{ $t('fields.see_more', [val.numberMatched, translateCategories(key), value]) }} </small>
               </router-link>
             </div>
 
@@ -112,17 +116,18 @@ export default defineComponent({
   methods: {
 
     async searchRequest(query_terms) {
-      this.is_loading = true
+      this.is_loading = true;
       const buildUrl = (route, query_terms) => {
-        return query_terms ? STAC_SEARCH.concat(`?collections=${route}&q=${query_terms}`) : STAC_SEARCH.concat(`?collections=${route}`);
+        const _query = query_terms ? STAC_SEARCH.concat(`?collections=${route}&q=${query_terms}`) : STAC_SEARCH.concat(`?collections=${route}`);
+        return _query.concat("&limit=6");
       };
       const all_requests = this.categories.map(({route}) => {
         return get(buildUrl(route, query_terms))
           .then((response) => {
             if (response.data) {
-              const {features} = response.data;
+              const {features, numberMatched} = response.data;
               return {
-                [route]: features
+                [route]: {features, numberMatched}
               };
             } else {
               return [];
@@ -133,7 +138,7 @@ export default defineComponent({
 
       const flattern = _.flattenDeep(this.search_results.map(el => {
         return Object.entries(el).map(([, val]) => {
-          return val;
+          return val.features;
         });
       }));
       this.search_result_is_empty = flattern.length === 0;
@@ -142,7 +147,7 @@ export default defineComponent({
     },
     async handleSearch(query_terms) {
       clearTimeout(this.searchTimeout);
-      if (query_terms?.length < 3) {
+      if (query_terms?.length < 2) {
         return;
       }
       this.searchTimeout = setTimeout(async () => {
@@ -176,7 +181,7 @@ export default defineComponent({
     },
 
     handleOpenSearchResult() {
-      this.open_search = true;
+      this.open_search = this.value?.length > 1;
     },
     handleCloseSearchResult(event) {
       const search_container = this.$refs.search_container;
@@ -205,7 +210,7 @@ export default defineComponent({
   &__results {
     margin-top: 8px;
     position: absolute;
-    width: 19.3%;
+    width: 20.3%;
     min-width: 400px;
     //min-height: 80%;
     height: fit-content;
@@ -219,15 +224,18 @@ export default defineComponent({
       color: black;
       display: block;
       cursor: pointer;
-      margin: 3px 0;
       padding: 4px;
       transition: background-color linear 0.4s;
       border-bottom: 1px solid rgba($secondary-color, 0.1);
 
       &:hover {
-        background-color: rgba(map-get($theme-colors, "primary"), 0.3);
-        //background-color: rgba($primary-color, 0.4);
+        background-color: rgba(map-get($theme-colors, "primary"), 0.3) !important;
       }
+    }
+
+    .see_more {
+      font-size: 13px !important;
+      background: rgba(map-get($theme-colors, "secondary"), 0.08);
     }
   }
 }

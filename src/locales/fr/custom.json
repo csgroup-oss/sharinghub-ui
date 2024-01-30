@@ -23,7 +23,7 @@
     "common_tag": "Étiquettes courantes",
     "others": "Autres",
     "i_understand": "J'ai compris",
-    "see_more": "Voir plus de résultats '{0}' pour '{1}' ",
+    "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
     "filter_by_name": "Filtrer par le nom..."
   }
 }

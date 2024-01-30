@@ -198,7 +198,7 @@ export default defineComponent({
 
 
     <div class="section p-ml-5">
-      <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter pt-5">
+      <div class="col-xl-3 col-md-3 col-lg-3  col-sm-12 filter">
 
         <TagFilterComponent
           v-if="!!tags"

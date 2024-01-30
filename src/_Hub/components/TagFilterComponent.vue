@@ -2,7 +2,7 @@
   <div class="p-d-flex p-flex-column p-flex-wrap w-100 tag-filter">
 
     <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 input-container">
-      <b-input-group size="sm" class="mb-5 p-mt-2">
+      <b-input-group size="sm" class="mb-3 p-mt-2">
       <b-form-input
         type="text"
         v-model="term_filter"
