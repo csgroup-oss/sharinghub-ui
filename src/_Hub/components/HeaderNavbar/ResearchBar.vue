@@ -35,14 +35,14 @@
               <text-view type="header__b14" :class="['p-d-block p-px-3', `text-${getRandomColor(idx)}`]">
                 {{ translateCategories(key) }}
               </text-view>
-              <a v-for="(el) in val.features.slice(0,4)"
+              <a v-for="(el) in val.features.slice(0, limit_displayed)"
                  :class="['research-bar__results__item p-px-4']"
                  @click="$event => handleSelectResult($event, itemLink(el.links))"
                  :href="itemLink(el.links)">
                 <small> {{ el.properties['title'] }}
                 </small>
               </a>
-              <router-link v-if="val.numberMatched > 4  && value.length > 2 "
+              <router-link v-if="val.numberMatched > limit_displayed && value.length > 2 "
                            class="research-bar__results__item p-px-4 see_more"
                            :to="`/${key}?q=${value}`">
                 <small class="">
@@ -91,6 +91,7 @@ export default defineComponent({
       searchTimeout: null,
       search_result_is_empty: true,
       is_loading: false,
+      limit_displayed:4,
     };
   },
   computed: {

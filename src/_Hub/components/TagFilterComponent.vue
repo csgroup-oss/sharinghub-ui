@@ -1,17 +1,6 @@
 <template>
   <div class="p-d-flex p-flex-column p-flex-wrap w-100 tag-filter">
 
-    <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 input-container">
-      <b-input-group size="sm" class="mb-3 p-mt-2">
-      <b-form-input
-        type="text"
-        v-model="term_filter"
-        autocomplete="false"
-        @update="updateInput"
-        :placeholder="$t('fields.filter_by_name') ">
-      </b-form-input>
-    </b-input-group>
-    </div>
 
     <b-tabs small pills size="sm">
       <b-tab :title="$t('fields.common_tag')" :active="!isPreSelect">
@@ -74,7 +63,6 @@ export default defineComponent({
     },
 
   },
-  emits: ['handleTermFilter'],
   data() {
     return {
       pagination: 30,
@@ -101,11 +89,6 @@ export default defineComponent({
   beforeMount() {
     this.isPreSelect = this.tags.topics_from_gitlab.some(el => this.filteredTags.includes(el)) || this.filtered_section_tags.length === 0;
   },
-  methods: {
-    updateInput(term_value) {
-      this.$emit('handleTermFilter', term_value);
-    }
-  }
 });
 </script>
 
@@ -120,7 +103,7 @@ export default defineComponent({
   background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
 
   .input-container {
-    padding: 0px!important;
+    padding: 0px !important;
   }
 
   .badge {

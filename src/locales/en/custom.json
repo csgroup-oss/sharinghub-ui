@@ -7,7 +7,6 @@
     "update_days": "update about {0} day(s) ago",
     "update_hours": "update about {0} hour(s) ago",
     "search_placeholder": "search keyword, models ...",
-    "list_of": "List of {0}",
     "asset_card": "Details",
     "reviews": "Reviews",
     "model_deploy": "Models deployment",
@@ -24,6 +23,13 @@
     "others": "Others",
     "i_understand": "I understand",
     "see_more": "See {0} \"{1}\" results for \"{2}\"",
-    "filter_by_name": "Filter by name..."
+    "filter_by_name": "Filter by name...",
+    "sort": {
+      "sort_by": "Sort by...",
+      "title": "Title",
+      "like": "Most likes",
+      "created": "Recently Created",
+      "updated": "Recently Updated"
+    }
   }
 }

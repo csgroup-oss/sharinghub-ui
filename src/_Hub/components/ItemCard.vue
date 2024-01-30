@@ -126,11 +126,19 @@ export default defineComponent({
     },
     handleFilterByTag(event, tag) {
       event.stopImmediatePropagation();
-      const {topics} = this.$route.query;
-      if (topics && topics === tag) {
+      const {topics, q, sortby} = this.$route.query;
+       if (topics && topics === tag) {
         return;
       }
-      this.$router.push({path: "", query: {topics: tag}});
+      let query = {topics : tag};
+       if(q){
+         query = {...query, q};
+       }
+       if(sortby){
+         query = {...query, sortby};
+       }
+       this.$router.push({path: "", query});
+
     }
   }
 });

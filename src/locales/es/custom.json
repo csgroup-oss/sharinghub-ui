@@ -7,7 +7,6 @@
     "update_days": "actualizado hace {0} día(s)",
     "update_hours": "actualizado hace {0} hora(s)",
     "search_placeholder": "buscar palabra clave, modelos ...",
-    "list_of": "Lista de los {0}",
     "asset_card": "Detalles",
     "reviews": "Comentarios",
     "model_deploy": "Despliegue del modelo",

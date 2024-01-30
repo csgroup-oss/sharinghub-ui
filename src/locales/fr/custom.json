@@ -7,7 +7,6 @@
     "update_days": "mis à jour il y a {0} jour(s)",
     "update_hours": "mis à jour il y a {0} heure(s)",
     "search_placeholder": "recherchez mots clés, models ...",
-    "list_of": "Liste des {0}",
     "asset_card": "Détails",
     "reviews": "Commentaires",
     "model_deploy": "Déploiement de modèles",
@@ -24,6 +23,13 @@
     "others": "Autres",
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
-    "filter_by_name": "Filtrer par le nom..."
+    "filter_by_name": "Filtrer par le nom...",
+    "sort": {
+      "sort_by": "Trier par...",
+      "title": "Titre",
+      "like": "Populaire",
+      "created": "Ajouté récemment",
+      "updated": "Modifié récemment"
+    }
   }
 }
