@@ -8,7 +8,6 @@ import GitlabV4 from "../../../../vendors-release/lib/index";
 
 import {mapState} from "vuex";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
-import Utils from "@/utils";
 
 
 Vue.use(Vssue);
@@ -20,7 +19,7 @@ const vsOptions = {
   labels: ['discussion', 'sharingHub'],
   prefix: 'Review -',
   admins: [],
-  locale:"en",
+  locale: "en",
   baseURL: PROXY_URL,
   issueContent: ({url}) => url,
   autoCreateIssue: true,
@@ -43,6 +42,7 @@ export default defineComponent({
       options: {
         ...vsOptions,
       },
+      refreshTimeout:null
     };
   },
   watch: {
@@ -50,24 +50,27 @@ export default defineComponent({
       immediate: true,
       handler(data) {
         this.isLoading = true;
+        clearTimeout(this.refreshTimeout);
         if (data) {
-          this.options.repo = Utils.getProjectID(data.id);
-          this.options.clientId = this.auth.token;
-          this.isLoading = false;
+          this.refreshTimeout = setTimeout(() => {
+            this.options = Object.assign(this.options, {
+              repo: data.properties["sharinghub:id"],
+              clientId: this.auth.token,
+            });
+            this.isLoading = false;
+          }, 250);
         }
       }
     },
-     uiLanguage: {
-        immediate: true,
-        async handler(locale) {
-          if (!locale) {
-            return;
-          }
-          this.options = Object.assign(this.options, {locale : locale});
+    uiLanguage: {
+      immediate: true,
+      async handler(locale) {
+        if (!locale) {
+          return;
         }
+        this.options = Object.assign(this.options, {locale: locale});
       }
-  },
-  mounted() {
+    }
   },
   methods: {}
 });
@@ -76,8 +79,8 @@ export default defineComponent({
 
 <template>
   <div class="w-100">
-    <Awaiter v-if="isLoading" :is-visible="isLoading" />
-    <Vssue :title="title" :options="options" v-else />
+    <Awaiter v-if="isLoading" :is-visible="isLoading"/>
+    <Vssue :title="title" :options="options" v-if="!isLoading"/>
   </div>
 </template>
 

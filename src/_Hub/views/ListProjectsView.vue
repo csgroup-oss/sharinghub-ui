@@ -149,14 +149,9 @@ export default defineComponent({
       this.title = topic.title || " ";
 
       let searchUrl = url.concat(`?collections=${route}&limit=30`);
-
-      if (this.filtered_tags.length !== 0) {
+      if (topics) {
+        this.selectedFilterFromURL(topics);
         searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
-      } else {
-        if (topics) {
-          this.addFilterTag(topics);
-          searchUrl = this.addTopicsToUrl(searchUrl, this.filtered_tags);
-        }
       }
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
@@ -183,9 +178,21 @@ export default defineComponent({
       });
     },
     async handleFilterTag(item) {
-      this.addFilterTag(item);
-      this.dataList = [];
-      this.dataList = [...await this.fetchCollectionsItems()];
+      let query = {};
+      const {topics, q, sortby} = this.$route.query;
+      let array_topics = topics ? topics.split(",") : [];
+      if (!array_topics.includes(item)) {
+        array_topics.push(item);
+      } else {
+        array_topics = array_topics.filter(el => el !== item);
+      }
+      this.filtered_tags = array_topics;
+      if(array_topics.length!==0){
+        query = {...query, topics:array_topics.join(",")};
+      }
+      query = q ? {...query, q} : query;
+      query = sortby ? {...query, sortby} : query;
+      this.$router.push({path: "", query});
     },
     async loadItemsData(url) {
       return get(url).then((response) => {
@@ -234,15 +241,9 @@ export default defineComponent({
     async handleSort(criteria) {
       let query = {};
       const {topics, q} = this.$route.query;
-      if (q) {
-        query = {...query, q};
-      }
-      if (topics) {
-        query = {...query, topics};
-      }
-      if (criteria) {
-        query = {...query, sortby: criteria};
-      }
+      query = q ? {...query, q} : query;
+      query = topics ? {...query, topics} : query;
+      query = criteria ? {...query, sortby: criteria} : query;
       this.$router.push({path: "", query});
     },
     addQueryToUrl(_url, q) {
@@ -262,24 +263,18 @@ export default defineComponent({
       });
       return url;
     },
-    addFilterTag(item) {
-      if (!this.filtered_tags.includes(item)) {
-        this.filtered_tags.push(item);
-      } else {
-        this.filtered_tags = this.filtered_tags.filter(el => el !== item);
-        const {topics, q} = this.$route.query;
-        if (q) {
-          this.$router.push({path: ""});
-        } else if (topics) {
-          this.$router.push({path: ""});
+    selectedFilterFromURL(queryTopics) {
+      queryTopics.split(",").forEach((el) => {
+        if (el && el !== "") {
+          this.filtered_tags = [...this.filtered_tags, el]
         }
-
-      }
+      });
     },
     handleResetQuery({q, sortby}) {
       this.term_filter = q ? q : null;
       this.options.selected = sortby ? sortby : null;
-    }
+    },
+
 
   },
 
@@ -295,7 +290,8 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  .filter_section{
+
+  .filter_section {
 
   }
 }

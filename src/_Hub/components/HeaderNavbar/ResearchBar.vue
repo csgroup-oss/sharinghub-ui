@@ -91,7 +91,7 @@ export default defineComponent({
       searchTimeout: null,
       search_result_is_empty: true,
       is_loading: false,
-      limit_displayed:4,
+      limit_displayed: 4,
     };
   },
   computed: {
@@ -172,13 +172,15 @@ export default defineComponent({
       event.preventDefault();
       event.stopPropagation();
       const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join("/")}`;
-      let stacFeatureItem;
-      stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
-      this.$router.push({path: external});
-      if (!stacFeatureItem) {
-        throw new Error('error on stacFeatureItem');
+      if (external !== this.$route.path) {
+        let stacFeatureItem;
+        stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
+        this.$router.push({path: external});
+        if (!stacFeatureItem) {
+          throw new Error('error on stacFeatureItem');
+        }
+        await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
       }
-      await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
     },
 
     handleOpenSearchResult() {

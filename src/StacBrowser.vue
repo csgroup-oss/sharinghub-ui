@@ -41,7 +41,7 @@
           <template #title>
             <TextView type="header__b16">STAC API</TextView>
           </template>
-          <TabSectionApiStac :title="title" :stacUrl="url" :stac="data"/>
+          <TabSectionApiStac v-if="data" :title="title" :stacUrl="url" :stac="data"/>
         </b-tab>
 
       </b-tabs>
