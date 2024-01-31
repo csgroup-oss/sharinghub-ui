@@ -317,12 +317,6 @@ export default {
   },
   methods: {
     ...mapActions(['switchLocale']),
-    async validate() {
-      if (!this.canValidate) {
-        return;
-      }
-      await this.$store.dispatch('validate', this.stacUrl);
-    },
     browserUrl() {
       return window.location.toString();
     },

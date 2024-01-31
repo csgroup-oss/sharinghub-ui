@@ -955,7 +955,7 @@ function getStore(config, router) {
           }
         }
       },
-      async validate(cx, url) {
+      async validate(cx, url,) {
         if (typeof cx.state.valid === 'boolean') {
           return;
         }
@@ -963,6 +963,18 @@ function getStore(config, router) {
           let uri = URI('https://api.staclint.com/url');
           uri.addSearch('stac_url', url);
           let response = await axios.get(uri.toString());
+          cx.commit('valid', Boolean(response.data?.body?.valid_stac));
+        } catch (error) {
+          cx.commit('valid', error);
+        }
+      },
+      async validateSTACObject(cx, STACObject) {
+        if (typeof cx.state.valid === 'boolean') {
+          return;
+        }
+        try {
+          let uri = URI('https://api.staclint.com/json');
+          let response = await axios.post(uri.toString(), STACObject);
           cx.commit('valid', Boolean(response.data?.body?.valid_stac));
         } catch (error) {
           cx.commit('valid', error);

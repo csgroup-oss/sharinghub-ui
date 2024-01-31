@@ -1,3 +1,39 @@
+<template>
+  <div class="share mt-1">
+    <div v-if="stacUrl" class="p-mt-3">
+      <template v-if="stac">
+        <b-row v-if="stacId" class="stac-id">
+          <b-col cols="4">{{ $t('source.id') }}</b-col>
+          <b-col>
+            <code>{{ stacId }}</code>
+            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2"/>
+          </b-col>
+        </b-row>
+        <b-row v-if="stacVersion" class="stac-version">
+          <b-col cols="4">{{ $t('source.stacVersion') }}</b-col>
+          <b-col>{{ stacVersion }}</b-col>
+        </b-row>
+        <b-row v-if="canValidate" class="validation">
+          <b-col cols="4">{{ $t('source.valid') }}</b-col>
+          <b-col>
+            <b-spinner v-if="valid === null" :label="$t('source.validating')" small/>
+            <template v-else-if="valid === true">✔️</template>
+            <template v-else-if="valid === false">❌</template>
+            <template v-else>{{ $t('source.validationNA') }}</template>
+          </b-col>
+        </b-row>
+        <hr>
+      </template>
+      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')"/>
+    </div>
+
+    <div v-if="showRoot">
+      <RootStats/>
+    </div>
+  </div>
+
+</template>
+
 <script>
 import {defineComponent} from 'vue'
 import CopyButton from "@/components/CopyButton.vue";
@@ -32,7 +68,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
+    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'privateQueryParameters', 'data', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
     ...mapGetters(['supportsExtension', 'root']),
     stacVersion() {
       return this.stac?.stac_version;
@@ -137,6 +173,17 @@ export default defineComponent({
       return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },
+  watch: {
+    data: {
+      immediate: true,
+      async handler(data) {
+        if (!this.canValidate || !data) {
+          return;
+        }
+        await this.$store.dispatch('validateSTACObject', data);
+      }
+    }
+  },
   methods: {
     ...mapActions(['switchLocale']),
     async validate() {
@@ -149,51 +196,9 @@ export default defineComponent({
       return window.location.toString();
     }
   },
-  async beforeMount() {
-    if (!this.canValidate) {
-      return;
-    }
-    await this.$store.dispatch('validate', this.stacUrl);
-  }
 });
 
 </script>
-
-<template>
-  <div class="share mt-1">
-    <div v-if="stacUrl" class="p-mt-3">
-      <template v-if="stac">
-        <b-row v-if="stacId" class="stac-id">
-          <b-col cols="4">{{ $t('source.id') }}</b-col>
-          <b-col>
-            <code>{{ stacId }}</code>
-            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2"/>
-          </b-col>
-        </b-row>
-        <b-row v-if="stacVersion" class="stac-version">
-          <b-col cols="4">{{ $t('source.stacVersion') }}</b-col>
-          <b-col>{{ stacVersion }}</b-col>
-        </b-row>
-        <b-row v-if="canValidate" class="validation">
-          <b-col cols="4">{{ $t('source.valid') }}</b-col>
-          <b-col>
-            <b-spinner v-if="valid === null" :label="$t('source.validating')" small/>
-            <template v-else-if="valid === true">✔️</template>
-            <template v-else-if="valid === false">❌</template>
-            <template v-else>{{ $t('source.validationNA') }}</template>
-          </b-col>
-        </b-row>
-        <hr>
-      </template>
-      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')"/>
-    </div>
-
-    <div v-if="showRoot">
-       <RootStats />
-    </div>
-  </div>
-
-</template>
 
 <style lang="scss">
 #popover-link, #popover-root, #popover-share {
