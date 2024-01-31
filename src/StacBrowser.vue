@@ -320,6 +320,18 @@ export default {
         this.onDataLoaded();
       }
     },
+    $route: {
+      immediate: true,
+      async handler() {
+        let external = this.$route.path;
+        let stacFeatureItem;
+        stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
+        if (!stacFeatureItem) {
+          throw new Error('error on stacFeatureItem');
+        }
+        await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
+      }
+    }
   },
   async created() {
     this.$router.onReady(() => {
@@ -346,13 +358,6 @@ export default {
       this.$store.commit(resetOp);
       this.parseQuery(to);
     });
-    let external = this.$route.path;
-    let stacFeatureItem;
-    stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
-    if (!stacFeatureItem) {
-      throw new Error('error on stacFeatureItem');
-    }
-    await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
   },
   mounted() {
     this.$root.$on('error', this.showError);

@@ -457,26 +457,28 @@ export default class Utils {
   }
 
   static browsifyUrl(url) {
-      const urlObject = new URL(url);
-      const url_to_resolve = urlObject.pathname.split("/").splice(1).join("/");
-      return `${window.location.origin}/ui/${url_to_resolve}`;
+    const urlObject = new URL(url);
+    const url_to_resolve = urlObject.pathname.split("/").splice(1).join("/");
+    const prefix = window.location.hash.includes("#") ? "/ui/#/" : "/ui/";
+    return `${window.location.origin}${prefix}${url_to_resolve}`;
   }
 
   static isMlModelCompliant(array) {
     return Array.isArray(array) && array.includes(STAC_EXTENSIONS["ml-model"]);
   }
 
-  static isMlModeltrainData  (rel) {
-   return  rel === "ml-model:train-data";
+  static isMlModeltrainData(rel) {
+    return rel === "ml-model:train-data";
   }
 
-  static isBrowserUrl(url){
-    if(!url){
+  static isBrowserUrl(url) {
+    if (!url) {
       return url;
     }
     return url.startsWith(BASE_URL);
   }
-   static hasNotebookAsset(url){
+
+  static hasNotebookAsset(url) {
     return url.endsWith('.ipynb');
   }
 

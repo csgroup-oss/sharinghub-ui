@@ -44,14 +44,14 @@
     <footer class="w-100 p-mt-6">
       <div class="p-px-4 p-py-3 container footer">
 
-        <div class="p-d-flex p-jc-between">
+        <div class="p-d-flex p-jc-between  p-flex-sm-column p-flex-md-row p-flex-lg-row ">
           <b-button-group size="sm" class="left">
             <b-button size="sm" variant="link" disabled>
-              {{ $t("fields.copyright") }}
+              {{ $t("fields.copyright", [new Date().getFullYear()]) }}
             </b-button>
           </b-button-group>
 
-          <b-button-group size="sm" class="right">
+          <b-button-group  size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
             <b-button size="sm" :href="docs('/legal/terms-of-service')" variant="link">
               {{ $t("fields.terms_of_service") }}
             </b-button>

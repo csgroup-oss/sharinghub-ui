@@ -173,13 +173,7 @@ export default defineComponent({
       event.stopPropagation();
       const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join("/")}`;
       if (external !== this.$route.path) {
-        let stacFeatureItem;
-        stacFeatureItem = this.$store.getters.getRequestUrl(external, this.catalogUrlFromVueX);
         this.$router.push({path: external});
-        if (!stacFeatureItem) {
-          throw new Error('error on stacFeatureItem');
-        }
-        await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
       }
     },
 

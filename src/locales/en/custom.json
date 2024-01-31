@@ -12,7 +12,7 @@
     "model_deploy": "Models deployment",
     "no_data_found": "No results found {0}",
     "login": "Log in",
-    "copyright": "All rights reserved © Sharing HUB 2023",
+    "copyright": "All rights reserved © Sharing HUB {0}",
     "about": "About",
     "privacy": "Privacy",
     "terms_of_service": "Terms of service",
