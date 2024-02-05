@@ -3,9 +3,12 @@
     "description": ""
   },
   "fields": {
-    "update_date": "mis à jour le {0}",
-    "update_days": "mis à jour il y a {0} jour(s)",
-    "update_hours": "mis à jour il y a {0} heure(s)",
+    "date": {
+      "update_date": "mis à jour le {0}",
+      "update_days": "mis à jour il y a {0} jour(s)",
+      "update_hours": "mis à jour il y a {0} heure(s)",
+      "update_less_hour": "mis à jour il y  a moins d'une heure"
+    },
     "search_placeholder": "recherchez mots clés, models ...",
     "asset_card": "Détails",
     "reviews": "Commentaires",
@@ -19,8 +22,11 @@
     "results": "Résultats",
     "keyword_search": "Résultat de recherche \"{0}\"",
     "advanced_search": "Recherche avancée",
-    "common_tag": "Étiquettes courantes",
-    "others": "Autres",
+    "tags":{
+      "common_tag": "Étiquettes courantes",
+      "others": "Autres",
+      "reset": "Réinitialiser"
+    },
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
     "filter_by_name": "Filtrer par le nom...",

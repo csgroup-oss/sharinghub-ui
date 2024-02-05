@@ -120,7 +120,7 @@ export default defineComponent({
       this.is_loading = true;
       const buildUrl = (route, query_terms) => {
         const _query = query_terms ? STAC_SEARCH.concat(`?collections=${route}&q=${query_terms}`) : STAC_SEARCH.concat(`?collections=${route}`);
-        return _query.concat("&limit=6");
+        return _query.concat("&limit=4");
       };
       const all_requests = this.categories.map(({route}) => {
         return get(buildUrl(route, query_terms))

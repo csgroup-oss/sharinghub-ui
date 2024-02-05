@@ -12,8 +12,9 @@
           </div>
           <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
             <b-badge
-              v-for="tag in stac.properties.keywords.slice(0,6)"
+              v-for="tag,idx in stac.properties.keywords.slice(0,6)"
               variant="primary"
+              :key="idx"
               @click="$event =>handleFilterByTag($event, tag)"
             >
               {{ tag }}
@@ -90,12 +91,15 @@ export default defineComponent({
       const hours = interval.length('hours');
       const days = interval.length('days');
       if (hours <= 24) {
-        return `${this.$t('fields.update_hours', [Math.round(hours)])}`;
+          if(hours < 1){
+            return `${this.$t('fields.date.update_less_hour', [Math.round(hours)])}`; 
+          }
+        return `${this.$t('fields.date.update_hours', [Math.round(hours)])}`;
       } else if (days <= 30) {
-        return `${this.$t('fields.update_days', [Math.round(days)])}`;
+        return `${this.$t('fields.date.update_days', [Math.round(days)])}`;
       } else {
         const lang = ["fr", "en"].includes(this.uiLanguage) ? this.uiLanguage : "en";
-        return `${this.$t('fields.update_date', [date.setLocale(lang).toLocaleString({
+        return `${this.$t('fields.date.update_date', [date.setLocale(lang).toLocaleString({
           month: 'long',
           day: 'numeric',
           year: "numeric"
@@ -127,10 +131,12 @@ export default defineComponent({
     handleFilterByTag(event, tag) {
       event.stopImmediatePropagation();
       const {topics, q, sortby} = this.$route.query;
-       if (topics && topics === tag) {
+      const topics_array = topics?.split(",") || []
+      if(topics_array.includes(tag)) {
         return;
       }
-      let query = {topics : tag};
+      topics_array.push(tag)
+      let query = {topics : topics_array.join(',')};
        if(q){
          query = {...query, q};
        }
@@ -228,7 +234,6 @@ img {
 
     &__description {
       font-size: 12px;
-      text-wrap: wrap;
       max-height: 51px;
     }
 

@@ -3,7 +3,10 @@
 
 
     <b-tabs small pills size="sm">
-      <b-tab :title="$t('fields.common_tag')" :active="!isPreSelect">
+      <b-tab  :active="!isPreSelect">
+        <template #title>
+         {{ $t('fields.tags.common_tag') }} <b-badge v-if="number_commontag_selected!==0"   variant="light">{{ number_commontag_selected }}</b-badge>
+        </template>
         <div v-for="key in filtered_section_tags" class="p-d-block mb-3 mt-4">
           <div class="p-d-block">
             <text-view class="text-primary" type="header__14"> {{ key.name }}</text-view>
@@ -17,7 +20,10 @@
         </div>
 
       </b-tab>
-      <b-tab :title="$t('fields.others')" :active="isPreSelect">
+      <b-tab :active="isPreSelect">
+        <template #title>
+         {{ $t('fields.tags.others') }} <b-badge  v-if="number_others_tag_selected !==0" variant="light">{{ number_others_tag_selected }}</b-badge>
+        </template>
         <div class="p-d-flex p-flex-column p-ai-center">
           <b-row class="p-px-2 mt-4 p-d-flex p-flex-wrap">
             <b-badge v-for="tag in tags_from_gitlab" variant="light" pill @click="handleFilterTags(tag)"
@@ -33,6 +39,12 @@
           </b-button>
         </div>
       </b-tab>
+
+      <template #tabs-end>
+        <b-nav-item @click="handleResetTags">
+          {{ $t("fields.tags.reset") }}
+        </b-nav-item>
+    </template>
     </b-tabs>
 
 
@@ -43,6 +55,7 @@
 <script>
 import {defineComponent} from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
+import _ from "lodash";
 
 
 export default defineComponent({
@@ -61,7 +74,10 @@ export default defineComponent({
       type: Function,
       required: true
     },
-
+    handleResetTags:{
+      type : Function,
+      required : true,
+    },
   },
   data() {
     return {
@@ -84,6 +100,15 @@ export default defineComponent({
         return this.tags.sections;
       }
     },
+    number_commontag_selected(){
+     const _tags = _.flatten(this.filtered_section_tags.map(el => el.keywords));
+     const els =  this.filteredTags.filter(el => _tags.includes(el));
+     return els.length;
+    },
+    number_others_tag_selected(){
+     const els =  this.filteredTags.filter(el => this.tags_from_gitlab.includes(el));
+     return els.length;
+    }
 
   },
   beforeMount() {

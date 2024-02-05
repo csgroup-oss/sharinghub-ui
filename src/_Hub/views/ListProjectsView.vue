@@ -7,6 +7,7 @@
 
         <TagFilterComponent
           v-if="!!tags"
+          :handle-reset-tags="handleResetTags"
           :handle-filter-tags="handleFilterTag"
           :filtered-tags="filtered_tags"
           :tags="tags"
@@ -14,39 +15,43 @@
       </div>
 
       <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12 ">
+
+        <div class="p-d-flex p-flex-sm-column p-flex-lg-row p-ai-center p-jc-between ">
+          <div>
+            <text-view class="p-pl-3" type="header__b20"> {{ title }}</text-view>
+            <text-view type="header__16" class="text-secondary ml-2" v-if="dataList.length!==0">{{ dataList.length }}</text-view>
+          </div>
+
+          <div class="p-d-flex filter_section col-sm-12 col-md-12 col-lg-6 col-xl-6 mt-sm-3">
+            <b-input-group size="sm" class="">
+              <b-form-input
+                type="text"
+                v-model="term_filter"
+                autocomplete="false"
+                @update="handleFilterByTerms"
+                :placeholder="$t('fields.filter_by_name') ">
+              </b-form-input>
+            </b-input-group>
+
+            <b-form-select @change="handleSort" v-model="options.selected" class="ml-3" size="sm">
+              <b-form-select-option :value="null">{{ $t("fields.sort.sort_by") }}</b-form-select-option>
+              <b-form-select-option value="+properties.title">{{ $t("fields.sort.title") }}</b-form-select-option>
+              <b-form-select-option value="-properties.sharinghub:stars">{{ $t("fields.sort.like") }}
+              </b-form-select-option>
+              <b-form-select-option value="-properties.created">{{ $t("fields.sort.created") }}
+              </b-form-select-option>
+              <b-form-select-option value="-properties.updated">{{ $t("fields.sort.updated") }}
+              </b-form-select-option>
+            </b-form-select>
+          </div>
+        </div>
         <template v-if="loading">
-          <awaiter :is-visible="loading"/>
+          <awaiter class="mt-4" :is-visible="loading"/>
         </template>
+
         <template v-else>
 
           <b-overlay :show="over_loading" rounded="sm">
-
-            <div class="p-d-flex p-flex-sm-column p-flex-lg-row p-ai-center p-jc-between ">
-              <text-view class="p-pl-3" type="header__b20"> {{ title }}</text-view>
-              <div class="p-d-flex filter_section col-sm-12 col-md-12 col-lg-6 col-xl-6 mt-sm-3">
-                <b-input-group size="sm" class="">
-                  <b-form-input
-                    type="text"
-                    v-model="term_filter"
-                    autocomplete="false"
-                    @update="handleFilterByTerms"
-                    :placeholder="$t('fields.filter_by_name') ">
-                  </b-form-input>
-                </b-input-group>
-
-                <b-form-select @change="handleSort" v-model="options.selected" class="ml-3" size="sm">
-                  <b-form-select-option :value="null">{{ $t("fields.sort.sort_by") }}</b-form-select-option>
-                  <b-form-select-option value="+properties.title">{{ $t("fields.sort.title") }}</b-form-select-option>
-                  <b-form-select-option value="-properties.sharinghub:stars">{{ $t("fields.sort.like") }}
-                  </b-form-select-option>
-                  <b-form-select-option value="-properties.created">{{ $t("fields.sort.created") }}
-                  </b-form-select-option>
-                  <b-form-select-option value="-properties.updated">{{ $t("fields.sort.updated") }}
-                  </b-form-select-option>
-                </b-form-select>
-              </div>
-            </div>
-
             <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
               <item-card v-for="dataset in dataList" :stac="dataset"/>
             </b-row>
@@ -187,8 +192,8 @@ export default defineComponent({
         array_topics = array_topics.filter(el => el !== item);
       }
       this.filtered_tags = array_topics;
-      if(array_topics.length!==0){
-        query = {...query, topics:array_topics.join(",")};
+      if (array_topics.length !== 0) {
+        query = {...query, topics: array_topics.join(",")};
       }
       query = q ? {...query, q} : query;
       query = sortby ? {...query, sortby} : query;
@@ -222,7 +227,7 @@ export default defineComponent({
             query = {...query, sortby};
           }
           this.$router.push({path: "", query});
-        }, 250);
+        }, 500);
       } else {
         query = {...query, q: term_query};
         if (topics) {
@@ -233,7 +238,7 @@ export default defineComponent({
         }
         this.nameSearchTimeout = setTimeout(() => {
           this.$router.push({path: "", query});
-        }, 250);
+        }, 500);
       }
 
 
@@ -274,6 +279,15 @@ export default defineComponent({
       this.term_filter = q ? q : null;
       this.options.selected = sortby ? sortby : null;
     },
+    handleResetTags(){
+      this.filtered_tags = [];
+      const {q, sortby} = this.$route.query;
+      let query = {};
+      query = q ? {...query, q} : query;
+      query = sortby ?  {...query, sortby} : query;
+      this.$router.push({path:"", query});
+
+    }
 
 
   },
@@ -291,8 +305,5 @@ export default defineComponent({
   flex-wrap: wrap;
   justify-content: space-between;
 
-  .filter_section {
-
-  }
 }
 </style>

@@ -3,9 +3,12 @@
     "description": ""
   },
   "fields": {
-    "update_date": "update {0}",
-    "update_days": "update about {0} day(s) ago",
-    "update_hours": "update about {0} hour(s) ago",
+    "date":{
+      "update_date": "update {0}",
+      "update_days": "update about {0} day(s) ago",
+      "update_hours": "update about {0} hour(s) ago",
+      "update_less_hour": "updated less than an hour ago"
+    },
     "search_placeholder": "search keyword, models ...",
     "asset_card": "Details",
     "reviews": "Reviews",
@@ -19,8 +22,11 @@
     "results": "Results",
     "keyword_search": "Search result \"{0}\"",
     "advanced_search": "Advanced search",
-    "common_tag": "Common tags",
-    "others": "Others",
+    "tags":{
+      "common_tag": "Common tags",
+      "others": "Others",
+      "reset": "Reset"
+     },
     "i_understand": "I understand",
     "see_more": "See {0} \"{1}\" results for \"{2}\"",
     "filter_by_name": "Filter by name...",
