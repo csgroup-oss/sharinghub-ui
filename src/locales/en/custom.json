@@ -25,7 +25,8 @@
     "tags":{
       "common_tag": "Common tags",
       "others": "Others",
-      "reset": "Reset"
+      "reset": "Reset",
+      "starred_projet": "Show starred projects"
      },
     "i_understand": "I understand",
     "see_more": "See {0} \"{1}\" results for \"{2}\"",

@@ -148,7 +148,7 @@ export default defineComponent({
     },
     async handleSearch(query_terms) {
       clearTimeout(this.searchTimeout);
-      if (query_terms?.length < 2) {
+      if (query_terms?.length < 3) {
         return;
       }
       this.searchTimeout = setTimeout(async () => {
@@ -212,7 +212,7 @@ export default defineComponent({
     //min-height: 80%;
     height: fit-content;
     background: map-get($theme-colors, "light");
-    z-index: 1;
+    z-index: 1000;
     -webkit-box-shadow: 0px 1px 31px 0px rgba(map-get($theme-colors, "secondary"), 0.36);
     box-shadow: 0px 1px 31px 0px rgba(map-get($theme-colors, "secondary"), 0.36);
 

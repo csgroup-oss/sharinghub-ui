@@ -25,7 +25,8 @@
     "tags":{
       "common_tag": "Étiquettes courantes",
       "others": "Autres",
-      "reset": "Réinitialiser"
+      "reset": "Réinitialiser",
+      "starred_projet": "Montrer les projets votés"
     },
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
