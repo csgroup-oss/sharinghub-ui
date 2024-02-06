@@ -117,7 +117,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'conformsTo', 'uiLanguage', 'provideConfig']),
+    ...mapState(['auth', 'conformsTo', 'uiLanguage', 'provideConfig', 'pathPrefix']),
     login() {
       return LOGIN_URL;
     }
@@ -188,6 +188,16 @@ export default defineComponent({
     this.$store.commit("setBaseUrl", STAC_ROOT_URL);
   },
   async beforeMount() {
+    const {search} = window.location;
+    if(search){
+      const regex = /(?:\?|&)redirect=([^& ]*)/;
+      const match = search.match(regex);
+      if(match){
+        const redirectContent = decodeURIComponent(match[1]);
+        const url = new URL(`${window.origin}${this.pathPrefix}/#/${redirectContent}`);
+        window.location.replace(url.toString());
+      }
+    }
     const {categories, external_urls, alert_info} = await this.getConfig();
     this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
     this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);

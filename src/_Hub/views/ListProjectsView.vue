@@ -178,7 +178,7 @@ export default defineComponent({
 
       }).catch(() => {
         if (this.$route.name !== "Login") {
-          this.$router.push("/login");
+          this.$router.push({path:"/login", query:{redirect: this.$route.params?.pathMatch}});
         }
       });
     },
