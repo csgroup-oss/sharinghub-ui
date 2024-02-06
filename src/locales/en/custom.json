@@ -26,7 +26,7 @@
       "common_tag": "Common tags",
       "others": "Others",
       "reset": "Reset",
-      "starred_projet": "Show starred projects"
+      "starred_project": "Show starred projects"
      },
     "i_understand": "I understand",
     "see_more": "See {0} \"{1}\" results for \"{2}\"",
@@ -37,6 +37,10 @@
       "like": "Most likes",
       "created": "Recently Created",
       "updated": "Recently Updated"
+    },
+    "search": {
+      "collection_mandatory": "Please select one collection to submit search."
     }
+    
   }
 }

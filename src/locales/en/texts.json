@@ -236,6 +236,7 @@
     "notSupported": "Item Search is not supported by the API.",
     "placeholder": "Search...",
     "selectCollections": "Select one or multiple collections...",
+    "selectCollection": "Select one collection...",
     "selectTopics": "Select one or multiple Tags...",
     "selectForItemSearch": "Select for Item Search",
     "sortOptions": {

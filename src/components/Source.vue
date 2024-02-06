@@ -279,14 +279,20 @@ export default {
         this.jupyter_link = undefined;
         this.can_rate = false;
         if (data) {
-          let projectID = Utils.getProjectID(data.id);
+          let projectID =  data.getMetadata("sharinghub:id");
           get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
             if (response.data) {
               this.rank_rate = response.data.length;
               if (this.currentUser) {
                 this.can_rate = true;
-                this.has_rated = !response.data.some(el => el.user.username === this.currentUser.username
-                  || el.user.web_url === this.currentUser.web_url);
+                if(response.data.length===0){
+                  this.has_rated = false;
+                }else{
+                  const {user} = this.auth;
+                  const my_rate = response.data.find( el => el.user.username === user.username || el.user.web_url === user.web_url );
+                  this.has_rated = !!my_rate;
+                }
+              
               }
             }
           });

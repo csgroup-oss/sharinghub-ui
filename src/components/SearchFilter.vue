@@ -34,28 +34,14 @@
           <Map class="mb-4" v-if="provideBBox" :stac="stac" selectBounds @bounds="setBBox" scrollWheelZoom/>
         </b-form-group>
 
-        <b-form-group v-if="conformances.CollectionIdFilter" :label="$tc('stacCollection', collections.length)"
+        <b-form-group v-if="conformances.CollectionIdFilter" :label="$tc('stacCollection', 1)"
                       :label-for="ids.collections">
-          <multiselect
-            v-bind="collectionSelectOptions"
-            @input="setCollections"
-            @tag="addCollection"
-            @search-change="searchCollections"
-            ref="multiselect"
-          >
-            <template #noOptions>{{ $t('search.noOptions') }}</template>
-            <template v-if="additionalCollectionCount > 0" #afterList>
-              <li>
-                <strong class="multiselect__option multiselect__option--disabled">
-                  {{ $t("multiselect.andMore", {count: additionalCollectionCount}) }}
-                </strong>
-              </li>
-            </template>
-          </multiselect>
+          <b-form-select  @change="addCollection" v-bind="collectionSelectOptions">
+          </b-form-select>
         </b-form-group>
 
         <!-- #filter tags -->
-        <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
+        <!-- <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
           <multiselect
             :id="ids.topics"
             multiple taggable
@@ -76,7 +62,7 @@
               </li>
             </template>
           </multiselect>
-        </b-form-group>
+        </b-form-group> -->
 
         <b-form-group v-if="conformances.ItemIdFilter" :label="$t('search.itemIds')" :label-for="ids.ids">
           <multiselect
@@ -145,7 +131,8 @@
         </b-form-group>
       </b-card-body>
       <b-card-footer>
-        <b-button type="submit" variant="primary">{{ $t('submit') }}</b-button>
+        <b-alert v-if="!this.selectedCollections" variant="danger" show>{{ $t('fields.search.collection_mandatory') }}</b-alert>
+        <b-button :disabled="!this.selectedCollections" type="submit" variant="primary">{{ $t('submit') }}</b-button>
         <b-button type="reset" variant="danger" class="ml-3">{{ $t('reset') }}</b-button>
       </b-card-footer>
     </b-card>
@@ -208,7 +195,7 @@ function getDefaults() {
     query: getQueryDefaults(),
     filtersAndOr: 'and',
     filters: [],
-    selectedCollections: [],
+    selectedCollections: null,
     selectedTopics: [],
   };
 }
@@ -271,25 +258,14 @@ export default {
     ...mapState(['itemsPerPage', 'uiLanguage', 'entriesRoute']),
     ...mapGetters(['canSearchCollections', 'supportsConformance']),
     collectionSelectOptions() {
-      let taggable = !this.hasAllCollections;
-      let isResult = this.collections.length > 0 && !this.hasAllCollections;
       return {
-        id: this.ids.collections,
         value: this.selectedCollections,
-        multiple: true,
-        taggable,
-        options: this.collections, // query.collections
+        options: [
+          {value: null, text:this.$t('search.selectCollection')},
+          ...this.collections
+        ], // query.collections
         trackBy: "value",
         label: "text",
-        placeholder: taggable ? this.$t('search.enterCollections') : this.$t('search.selectCollections'),
-        tagPlaceholder: this.$t('search.addCollections'),
-        selectLabel: this.$t('multiselect.selectLabel'),
-        selectedLabel: this.$t('multiselect.selectedLabel'),
-        deselectLabel: this.$t('multiselect.deselectLabel'),
-        limitText: count => this.$t("multiselect.andMore", {count}),
-        loading: this.collectionsLoadingTimer !== null,
-        showNoResults: false,
-        internalSearch: !isResult
       };
     },
     collectionSearchLink() {
@@ -344,34 +320,11 @@ export default {
         this.updateApiCollections();
       }
     },
-    value: {
-      immediate: true,
-      deep: true,
-      handler(value) {
-        let query = Object.assign(getQueryDefaults(), value);
-        if (Array.isArray(query.datetime)) {
-          query.datetime = query.datetime.map(Utils.dateFromUTC);
-        }
-        this.query = query;
-        if (this.collections.length > 0 && this.hasAllCollections) {
-          this.selectedCollections = this.collections.filter(c => query.collections.includes(c.value));
-        } else {
-          this.selectedCollections = query.collections.map(id => {
-            let collection = this.selectedCollections.find(c => c.value === id);
-            return collection ? collection : this.collectionToMultiSelect({id});
-          });
-        }
-      }
-    },
     entriesRoute: {
       immediate: true,
       handler(newVal, oldValue) {
         if (oldValue?.length > 0 && !_.isEqual(newVal, oldValue)) {
           this.collections = this.translateCollections(this.collections, newVal);
-          if (this.selectedCollections.length > 0) {
-            this.setCollections(this.translateCollections(this.selectedCollections, newVal));
-          }
-
         }
       }
 
@@ -407,10 +360,6 @@ export default {
     }
     Promise.all(promises).finally(() => {
       this.loaded = true;
-      if (this.selectedTopics.length > 0) {
-        this.setCollections(this.collections);
-        this.onSubmit();
-      }
     });
     const {q} = this.$route.query;
     if (q) {
@@ -424,37 +373,7 @@ export default {
       clearTimeout(this.collectionsLoadingTimer);
       this.collectionsLoadingTimer = null;
     },
-    // not used
-    searchCollections(text) {
-      if (!this.canSearchCollectionsFreeText || this.hasAllCollections) {
-        return;
-      }
-      this.resetSearchCollection();
-      this.additionalCollectionCount = 0;
-      if (typeof text !== 'string' || text.trim().length < 2) {
-        this.collections = [];
-        return;
-      }
-      this.collectionsLoadingTimer = setTimeout(async () => {
-        try {
-          const link = Utils.addFiltersToLink(this.collectionSearchLink, {q: [text]});
-          const response = await stacRequest(this.$store, link);
-          // Only set collections if response is valid AND collectionsLoadingTimer has not been reset.
-          // If collectionsLoadingTimer has been reset, the result is not relevant anylonger.
-          if (this.collectionsLoadingTimer && Utils.isObject(response.data) && Array.isArray(response.data.collections)) {
-            this.collections = this.prepareCollections(response.data.collections);
-            if (typeof response.data.numberMatched === 'number') {
-              this.additionalCollectionCount = response.data.numberMatched - this.collections.length;
-            }
-          }
-        } catch (error) {
-          console.error(error);
-          this.collections = [];
-        } finally {
-          this.resetSearchCollection();
-        }
-      }, 250);
-    },
+
     async loadCollections(link) {
       let hasMore = false;
       let data = {
@@ -588,6 +507,7 @@ export default {
       });
     },
     onSubmit() {
+
       if (this.canSort && this.sortTerm && this.sortOrder) {
         this.$set(this.query, 'sortby', this.formatSort());
       }
@@ -645,18 +565,8 @@ export default {
       this.$set(this.query, 'datetime', datetime);
     },
     addCollection(collection) {
-      if (!this.collectionSelectOptions.taggable) {
-        return;
-      }
-      this.resetSearchCollection();
-      let opt = this.collectionToMultiSelect({id: collection});
-      this.selectedCollections.push(opt);
-      this.collections.push(opt);
-      this.query.collections.push(collection);
-    },
-    setCollections(collections) {
-      this.selectedCollections = collections;
-      this.$set(this.query, 'collections', collections.map(c => c.value));
+      this.selectedCollections = collection
+      this.query.collections =[collection];
     },
     addId(id) {
       this.query.ids.push(id);

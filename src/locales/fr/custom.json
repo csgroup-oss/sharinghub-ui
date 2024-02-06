@@ -26,7 +26,7 @@
       "common_tag": "Étiquettes courantes",
       "others": "Autres",
       "reset": "Réinitialiser",
-      "starred_projet": "Montrer les projets votés"
+      "starred_project": "Montrer les projets votés"
     },
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
@@ -37,6 +37,9 @@
       "like": "Populaire",
       "created": "Ajouté récemment",
       "updated": "Modifié récemment"
+    },
+    "search": {
+      "collection_mandatory": "Veuillez sélectionner une collection pour soumettre votre recherche."
     }
   }
 }

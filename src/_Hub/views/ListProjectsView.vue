@@ -6,7 +6,6 @@
           :handle-reset-tags="handleResetTags" 
           :handle-filter-tags="handleFilterTag"
           :filtered-tags="filtered_tags" :tags="tags"
-          :handle-select-starred-project="handleSelectStarredProject"
           
           />
       </div>
@@ -42,6 +41,13 @@
               </b-form-select-option>
             </b-form-select>
 
+            <b-button v-if="isAuthenticated" @click="handleSelectStarredProject(!only_starred_project)" 
+              v-b-tooltip.hover.topleft :title="$t('fields.tags.starred_project')"
+              class="p-ml-2" :variant="only_starred_project ? 'primary':'outline-primary'"
+              size="sm">
+                <b-icon icon="star"/>
+            </b-button>
+
 
           </div>
         </div>
@@ -71,20 +77,19 @@
 
 
 <script>
-import { computed, defineComponent } from "vue";
+import {defineComponent } from "vue";
 import TextView from "@/_Hub/components/TextView.vue";
 import { mapState } from "vuex";
 import ItemCard from "@/_Hub/components/ItemCard.vue";
-import { get } from "@/_Hub/tools/https";
+import { get, CONNEXION_MODE } from "@/_Hub/tools/https";
 import { PROXY_URL, STAC_SEARCH } from "@/_Hub/Endpoint";
 import Awaiter from "@/_Hub/components/Awaiter.vue";
 import _ from "lodash";
 import TagFilterComponent from "@/_Hub/components/TagFilterComponent.vue";
-import { ToggleButton } from 'vue-js-toggle-button'
 
 export default defineComponent({
   name: "ListProjectsView",
-  components: { TagFilterComponent, Awaiter, ItemCard, TextView, ToggleButton },
+  components: { TagFilterComponent, Awaiter, ItemCard, TextView },
   data() {
     return {
       dataList: [],
@@ -105,6 +110,9 @@ export default defineComponent({
   },
   computed: {
     ...mapState(["data", "auth", "entriesRoute", "uiLanguage"]),
+    isAuthenticated(){
+      return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
+    }
   },
   watch: {
     $route: {
@@ -128,9 +136,10 @@ export default defineComponent({
   },
   async beforeMount() {
     this.getTopics();
+    const {starred} = this.$route.query;
+    this.only_starred_project = !!starred;
   },
   methods: {
-computed,
     async getTopics() {
       return get(PROXY_URL.concat("tags"))
         .then((response) => {

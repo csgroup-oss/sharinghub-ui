@@ -1,15 +1,7 @@
 <template>
   <div class="p-d-flex p-flex-column p-flex-wrap w-100 tag-filter">
 
-
-    <template v-if="isAuthenticated">
-      <b-form-checkbox v-model="only_starred_project" @change="this.handleChangeToogle" class="p-mb-3 cursor" name="check-button" switch>
-        <text-view class="text-primary"> {{ $t('fields.tags.starred_projet') }}</text-view>
-      </b-form-checkbox>
-    </template>
-
-
-    <b-tabs small pills size="sm">
+    <b-tabs small  pills size="sm">
       <b-tab :active="!isPreSelect">
         <template #title>
           {{ $t('fields.tags.common_tag') }} <b-badge v-if="number_commontag_selected !== 0" variant="light">{{
@@ -48,10 +40,12 @@
         </div>
       </b-tab>
 
-      <template #tabs-end>
-        <b-nav-item class="bg-secondary p-ml-2" @click="handleResetTags">
-         <span class=" text-white"> {{ $t("fields.tags.reset") }}</span>
-        </b-nav-item>
+      <template v-if="filteredTags.length!==0"  #tabs-end>
+        <b-button size="sm"
+          v-b-tooltip.hover.topright :title="$t('fields.tags.reset')"
+          class="reset p-ml-2" @click="handleResetTags">
+          <b-icon class="text-white" icon="x"></b-icon>
+        </b-button>
       </template>
     </b-tabs>
 
@@ -63,7 +57,6 @@
 <script>
 import { defineComponent } from 'vue';
 import TextView from "@/_Hub/components/TextView.vue";
-import {CONNEXION_MODE} from "@/_Hub/tools/https";
 import _ from "lodash";
 import { mapState } from 'vuex';
 
@@ -86,10 +79,6 @@ export default defineComponent({
     },
 
     handleResetTags: {
-      type: Function,
-      required: true,
-    },
-    handleSelectStarredProject: {
       type: Function,
       required: true,
     },
@@ -127,21 +116,10 @@ export default defineComponent({
       const els = this.filteredTags.filter(el => this.tags_from_gitlab.includes(el));
       return els.length;
     },
-    isAuthenticated(){
-      return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
-    }
 
-  },
-  methods:{
-      handleChangeToogle(boolean){
-        this.only_starred_project=boolean;
-        this.handleSelectStarredProject(boolean)
-      }
   },
   beforeMount() {
     this.isPreSelect = this.tags.topics_from_gitlab.some(el => this.filteredTags.includes(el)) || this.filtered_section_tags.length === 0;
-    const {starred} = this.$route.query;
-    this.only_starred_project = !!starred;
   },
 });
 </script>
@@ -156,8 +134,8 @@ export default defineComponent({
   border-radius: 12px;
   background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
 
-  .input-container {
-    padding: 0px !important;
+  .nav-pills {
+    align-items: center !important;
   }
 
   .badge {
