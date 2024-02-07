@@ -72,7 +72,6 @@ import STAC from '../models/stac';
 import {BIconCheckSquare, BIconSquare, BTab, BTabs} from 'bootstrap-vue';
 import {processSTAC, stacRequest} from '../store/utils';
 import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
-import {CONNEXION_MODE} from "@/_Hub/tools/https";
 
 export default {
   name: "Search",

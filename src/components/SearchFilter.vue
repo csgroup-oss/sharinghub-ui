@@ -2,105 +2,80 @@
   <b-form class="filter mb-4" @submit.stop.prevent="onSubmit" @reset="onReset">
     <b-card no-body :title="title">
       <b-card-body>
-        <Loading v-if="!loaded" fill/>
+        <Loading v-if="!loaded" fill />
 
-        <b-card-title v-if="title" :title="title"/>
+        <b-card-title v-if="title" :title="title" />
         <b-form-group v-if="canFilterFreeText" :label="$t('search.freeText')" :label-for="ids.q"
-                      :description="$t('search.freeTextDescription')">
-          <multiselect
-            :id="ids.q" :value="query.q" @input="setSearchTerms"
-            multiple taggable :options="query.ids"
-            :placeholder="$t('search.enterSearchTerms')"
-            :tagPlaceholder="$t('search.addSearchTerm')"
-            :noOptions="$t('search.addSearchTerm')"
-            @tag="addSearchTerm"
-          >
+          :description="$t('search.freeTextDescription')">
+          <multiselect :id="ids.q" :value="query.q" @input="setSearchTerms" multiple taggable :options="query.ids"
+            :placeholder="$t('search.enterSearchTerms')" :tagPlaceholder="$t('search.addSearchTerm')"
+            :noOptions="$t('search.addSearchTerm')" @tag="addSearchTerm">
             <template #noOptions>{{ $t('search.noOptions') }}</template>
           </multiselect>
         </b-form-group>
 
         <b-form-group v-if="canFilterExtents" :label="$t('search.temporalExtent')" :label-for="ids.datetime"
-                      :description="$t('search.dateDescription')">
-          <date-picker
-            range :id="ids.datetime" :lang="datepickerLang" :format="datepickerFormat"
-            :value="query.datetime" @input="setDateTime" input-class="form-control mx-input"
-          />
+          :description="$t('search.dateDescription')">
+          <date-picker range :id="ids.datetime" :lang="datepickerLang" :format="datepickerFormat" :value="query.datetime"
+            @input="setDateTime" input-class="form-control mx-input" />
         </b-form-group>
 
         <b-form-group v-if="canFilterExtents" :label="$t('search.spatialExtent')" :label-for="ids.bbox">
           <b-form-checkbox :id="ids.bbox" v-model="provideBBox" value="1" @change="setBBox()">
             {{ $t('search.filterBySpatialExtent') }}
           </b-form-checkbox>
-          <Map class="mb-4" v-if="provideBBox" :stac="stac" selectBounds @bounds="setBBox" scrollWheelZoom/>
+          <Map class="mb-4" v-if="provideBBox" :stac="stac" selectBounds @bounds="setBBox" scrollWheelZoom />
         </b-form-group>
 
         <b-form-group v-if="conformances.CollectionIdFilter" :label="$tc('stacCollection', 1)"
-                      :label-for="ids.collections">
-          <b-form-select  @change="addCollection" v-bind="collectionSelectOptions">
+          :label-for="ids.collections">
+          <b-form-select @change="addCollection" v-bind="collectionSelectOptions">
           </b-form-select>
         </b-form-group>
 
         <!-- #filter tags -->
-        <!-- <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
-          <multiselect
-            :id="ids.topics"
-            multiple taggable
-            :value="this.selectedTopics"
-            :options="topics"
-            label="text" trackBy="value"
-            :placeholder="$t('search.selectTopics')"
-            :tagPlaceholder="$t('search.addItemIds')"
-            :noOptions="$t('search.addItemIds')"
-            @input="setTags"
-          >
+        <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
+          <multiselect :id="ids.topics" multiple taggable :value="this.selectedTopics"
+            :options="topics.concat(getAdditionalTopicsByCategory(selectedCollections))" label="text"
+            trackBy="value" :placeholder="$t('search.selectTopics')" :tagPlaceholder="$t('search.addItemIds')"
+            :noOptions="$t('search.addItemIds')" @input="setTags">
             <template #noOptions>{{ $t('search.noOptions') }}</template>
             <template v-if="additionalCollectionCount > 0" #afterList>
               <li>
                 <strong class="multiselect__option multiselect__option--disabled">
-                  {{ $t("multiselect.andMore", {count: additionalCollectionCount}) }}
+                  {{ $t("multiselect.andMore", { count: additionalCollectionCount }) }}
                 </strong>
               </li>
             </template>
           </multiselect>
-        </b-form-group> -->
+        </b-form-group>
 
         <b-form-group v-if="conformances.ItemIdFilter" :label="$t('search.itemIds')" :label-for="ids.ids">
-          <multiselect
-            :id="ids.ids" :value="query.ids" @input="setIds"
-            multiple taggable :options="query.ids"
-            :placeholder="$t('search.enterItemIds')"
-            :tagPlaceholder="$t('search.addItemIds')"
-            :noOptions="$t('search.addItemIds')"
-            @tag="addId"
-          >
+          <multiselect :id="ids.ids" :value="query.ids" @input="setIds" multiple taggable :options="query.ids"
+            :placeholder="$t('search.enterItemIds')" :tagPlaceholder="$t('search.addItemIds')"
+            :noOptions="$t('search.addItemIds')" @tag="addId">
             <template #noOptions>{{ $t('search.noOptions') }}</template>
           </multiselect>
         </b-form-group>
 
         <div class="additional-filters" v-if="showAdditionalFilters">
           <b-form-group :label="$t('search.additionalFilters')">
-            <b-form-radio-group v-model="filtersAndOr" :options="andOrOptions" name="logical" size="sm"/>
+            <b-form-radio-group v-model="filtersAndOr" :options="andOrOptions" name="logical" size="sm" />
 
             <b-dropdown size="sm" :text="$t('search.addFilter')" block variant="primary" class="queryables mt-2 mb-3"
-                        menu-class="w-100">
+              menu-class="w-100">
               <template v-for="queryable in sortedQueryables">
                 <b-dropdown-item v-if="queryable.supported" :key="queryable.id"
-                                 @click="additionalFieldSelected(queryable)">
+                  @click="additionalFieldSelected(queryable)">
                   {{ queryable.title }}
                   <b-badge variant="dark" class="ml-2">{{ queryable.id }}</b-badge>
                 </b-dropdown-item>
               </template>
             </b-dropdown>
 
-            <QueryableInput
-              v-for="(filter, index) in filters" :key="filter.id"
-              :value.sync="filter.value"
-              :operator.sync="filter.operator"
-              :queryable="filter.queryable"
-              :index="index"
-              :cql="cql"
-              @remove-queryable="removeQueryable(index)"
-            />
+            <QueryableInput v-for="(filter, index) in filters" :key="filter.id" :value.sync="filter.value"
+              :operator.sync="filter.operator" :queryable="filter.queryable" :index="index" :cql="cql"
+              @remove-queryable="removeQueryable(index)" />
           </b-form-group>
         </div>
 
@@ -108,30 +83,23 @@
           v-if="canFilterExtents || conformances.CollectionIdFilter || conformances.ItemIdFilter || showAdditionalFilters">
 
         <b-form-group v-if="canSort" :label="$t('sort.title')" :label-for="ids.sort"
-                      :description="$t('search.notFullySupported')">
-          <multiselect
-            :id="ids.sort" :value="sortTerm" @input="sortFieldSet"
-            :options="sortOptions" track-by="value" label="text"
-            :placeholder="$t('default')"
-            :selectLabel="$t('multiselect.selectLabel')"
-            :selectedLabel="$t('multiselect.selectedLabel')"
-            :deselectLabel="$t('multiselect.deselectLabel')"
-          />
+          :description="$t('search.notFullySupported')">
+          <multiselect :id="ids.sort" :value="sortTerm" @input="sortFieldSet" :options="sortOptions" track-by="value"
+            label="text" :placeholder="$t('default')" :selectLabel="$t('multiselect.selectLabel')"
+            :selectedLabel="$t('multiselect.selectedLabel')" :deselectLabel="$t('multiselect.deselectLabel')" />
           <SortButtons v-if="sortTerm && sortTerm.value" class="mt-1" :value="sortOrder" enforce
-                       @input="sortDirectionSet"/>
+            @input="sortDirectionSet" />
         </b-form-group>
 
         <b-form-group :label="$t('search.itemsPerPage')" :label-for="ids.limit"
-                      :description="$t('search.itemsPerPageDescription', {maxItems})">
-          <b-form-input
-            :id="ids.limit" :value="query.limit" @change="setLimit" min="1"
-            :max="maxItems" type="number"
-            :placeholder="$t('defaultWithValue', {value: itemsPerPage})"
-          />
+          :description="$t('search.itemsPerPageDescription', { maxItems })">
+          <b-form-input :id="ids.limit" :value="query.limit" @change="setLimit" min="1" :max="maxItems" type="number"
+            :placeholder="$t('defaultWithValue', { value: itemsPerPage })" />
         </b-form-group>
       </b-card-body>
       <b-card-footer>
-        <b-alert v-if="!this.selectedCollections" variant="danger" show>{{ $t('fields.search.collection_mandatory') }}</b-alert>
+        <b-alert v-if="!this.selectedCollections" variant="danger" show>{{ $t('fields.search.collection_mandatory')
+        }}</b-alert>
         <b-button :disabled="!this.selectedCollections" type="submit" variant="primary">{{ $t('submit') }}</b-button>
         <b-button type="reset" variant="danger" class="ml-3">{{ $t('reset') }}</b-button>
       </b-card-footer>
@@ -151,13 +119,13 @@ import {
   BFormRadioGroup
 } from 'bootstrap-vue';
 import Multiselect from 'vue-multiselect';
-import {mapGetters, mapState} from "vuex";
+import { mapGetters, mapState } from "vuex";
 import refParser from '@apidevtools/json-schema-ref-parser';
 
-import Utils, {schemaMediaType} from '../utils';
-import {ogcQueryables} from "../rels";
+import Utils, { schemaMediaType } from '../utils';
+import { ogcQueryables } from "../rels";
 
-import ApiCapabilitiesMixin, {TYPES} from './ApiCapabilitiesMixin';
+import ApiCapabilitiesMixin, { TYPES } from './ApiCapabilitiesMixin';
 import DatePickerMixin from './DatePickerMixin';
 import Loading from './Loading.vue';
 
@@ -166,10 +134,10 @@ import Cql from '../models/cql2/cql';
 import Queryable from '../models/cql2/queryable';
 import CqlValue from '../models/cql2/value';
 import CqlLogicalOperator from '../models/cql2/operators/logical';
-import {CqlEqual} from '../models/cql2/operators/comparison';
-import {stacRequest} from '../store/utils';
-import {PROXY_URL} from "@/_Hub/Endpoint";
-import {get} from "@/_Hub/tools/https";
+import { CqlEqual } from '../models/cql2/operators/comparison';
+import { stacRequest } from '../store/utils';
+import { PROXY_URL } from "@/_Hub/Endpoint";
+import { get } from "@/_Hub/tools/https";
 import _ from "lodash"
 
 function getQueryDefaults() {
@@ -250,6 +218,7 @@ export default {
       hasAllCollections: false,
       collections: [],
       topics: [],
+      additionnal_topics:[],
       collectionsLoadingTimer: null,
       additionalCollectionCount: 0
     }, getDefaults());
@@ -261,7 +230,7 @@ export default {
       return {
         value: this.selectedCollections,
         options: [
-          {value: null, text:this.$t('search.selectCollection')},
+          { value: null, text: this.$t('search.selectCollection') },
           ...this.collections
         ], // query.collections
         trackBy: "value",
@@ -288,8 +257,8 @@ export default {
     },
     andOrOptions() {
       return [
-        {value: 'and', text: this.$i18n.t('search.logical.and')},
-        {value: 'or', text: this.$i18n.t('search.logical.or')},
+        { value: 'and', text: this.$i18n.t('search.logical.and') },
+        { value: 'or', text: this.$i18n.t('search.logical.or') },
       ];
     },
     showAdditionalFilters() {
@@ -297,10 +266,10 @@ export default {
     },
     sortOptions() {
       return [
-        {value: null, text: this.$t('default')},
-        {value: 'properties.datetime', text: this.$t('search.sortOptions.datetime')},
-        {value: 'id', text: this.$t('search.sortOptions.id')},
-        {value: 'properties.title', text: this.$t('search.sortOptions.title')}
+        { value: null, text: this.$t('default') },
+        { value: 'properties.datetime', text: this.$t('search.sortOptions.datetime') },
+        { value: 'id', text: this.$t('search.sortOptions.id') },
+        { value: 'properties.title', text: this.$t('search.sortOptions.title') }
       ];
     },
     sortedQueryables() {
@@ -348,7 +317,7 @@ export default {
     if ((this.type === 'Collections' || this.conformances.CollectionIdFilter) && this.stac) {
       promises.push(
         this.loadCollections(this.stac.getApiCollectionsLink())
-          .then(({collections, queryableLink}) => {
+          .then(({ collections, queryableLink }) => {
             this.collections = this.translateCollections(collections, this.entriesRoute);
             if (this.collections.length > 0) {
               this.hasAllCollections = true;
@@ -361,7 +330,7 @@ export default {
     Promise.all(promises).finally(() => {
       this.loaded = true;
     });
-    const {q} = this.$route.query;
+    const { q } = this.$route.query;
     if (q) {
       this.query.q = [q];
       this.onSubmit();
@@ -404,12 +373,15 @@ export default {
       }
       return data;
     },
-    async loadTopicsForTags(link = PROXY_URL.concat('topics')) {
+    async loadTopicsForTags(link = PROXY_URL.concat('tags')) {
       return get(link).then((response) => {
         if (response.data) {
-          this.topics = response.data.map(el => (
-            {value: el.title, text: el.title}
+          const {topics_from_gitlab, sections } = response.data;
+          const _topics_from_gitlab = topics_from_gitlab.map(el => (
+            { value: el, text: el }
           )).sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage));
+          this.additionnal_topics = sections;
+          this.topics = _topics_from_gitlab 
           return this.topics;
         }
       }).catch(() => {
@@ -419,7 +391,7 @@ export default {
       });
     },
     preSelectTag(topics) {
-      const {tags: _preSelectTopics} = this.$route.query;
+      const { tags: _preSelectTopics } = this.$route.query;
       let selected_topic = topics.find(el => el.value === _preSelectTopics);
       if (selected_topic) {
         this.setTags([selected_topic]);
@@ -566,7 +538,7 @@ export default {
     },
     addCollection(collection) {
       this.selectedCollections = collection
-      this.query.collections =[collection];
+      this.query.collections = [collection];
     },
     addId(id) {
       this.query.ids.push(id);
@@ -598,6 +570,21 @@ export default {
         };
       });
     },
+    getAdditionalTopicsByCategory(category){
+      if(!category){
+        return []
+      }
+      const result = this.additionnal_topics
+      .filter(section => section.enabled_for.includes(category))
+      .map((section) =>{
+         return section.keywords.map(el => ({value:el, text:el}));
+      })
+      .reduce((ac, nex) => ac.concat(nex), [])
+      .sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage))
+      return result;
+    },
+   
+    
 
   }
 };
@@ -616,6 +603,7 @@ $primary-color: map-get($theme-colors, "primary");
 
 // Multiselect related style
 @import '~vue-multiselect/dist/vue-multiselect.min.css';
+
 #stac-browser {
   .multiselect__tags:focus-within {
     border-color: #48cce1;
@@ -674,11 +662,11 @@ $primary-color: map-get($theme-colors, "primary");
   }
 
   .form-group {
-    > div {
+    >div {
       margin-left: 1em;
     }
 
-    > label {
+    >label {
       font-weight: 600;
     }
   }

@@ -297,6 +297,17 @@ export default class Utils {
       // Construct new link with search params
       let url = URI(link.href);
 
+      filters = {...filters, 
+        q : [...filters.q, ...filters.topics?.map(el => `[${el}]`)]
+       }
+
+       if(filters.q.length===0){
+        delete filters.q;
+       }
+       if(filters.topics){
+        delete filters.topics;
+       }
+      
       for (let key in filters) {
         let value = filters[key];
         if (isEmpty(value)) {

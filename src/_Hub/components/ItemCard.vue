@@ -4,7 +4,7 @@
       <div class="items-card">
         <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
           <img v-if="getPreview()" :src="getPreview()">
-          <div class="p-d-flex p-ai-center p-justify-end mt-2 mx-2">
+          <div class="p-d-flex p-ai-center p-justify-end my-2 mx-2">
             <b-badge variant="secondary">
               <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
               {{ starsProject }}
