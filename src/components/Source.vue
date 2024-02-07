@@ -108,6 +108,7 @@ import {getBest, prepareSupported} from '../locale-id';
 import TextView from "@/_Hub/components/TextView.vue";
 import {CONNEXION_MODE, get, post} from "@/_Hub/tools/https";
 import {DOCS_URL, PROXY_URL, STORE_DVC_URL} from "@/_Hub/Endpoint";
+import STAC from '../models/stac';
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -301,7 +302,7 @@ export default {
             const notebooks = Object.values(this.data.assets).filter((el) => {
               return Utils.hasNotebookAsset(el.title);
             });
-            let projectID = Utils.getProjectID(data.id);
+            let projectID = data.getMetadata("sharinghub:id");
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
               if (res.data) {
                 const {token} = this.auth;
@@ -327,17 +328,15 @@ export default {
       return window.location.toString();
     },
     dvcUrl() {
-      let stac_id = this.data?.id;
-      if (!stac_id) return null;
-      const projectID = Utils.getProjectID(stac_id);
+      if (!this.data || !this.data instanceof STAC) return null;
+      const projectID = this.data.getMetadata("sharinghub:id");
       if (!projectID) return null;
       return STORE_DVC_URL + projectID;
     },
     starProject() {
-      let stac_id = this.data?.id;
-      if (!stac_id) throw  new Error('stac_id is wrong');
-      const projectID = Utils.getProjectID(stac_id);
-      if (!projectID) throw new Error('Project is wrong');
+      if (!this.data || !this.data instanceof STAC) throw  new Error('STAC is not defined');
+      const projectID = this.data.getMetadata("sharinghub:id");
+      if (!projectID) throw new Error('project is wrong');
       post(PROXY_URL.concat(`projects/${projectID}/star`))
         .then((response) => {
           if (response.data) {
@@ -347,10 +346,9 @@ export default {
         });
     },
     UnStarProject() {
-      let stac_id = this.data?.id;
-      if (!stac_id) throw  new Error('stac_id is wrong');
-      const projectID = Utils.getProjectID(stac_id);
-      if (!projectID) throw new Error('Project is wrong');
+      if (!this.data || !this.data instanceof STAC) throw  new Error('STAC is not defined');
+      const projectID = this.data.getMetadata("sharinghub:id");
+      if (!projectID) throw new Error('project id is wrong');
       post(PROXY_URL.concat(`projects/${projectID}/unstar`))
         .then((response) => {
           if (response.data) {
