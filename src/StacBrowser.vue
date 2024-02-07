@@ -1,8 +1,7 @@
 <template>
   <div class="container h-100">
-    <Authentication v-if="doAuth.length > 0"/>
     <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError"/>
-    <Sidebar v-if="sidebar"/>
+  
     <!-- Header  TODO -->
     <header>
       <div class="logo">{{ displayCatalogTitle }}</div>
@@ -22,7 +21,7 @@
           </TextView>
         </b-tab>
 
-        <b-tab class="p-pt-4">
+        <b-tab v-if="isAuthenticated" class="p-pt-4">
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.reviews') }}</TextView>
           </template>
@@ -94,6 +93,7 @@ import TextView from "@/_Hub/components/TextView.vue";
 import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
 import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
 import TabSectionDeployment from "@/_Hub/views/sections/TabSectionDeployment.vue";
+import {CONNEXION_MODE} from "@/_Hub/tools/https";
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -145,9 +145,7 @@ export default {
   components: {
     TabSectionDeployment,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
-    Authentication: () => import('./components/Authentication.vue'),
     ErrorAlert,
-    Sidebar: () => import('./components/Sidebar.vue'),
     StacHeader
   },
   props: {
@@ -184,6 +182,9 @@ export default {
         return this.data.getMetadata("sharinghub:deployment") === "enable";
       }
       return false;
+    },
+    isAuthenticated(){
+      return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes(this.auth.mode);
     }
   },
   watch: {

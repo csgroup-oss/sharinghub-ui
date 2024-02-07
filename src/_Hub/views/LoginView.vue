@@ -44,7 +44,12 @@ export default defineComponent({
             mode: connexion_mode,
           });
           this.isLoading = false;
-          this.$router.push("/");
+          const { redirect } = this.$route.query;
+          if(redirect){
+            this.$router.push({path:`/${redirect}`});
+          }else{
+            this.$router.push("/");
+          }
         }
       });
     },

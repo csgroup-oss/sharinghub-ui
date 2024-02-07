@@ -309,7 +309,7 @@ export default defineComponent({
     showAlert(alert_message = {}, connexion_mode) {
       const route_name = this.$route.name;
       if (['Login'].includes(route_name)
-        || connexion_mode === CONNEXION_MODE.CONNECTED) {
+        || [CONNEXION_MODE.CONNECTED, CONNEXION_MODE.PRIVATE_TOKEN].includes(connexion_mode)) {
         this.alert_message = undefined;
         return false;
       }
