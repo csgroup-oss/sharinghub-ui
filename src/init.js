@@ -1,11 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import PrimeVue from "primevue/config";
 import MainPage from "@/MainPage.vue";
 import i18n, {loadDefaultMessages} from './i18n';
 import "primeflex/primeflex.css";
-import "primevue/resources/primevue.css";
-import "primevue/resources/themes/tailwind-light/theme.css";
 
 
 import Vuex from "vuex";
@@ -14,7 +11,6 @@ import CONFIG from "@/config";
 import {getRoutes_2} from "@/router";
 
 
-Vue.use(PrimeVue);
 Vue.use(VueRouter);
 export const router = new VueRouter({
   mode: CONFIG.historyMode,

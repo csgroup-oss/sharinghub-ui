@@ -188,7 +188,7 @@ img {
   }
 
   .no-preview {
-    background: rgba(black, 0.6);
+    background: rgba(black, 0.1);
   }
 
   &__category {
