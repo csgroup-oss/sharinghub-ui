@@ -20,7 +20,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['uiLanguage', 'provideConfig'])
+    ...mapState(['uiLanguage', 'provideConfig', 'title'])
   },
   watch: {
     uiLanguage: {
@@ -74,7 +74,7 @@ export default defineComponent({
 
       <b-row class="p-flex-md-row p-flex-lg-row ">
         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
-          <h1 class="p-mb-4"> SharingHUB community </h1>
+          <h1 class="p-mb-4"> {{ title }} community </h1>
           <h2 class="p-mb-3"> {{ config?.title }} </h2>
           <Description v-if="!loading" :description="config?.description"/>
         </div>

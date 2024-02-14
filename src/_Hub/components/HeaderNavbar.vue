@@ -4,7 +4,7 @@
       <div class="p-d-flex p-ai-center">
         <text-view class="p-mr-4">
           <router-link to="/" class="cursor">
-            <h3><img width="40px" height="40px" :src="logo"> SharingHUB</h3>
+            <h3><img width="40px" height="40px" :src="logo"> {{ title }}</h3>
           </router-link>
         </text-view>
         <div class="" v-if="['md','lg','sm'].includes(size)">

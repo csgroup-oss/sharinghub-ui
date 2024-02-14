@@ -38,7 +38,7 @@ export default defineComponent({
   data() {
     return {
       isLoading: true,
-      title: "SharingHUB",
+      title: "SharingHub",
       options: {
         ...vsOptions,
       },

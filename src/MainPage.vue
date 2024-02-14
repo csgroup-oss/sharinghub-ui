@@ -52,14 +52,8 @@
           </b-button-group>
 
           <b-button-group  size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
-            <b-button size="sm" :href="docs('/legal/terms-of-service')" variant="link">
-              {{ $t("fields.terms_of_service") }}
-            </b-button>
             <b-button size="sm" variant="link" :href="docs('/legal/privacy')">
               {{ $t("fields.privacy") }}
-            </b-button>
-            <b-button size="sm" variant="link" :href="docs('legal/about-us')">
-              {{ $t("fields.about") }}
             </b-button>
           </b-button-group>
 
