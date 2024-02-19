@@ -287,7 +287,6 @@ export default {
     },
     showPage(url) {
       this.$store.commit('showPage', {
-        title: this.$t('search.title'),
         description: this.pageDescription,
         url
       });
