@@ -69,27 +69,27 @@ export default defineComponent({
 
 <template>
 
-  <div class="container p-pt-4">
-    <div class="p-d-flex p-justify-center p-mb-6">
+  <div class="container pt-4">
 
-      <b-row class="p-flex-md-row p-flex-lg-row ">
+    <div class="sm:block md:flex lg:flex xl:flex  justify-content-center mb-6">
+      <b-row class="md:flex-row lg:flex-row ">
         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
-          <h1 class="p-mb-4"> {{ title }} community </h1>
-          <h2 class="p-mb-3"> {{ config?.title }} </h2>
+          <h1 class="mb-4"> {{ title }} community </h1>
+          <h2 class="mb-3"> {{ config?.title }} </h2>
           <Description v-if="!loading" :description="config?.description"/>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-d-sm-none p-d-md-none  p-d-xl-inline p-d-lg-inline">
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:hidden md:hidden lg:inline xl:inline">
           <img height="350px" :src="image"/>
         </div>
       </b-row>
     </div>
 
-    <div class="p-d-flex p-justify-center p-my-6 ">
+    <div class="flex justify-content-center my-6 ">
       <div class="p-divider--horizontal w-50"/>
     </div>
 
-    <div class="w-100 p-d-flex p-justify-center p-flex-column p-ai-center">
-      <div v-for="(el, key) in categories" :key="key" class="p-mb-6  col-xl-7 col-lg-10 col-md-12 col-sm-12  ">
+    <div class="w-100 flex justify-content-center flex-column align-items-center">
+      <div v-for="(el, key) in categories" :key="key" class="mb-6  col-xl-7 col-lg-10 col-md-12 col-sm-12  ">
         <div class="w-100">
           <home-card v-bind="el" :index="key"/>
         </div>
@@ -102,5 +102,10 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-
+@media screen and  (max-width:575px) {
+  .sm\:hidden{
+    border:solid 1px red !important;
+    display: none !important;
+  }
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <main class="select-data-source container">
-    <h4 class="p-mb-5">{{ $t('index.selectTitle') }}</h4>
+    <h4 class="mb-5">{{ $t('index.selectTitle') }}</h4>
     <b-form @submit="go">
       <b-form-group
         id="select" :label="$t('index.specifyCatalog')" label-for="url"

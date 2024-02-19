@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 container">
-    <div class="section p-ml-5">
-      <div class="col-xl-3 col-md-3 col-lg-3 col-sm-12 filter">
+    <div class="section lg:ml-5 xl:ml-5">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-0">
         <TagFilterComponent v-if="!!tags" 
           :handle-reset-tags="handleResetTags" 
           :handle-filter-tags="handleFilterTag"
@@ -11,15 +11,15 @@
       </div>
 
       <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12">
-        <div class="p-d-flex p-flex-sm-column p-flex-lg-row p-ai-center p-jc-between">
+        <div class="flex sm:flex-column lg:flex-row align-items-center justify-content-between">
           <div>
-            <text-view class="p-pl-3" type="header__b20">
+            <text-view class="pl-3" type="header__b20">
               {{ title }}</text-view>
             <text-view type="header__16" class="text-secondary ml-2" v-if="dataList.length !== 0">{{ dataList.length
             }}</text-view>
           </div>
 
-          <div class="p-d-flex p-ai-center col-sm-12 col-md-12 col-lg-6 col-xl-6 mt-sm-3">
+          <div class="flex align-items-center col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:mt-3">
             <b-input-group size="sm" class="">
               <b-form-input type="text" v-model="term_filter" autocomplete="false" @update="handleFilterByTerms"
                 :placeholder="$t('fields.filter_by_name')">
@@ -43,12 +43,10 @@
 
             <b-button v-if="isAuthenticated" @click="handleSelectStarredProject(!only_starred_project)" 
               v-b-tooltip.hover.topleft :title="$t('fields.tags.starred_project')"
-              class="p-ml-2" :variant="only_starred_project ? 'primary':'outline-primary'"
+              class="ml-2" :variant="only_starred_project ? 'primary':'outline-primary'"
               size="sm">
                 <b-icon icon="star"/>
             </b-button>
-
-
           </div>
         </div>
         <template v-if="loading">
@@ -57,13 +55,13 @@
 
         <template v-else>
           <b-overlay :show="over_loading" rounded="sm">
-            <b-row v-if="dataList.length !== 0" class="p-d-flex p-flex-wrap p-ai-center">
+            <b-row v-if="dataList.length !== 0" class="flex flex-wrap align-items-center">
               <item-card v-for="dataset in dataList" :stac="dataset" />
             </b-row>
-            <h3 class="p-mt-6" v-else>
+            <h3 class="mt-6" v-else>
               {{ $t("fields.no_data_found", [":("]) }}
             </h3>
-            <b-row v-if="!!next_link" class="p-d-flex p-flex-wrap p-jc-center mt-3">
+            <b-row v-if="!!next_link" class="flex flex-wrap justify-content-center mt-3">
               <b-button @click="($event) => handleLoadMoreItems(next_link)" variant="outline-primary" size="sm">
                 {{ $t("showMore") }}
               </b-button>
@@ -74,7 +72,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import {defineComponent } from "vue";
@@ -105,7 +102,7 @@ export default defineComponent({
       options: {
         selected: null,
       },
-      only_starred_project:false
+      only_starred_project: false,
     };
   },
   computed: {
@@ -136,7 +133,7 @@ export default defineComponent({
   },
   async beforeMount() {
     this.getTopics();
-    const {starred} = this.$route.query;
+    const { starred } = this.$route.query;
     this.only_starred_project = !!starred;
   },
   methods: {
@@ -148,7 +145,7 @@ export default defineComponent({
           }
           return response.data;
         })
-        .catch(() => { });
+        .catch(() => {});
     },
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
@@ -230,7 +227,7 @@ export default defineComponent({
     },
     async handleFilterByTerms(term_query) {
       clearTimeout(this.nameSearchTimeout);
-      const { q, topics, sortby, starred} = this.$route.query;
+      const { q, topics, sortby, starred } = this.$route.query;
       let query = {};
       if (term_query?.length < 3 && q) {
         this.nameSearchTimeout = setTimeout(() => {
@@ -271,14 +268,16 @@ export default defineComponent({
         url = has_freetext_query
           ? url.concat(`,[${topic}]`)
           : index !== topics.length - 1
-            ? (url = url.concat(`[${topic}],`))
-            : (url = url.concat(`[${topic}]`));
+          ? (url = url.concat(`[${topic}],`))
+          : (url = url.concat(`[${topic}]`));
       });
       return url;
     },
     addStarredToUrl(_url) {
       let has_freetext_query = _url.includes("&q=");
-      return has_freetext_query ? _url.concat(`,:starred`) : _url.concat(`&q=:starred`);
+      return has_freetext_query
+        ? _url.concat(`,:starred`)
+        : _url.concat(`&q=:starred`);
     },
     selectedFilterFromURL(queryTopics) {
       queryTopics.split(",").forEach((el) => {
@@ -293,7 +292,7 @@ export default defineComponent({
     },
     handleResetTags() {
       const { q, sortby, topics } = this.$route.query;
-      if(!topics){
+      if (!topics) {
         return;
       }
       this.filtered_tags = [];
@@ -303,14 +302,14 @@ export default defineComponent({
       query = sortby ? { ...query, sortby } : query;
       this.$router.push({ path: "", query });
     },
-    handleSelectStarredProject(only_starred){
-      this.only_starred_project = only_starred
+    handleSelectStarredProject(only_starred) {
+      this.only_starred_project = only_starred;
       let query = {};
       const { topics, q } = this.$route.query;
       query = q ? { ...query, q } : query;
       query = topics ? { ...query, topics } : query;
-      if(only_starred){
-        query = {...query , starred:true}
+      if (only_starred) {
+        query = { ...query, starred: true };
       }
       this.$router.push({ path: "", query });
     },
@@ -327,5 +326,18 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 575px) {
+  .section {
+    .sm\: {
+      &flex-column {
+        flex-direction:  column !important;
+      }
+      &mt-3{
+        margin-top: 1rem;
+      }
+    }
+  }
 }
 </style>

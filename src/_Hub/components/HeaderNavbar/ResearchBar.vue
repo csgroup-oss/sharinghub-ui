@@ -18,7 +18,7 @@
           <b-icon style="padding-bottom: 3px;" icon="circle-fill" animation="throb"/>
         </b-button>
         <b-button v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
-                  variant="outline-secondary">
+                  :variant="variant">
           <b-icon style="padding-bottom: 3px;" icon="sliders"/>
         </b-button>
       </b-input-group-prepend>
@@ -28,22 +28,22 @@
     </b-input-group>
 
     <div v-if="open_search" ref="search_container" class="research-bar__results">
-      <div v-if="!search_result_is_empty" class="p-d-flex p-flex-column p-mt-3">
+      <div v-if="!search_result_is_empty" class="flex flex-column mt-3">
         <div v-for="(result, idx) in search_results">
           <template v-for="([key, val] ) in Object.entries(result)">
-            <div :class="['p-mt-2']" v-if="Array.isArray(val.features) && val.features.length!==0">
-              <text-view type="header__b14" :class="['p-d-block p-px-3', `text-${getRandomColor(idx)}`]">
+            <div :class="['mt-2']" v-if="Array.isArray(val.features) && val.features.length!==0">
+              <text-view type="header__b14" :class="['block px-3', `text-${getRandomColor(idx)}`]">
                 {{ translateCategories(key) }}
               </text-view>
               <a v-for="(el) in val.features.slice(0, limit_displayed)"
-                 :class="['research-bar__results__item p-px-4']"
+                 :class="['research-bar__results__item px-4']"
                  @click="$event => handleSelectResult($event, itemLink(el.links))"
                  :href="itemLink(el.links)">
                 <small> {{ el.properties['title'] }}
                 </small>
               </a>
               <router-link v-if="val.numberMatched > limit_displayed && value.length > 2 "
-                           class="research-bar__results__item p-px-4 see_more"
+                           class="research-bar__results__item px-4 see_more"
                            :to="`/${key}?q=${value}`">
                 <small class="">
                   <b-icon icon="arrow-right-short"/>
@@ -54,7 +54,7 @@
           </template>
         </div>
       </div>
-      <div v-else class="p-d-flex p-flex-column p-m-3">
+      <div v-else class="flex flex-column m-3">
         <text-view type="Small-1"> {{ $t('fields.no_data_found', [':(']) }}</text-view>
       </div>
     </div>
@@ -81,6 +81,11 @@ export default defineComponent({
     canSearch: {
       type: Boolean,
       required: true,
+    },
+    variant:{
+      type: String,
+      required: false,
+      default: "outline-secondary",
     }
   },
   data() {

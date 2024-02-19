@@ -58,11 +58,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="container w-50 p-pt-5">
-    <div class="p-d-flex p-flex-column">
-      <h2 class="p-mb-6">Log in</h2>
-      <b-row class="p-justify-between">
-        <b-col cols="6">
+  <div class="container md:w-6 lg:w-6 sm:w-6 pt-5">
+    <div class="flex flex-column">
+      <h2 class="mb-6 sm:align-self-center md:align-self-center lg:align-self-start xl:align-self-start">Log in</h2>
+      <div class="flex justify-content-between lg:flex-row md:flex-row xl:flex-row sm:flex-column-reverse">
+        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-6">
           <b-form @submit="go">
             <b-form-group
               id="select-token"
@@ -78,24 +78,55 @@ export default defineComponent({
               />
               <small> {{ $t("index.specifyTokenDetail") }} </small>
             </b-form-group>
-
-            <b-button type="submit" variant="primary">{{
+            <b-button type="submit" block variant="primary">{{
               $t("index.load")
             }}</b-button>
           </b-form>
-        </b-col>
-        <b-col cols="1">
-          <div class="p-divider--vertical" />
-        </b-col>
-        <b-col class="p-as-center" cols="4">
-          <b-button :href="connexion_url" variant="primary">
+        </div>
+        <div class="col-sm-12 col-md-1 col-lg-1 col-xl-1 sm:my-3">
+          <div class="p-divider--vertical sm:hidden lg:block" />
+          <div class="p-divider--horizontal sm:block lg:hidden"  />
+        </div>
+        <div class="p-as-center col-sm-12 col-md-4 col-lg-4 col-xl-4">
+          <b-button :href="connexion_url" block variant="primary">
             GitLab Oauth2</b-button
           >
-        </b-col>
-      </b-row>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+
+.lg\:{
+   &hidden{
+     display: none !important;
+   }
+  &block{
+    display: block !important;
+  }
+}
+@media screen and (max-width: 575px) {
+  .container{
+    .sm\:{
+      &flex-column-reverse{
+        flex-direction: column-reverse !important;
+      }
+      &my-3{
+        margin: 1rem auto;
+      }
+      &hidden{
+       display: none !important;
+      }
+      &block{
+        display: block !important;
+      }
+      &align-self-center{
+        align-self: center ;
+      }
+    }
+  }
+}
+
 </style>

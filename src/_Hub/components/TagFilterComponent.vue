@@ -1,21 +1,20 @@
 <template>
-  <div class="p-d-flex p-flex-column p-flex-wrap w-100 tag-filter">
-
-    <b-tabs small  pills size="sm">
+  <div class="flex flex-column flex-wrap w-100 tag-filter">
+    <b-tabs small  pills size="sm" class="lg:block sm:hidden">
       <b-tab :active="!isPreSelect">
         <template #title>
           {{ $t('fields.tags.common_tag') }} <b-badge v-if="number_commontag_selected !== 0" variant="light">{{
             number_commontag_selected }}</b-badge>
         </template>
-        <div v-for="key in filtered_section_tags" class="p-d-block mb-3 mt-4">
-          <div class="p-d-block">
+        <div v-for="key in filtered_section_tags" class="block mb-3 mt-4">
+          <div class="block">
             <text-view class="text-primary" type="header__14"> {{ key.name }}</text-view>
-            <b-row class="p-ml-1 p-mt-2">
+            <div class="flex flex-wrap align-items-center mx-2 mt-2">
               <b-badge v-for="tag in key.keywords" variant="light" pill @click="handleFilterTags(tag)"
                 :class="['m-1 cursor p-2', filteredTags.find(el => el === tag) && 'badge-active']">
                 {{ tag }}
               </b-badge>
-            </b-row>
+            </div>
           </div>
         </div>
 
@@ -25,8 +24,8 @@
           {{ $t('fields.tags.others') }} <b-badge v-if="number_others_tag_selected !== 0" variant="light">{{
             number_others_tag_selected }}</b-badge>
         </template>
-        <div class="p-d-flex p-flex-column p-ai-center">
-          <b-row class="p-px-2 mt-4 p-d-flex p-flex-wrap">
+        <div class="flex flex-column align-items-center">
+          <b-row class="px-2 mt-4 flex flex-wrap">
             <b-badge v-for="tag in tags_from_gitlab" variant="light" pill @click="handleFilterTags(tag)"
               :class="['m-1 cursor p-2', filteredTags.find(el => el === tag) && 'badge-active']">
               {{ tag }}
@@ -39,16 +38,79 @@
           </b-button>
         </div>
       </b-tab>
-
       <template v-if="filteredTags.length!==0"  #tabs-end>
         <b-button size="sm"
           v-b-tooltip.hover.topright :title="$t('fields.tags.reset')"
-          class="reset p-ml-2" @click="handleResetTags">
+          class="reset ml-2" @click="handleResetTags">
           <b-icon class="text-white" icon="x"></b-icon>
         </b-button>
       </template>
     </b-tabs>
 
+    <b-button block variant="primary" class="mb-3 sm:block lg:hidden"
+      @click="$bvModal.show('bv-modal-filter')">
+      <b-icon icon="funnel-fill"/>
+      {{ $t('fields.tags.add_filter')}}
+      <b-badge v-if="number_filters !== 0" variant="light">{{
+            number_filters }}</b-badge>
+    </b-button>
+
+    <b-modal id="bv-modal-filter" hide-footer>
+      <template #modal-title>
+      {{ $t('fields.tags.add_filter')}}
+      </template>
+      <b-tabs small  pills size="sm">
+        <b-tab :active="!isPreSelect">
+          <template #title>
+          {{ $t('fields.tags.common_tag') }} <b-badge v-if="number_commontag_selected !== 0" variant="light">{{
+            number_commontag_selected }}</b-badge>
+          </template>
+          <div v-for="key in filtered_section_tags" class="block mb-3 mt-4">
+            <div class="block">
+              <text-view class="text-primary" type="header__14"> {{ key.name }}</text-view>
+              <b-row class="ml-1 mt-2">
+                <b-badge v-for="tag in key.keywords" variant="light" pill @click="handleFilterTags(tag)"
+                  :class="['m-1 cursor p-2', filteredTags.find(el => el === tag) && 'badge-active']">
+                {{ tag }}
+                </b-badge>
+              </b-row>
+            </div>
+          </div>
+
+        </b-tab>
+        <b-tab :active="isPreSelect">
+          <template #title>
+          {{ $t('fields.tags.others') }} <b-badge v-if="number_others_tag_selected !== 0" variant="light">{{
+            number_others_tag_selected }}</b-badge>
+          </template>
+          <div class="flex flex-column align-items-center">
+            <b-row class="px-2 mt-4 flex flex-wrap">
+              <b-badge v-for="tag in tags_from_gitlab" variant="light" pill @click="handleFilterTags(tag)"
+                :class="['m-1 cursor p-2', filteredTags.find(el => el === tag) && 'badge-active']">
+              {{ tag }}
+              </b-badge>
+            </b-row>
+
+            <b-button v-if="pagination <= tags.topics_from_gitlab.length" size="sm" pill
+              @click="$event => isTruncated = !isTruncated" variant="light" class="mt-5">
+            {{ isTruncated ? $t('read.less') : $t('read.more') }}
+            </b-button>
+          </div>
+        </b-tab>
+
+        <template v-if="filteredTags.length!==0"  #tabs-end>
+          <b-button size="sm"
+            v-b-tooltip.hover.topright :title="$t('fields.tags.reset')"
+            class="reset ml-2" @click="handleResetTags">
+            <b-icon class="text-white" icon="x"></b-icon>
+          </b-button>
+        </template>
+      </b-tabs>
+      <b-button size="sm" class="mt-3" variant="primary"
+        block @click="$bvModal.hide('bv-modal-filter')">
+        {{ $t('leaflet.close') }}
+      </b-button>
+    </b-modal>
 
   </div>
 </template>
@@ -116,6 +178,9 @@ export default defineComponent({
       const els = this.filteredTags.filter(el => this.tags_from_gitlab.includes(el));
       return els.length;
     },
+    number_filters(){
+      return this.number_commontag_selected + this.number_others_tag_selected;
+    }
 
   },
   beforeMount() {
@@ -127,25 +192,13 @@ export default defineComponent({
 <style scoped lang="scss">
 @import "../../assets/colors";
 @import "../../theme/variables";
-
-.tag-filter {
-  min-height: 100%;
-  width: 100%;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
-
-  .nav-pills {
-    align-items: center !important;
-  }
-
+@mixin tags-style{
   .badge {
-    //background-color: rgba($secondary-color,1) !important;
     border: 1px rgba($secondary-color, 1) solid;
     max-width: 240px;
     overflow-x: hidden;
 
   }
-
   .badge-active {
     color: #FFFFFF;
     background-color: map-get($theme-colors, "primary") !important;
@@ -157,6 +210,43 @@ export default defineComponent({
       opacity:0.85;
     }
   }
+}
 
+#bv-modal-filter{
+  @include tags-style;
+}
+
+.tag-filter {
+  min-height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #FFFFFF, rgba(#129E83, 0.032));
+  .nav-pills {
+    align-items: center !important;
+  }
+  @include tags-style;
+
+  .lg\:{
+    &block{
+      display:block;
+    }
+    &hidden{
+      display:none;
+    }
+
+  }
+
+}
+
+@media screen and (max-width: 575px) {
+  .sm\:{
+    &block{
+      display:block !important;
+    }
+    &hidden{
+      display:none !important;
+    }
+
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <div class="p-d-inline-flex p-ai-center tag-custom p-px-2">
-    <i v-if="!!$props.icon" :class="'p-mr-1 p-py-1 ' + $props.icon"/>
-    <text-view type="Small-3" class="p-py-1">{{ label }}</text-view>
+  <div class="inline-flex align-items-center tag-custom px-2">
+    <i v-if="!!$props.icon" :class="'mr-1 py-1 ' + $props.icon"/>
+    <text-view type="Small-3" class="py-1">{{ label }}</text-view>
     <template v-if="!!$props.subLabel">
       <div class="p-divider--vertical" />
       <text-view type="Small-3" class="p-text-secondary ">{{ subLabel }}</text-view>

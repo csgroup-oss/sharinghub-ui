@@ -1,6 +1,6 @@
 <template>
-  <div v-bind="$attrs" v-on="$listeners" :class="['p-d-flex p-ai-center p-py-1 p-px-2', $props.isSimple ?'nav-item-simple' : 'nav-item']">
-    <i v-if="$props.icon !== undefined" :class="$props.icon +' '+ 'p-mr-2' "></i>
+  <div v-bind="$attrs" v-on="$listeners" :class="['flex align-items-center py-1 px-2', $props.isSimple ?'nav-item-simple' : 'nav-item']">
+    <i v-if="$props.icon !== undefined" :class="$props.icon +' '+ 'mr-2' "></i>
     <text-view type="Title-2">
       <slot/>
     </text-view>

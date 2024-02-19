@@ -1,23 +1,23 @@
 <template>
-  <header class="nav-bar w-100 p-pb-2">
-    <div class="container p-px-4 p-py-1 p-d-flex p-ai-center p-jc-between">
-      <div class="p-d-flex p-ai-center">
-        <text-view class="p-mr-4">
+  <header  :class="['nav-bar w-100 pb-2', ['sm', 'md'].includes(size) && 'fixed']">
+    <div class="container px-4 py-1 flex justify-content-between align-items-center">
+      <div class="flex align-items-center">
+        <text-view class="mr-4">
           <router-link to="/" class="cursor">
-            <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
+            <h3><img width="40px" height="40px" :src="logo">SharingHub</h3>
           </router-link>
         </text-view>
-        <div class="" v-if="['md','lg','sm'].includes(size)">
+        <div class="" v-if="['md','lg'].includes(size)">
           <research-bar
             :canSearch="canSearch"
             :categories="routes"/>
         </div>
       </div>
 
-      <div v-if="['lg'].includes(size)" class="p-d-flex p-ai-center p-jc-between">
+      <div v-if="['lg'].includes(size)" class="flex justify-content-between align-items-center">
         <template v-if="routes.length > 0">
           <router-link v-for="item in routes" class="" :to="`/${item.route}`">
-            <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
+            <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
               <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
               <b-icon v-else :icon="item.icon"/>
               <text-view type="header__b13"> {{ item.title }}</text-view>
@@ -26,10 +26,10 @@
 
         </template>
         <div class="p-divider--vertical"/>
-        <div class="p-d-flex p-ai-center">
+        <div class="flex align-items-center">
           <div v-for="link in externalLinks">
             <a v-if="link.url" :href="link.url" target="_blank">
-              <nav-item class="p-mx-1">
+              <nav-item class="mx-1">
                 <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
                 <text-view type="header__b13"> {{ link.name }}</text-view>
               </nav-item>
@@ -37,7 +37,7 @@
             <b-dropdown v-if="link.dropdown" right size="sm" variant="link" toggle-class="text-decoration-none"
                         no-caret>
               <template #button-content>
-                <nav-item class="p-mx-1">
+                <nav-item class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
                   <text-view type="header__b13"> {{ link.name }}</text-view>
                 </nav-item>
@@ -63,7 +63,7 @@
           <b-dropdown-divider/>
           <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
         </b-dropdown>
-        <div v-else class="p-ml-3">
+        <div v-else class="ml-3">
           <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
             {{ $t('fields.login') }}
             <b-icon-box-arrow-in-right/>
@@ -72,10 +72,10 @@
       </div>
 
 
-      <div v-if="['md','sm'].includes(size)" class="p-d-flex p-ai-center">
-        <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+      <div v-if="['md','sm'].includes(size)" class="flex align-items-center">
+        <b-dropdown right v-if="isAuthenticated" size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
           <template class="" #button-content>
-            <b-avatar size="40" variant="info" :src="avatar_url"/>
+            <b-avatar size="30" variant="info" :src="avatar_url"/>
           </template>
           <b-dropdown-item>
             <text-view class="" type="">{{ auth?.user?.name }}</text-view>
@@ -91,10 +91,24 @@
 
 
       <b-sidebar id="sidebar-menu" sidebar-class="border-right">
-        <div class="px-3 py-2 p-d-flex p-flex-column">
+        <div class="px-3 py-2 flex flex-column">
+
+          <text-view class="mr-4">
+            <router-link to="/" class="cursor">
+              <h3><img width="40px" height="40px" :src="logo">SharingHub</h3>
+            </router-link>
+          </text-view>
+
+           <div class="my-2">
+             <research-bar
+               variant="secondary"
+               :canSearch="canSearch"
+               :categories="routes"/>
+           </div>
+
           <template v-if="routes.length > 0">
             <router-link v-for="item in routes" class="mx-1 mt-3" :to="`/${item.route}`">
-              <nav-item :class="['p-mx-1 p-d-flex p-ai-center', isActiveRoute(item.route) && 'active']">
+              <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
                 <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
                 <b-icon v-else :icon="item.icon"/>
                 <text-view type="header__b14"> {{ item.title }}</text-view>
@@ -105,7 +119,7 @@
           <div class="mx-1 mt-3">
             <template v-for="link in externalLinks">
               <a v-if="link.url" :href="link.url" target="_blank">
-                <nav-item class="p-mx-1">
+                <nav-item class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
                   <text-view type="header__b14"> {{ link.name }}</text-view>
                 </nav-item>
@@ -113,7 +127,7 @@
               <b-dropdown v-if="link.dropdown" left size="sm" variant="link" toggle-class="text-decoration-none"
                           no-caret>
                 <template #button-content>
-                  <nav-item class="p-mx-1">
+                  <nav-item class="mx-1">
                     <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
                     <text-view type="header__b14"> {{ link.name }}</text-view>
                   </nav-item>
@@ -282,6 +296,10 @@ export default defineComponent({
     background-color: rgba(map-get($theme-colors, 'primary'), 0.3);
   }
 }
-
+.fixed{
+  z-index:1 ! important;
+  background: white !important;
+  position: fixed;
+}
 
 </style>

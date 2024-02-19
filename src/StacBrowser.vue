@@ -8,10 +8,10 @@
       <StacHeader @enableSidebar="sidebar = true"/>
     </header>
 
-    <div class="w-100 p-pt-5 ">
-      <b-tabs class="p-pb-3">
+    <div class="w-100 pt-5 ">
+      <b-tabs class="pb-3">
 
-        <b-tab class="p-pt-4">
+        <b-tab class="pt-4">
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.asset_card') }}</TextView>
           </template>
@@ -21,7 +21,7 @@
           </TextView>
         </b-tab>
 
-        <b-tab v-if="isAuthenticated" class="p-pt-4">
+        <b-tab v-if="isAuthenticated" class="pt-4">
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.reviews') }}</TextView>
           </template>
@@ -29,14 +29,14 @@
         </b-tab>
 
 
-        <b-tab v-if="isMlModelCompliant && canDeploy" class="p-pt-4">
+        <b-tab v-if="isMlModelCompliant && canDeploy" class="pt-4">
           <template #title>
             <TextView type="header__b16">{{ $t('fields.model_deploy') }}</TextView>
           </template>
           <TabSectionDeployment/>
         </b-tab>
 
-        <b-tab class="p-pt-4">
+        <b-tab class="pt-4">
           <template #title>
             <TextView type="header__b16">STAC API</TextView>
           </template>

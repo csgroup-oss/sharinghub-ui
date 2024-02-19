@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div id="stac-browser" class="p-d-flex p-flex-column h-100 w-100 p-ai-center main-page">
+    <div id="stac-browser" class="flex flex-column h-100 w-100 align-items-center main-page">
       <header-navbar
         v-if="!!headerRoutes"
         :routes="headerRoutes"
@@ -10,13 +10,13 @@
       <div v-if="!!alert_message" class="container">
         <b-alert class="" show :variant="alert_message.type" fade dismissible
                  @dismissed="closeAlert(alert_message.url)">
-          <div class="p-d-flex p-ai-start">
+          <div class="flex justify-items-start">
             <div class="mr-2">
               <b-icon icon="exclamation-circle-fill" variant="dark"/>
             </div>
             <div>
-              <text-view class="p-d-block" type="header__b14">{{ alert_message.title }}</text-view>
-              <text-view class="p-d-block" type="header__13">{{ alert_message.message }}</text-view>
+              <text-view class="block" type="header__b14">{{ alert_message.title }}</text-view>
+              <text-view class="block" type="header__13">{{ alert_message.message }}</text-view>
               <b-button v-if="alert_message.url"
                         size="sm" class="mt-2"
                         variant="light"
@@ -30,21 +30,24 @@
         </b-alert>
       </div>
 
-      <div v-if="isLoading" class="container w-100 h-100 p-pt-5">
-        <Awaiter :is-visible="isLoading"/>
-      </div>
+      <div class="body-content w-100 h-100">
+        <div v-if="isLoading" class="container w-100 h-100 pt-5">
+          <Awaiter :is-visible="isLoading"/>
+        </div>
 
-      <div v-else class="w-100 h-100 p-pt-0">
-        <router-view/>
+        <div v-else class="w-100 h-100 pt-0">
+          <router-view/>
+        </div>
+
       </div>
 
 
     </div>
 
-    <footer class="w-100 p-mt-6">
-      <div class="p-px-4 p-py-3 container footer">
+    <footer class="w-100 mt-6">
+      <div class="px-4 py-3 container footer">
 
-        <div class="p-d-flex p-jc-between  p-flex-sm-column p-flex-md-row p-flex-lg-row ">
+        <div class="flex justify-content-between  sm:flex-column md:flex-row lg:flex-row ">
           <b-button-group size="sm" class="left">
             <b-button size="sm" variant="link" disabled>
               {{ $t("fields.copyright", [new Date().getFullYear()]) }}
@@ -352,5 +355,21 @@ footer {
 
 .btn-sm {
   font-size: 0.8rem;
+}
+
+@media screen and (max-width:575px){
+  .body-content{
+  margin-top:5.5rem;
+  }
+}
+@media screen and (min-width:576px ) and  (max-width:978px ) {
+  .body-content{
+    margin-top:6.5rem;
+  }
+}
+@media screen and (min-width:979px ) and (max-width:1581px){
+  .body-content{
+    margin-top:4.6rem;
+  }
 }
 </style>

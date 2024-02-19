@@ -15,14 +15,14 @@ export default defineComponent({
     <b-col cols="4">
       <ProjectDownLoadStats/>
     </b-col>
-    <b-col class="p-mt-5" cols="12">
+    <b-col class="mt-5" cols="12">
       <b-dropdown>
         <template #button-content>
           <b-icon scale="0.8" icon="file-code-fill"/>
           deploy
         </template>
         <b-dropdown-item>
-          <span class="p-d-block p-text-bold">Inference Endpoint</span>
+          <span class="block p-text-bold">Inference Endpoint</span>
           <small>Production-ready API deployments</small>
         </b-dropdown-item>
       </b-dropdown>

@@ -15,7 +15,7 @@
     "model_deploy": "Models deployment",
     "no_data_found": "No results found {0}",
     "login": "Log in",
-    "copyright": "All rights reserved © Sharing HUB {0}",
+    "copyright": "All rights reserved © SharingHub {0}",
     "about": "About",
     "privacy": "Privacy",
     "terms_of_service": "Terms of service",
@@ -26,7 +26,8 @@
       "common_tag": "Common tags",
       "others": "Others",
       "reset": "Reset",
-      "starred_project": "Show starred projects"
+      "starred_project": "Show starred projects",
+      "add_filter" : "Add filters"
      },
     "i_understand": "I understand",
     "see_more": "See {0} \"{1}\" results for \"{2}\"",

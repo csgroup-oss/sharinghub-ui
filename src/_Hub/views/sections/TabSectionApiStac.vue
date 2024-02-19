@@ -1,6 +1,6 @@
 <template>
   <div class="share mt-1">
-    <div v-if="stacUrl" class="p-mt-3">
+    <div v-if="stacUrl" class="mt-3">
       <template v-if="stac">
         <b-row v-if="stacId" class="stac-id">
           <b-col cols="4">{{ $t('source.id') }}</b-col>

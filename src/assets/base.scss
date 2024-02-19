@@ -1,5 +1,6 @@
 @import "colors";
 @import "mixins";
+@import "primeflex/primeflex.scss";
 
 html, body {
   height: 100%;
@@ -11,6 +12,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   @include scrollbars(0.6em, $primary-color)
 }
+
 
 .w {
   &-100 {

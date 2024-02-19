@@ -31,21 +31,21 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="p-d-flex p-flex-column w-100 resource_card p-p-3 p-mt-5" @click="seeModel($event, $props.metadata.id)">
-    <div class="p-d-flex p-ai-center p-mb-1">
-      <img :src="owner" class="p-mr-1"/>
+  <div class="flex flex-column w-100 resource_card p-3 mt-5" @click="seeModel($event, $props.metadata.id)">
+    <div class="flex align-items-center mb-1">
+      <img :src="owner" class="mr-1"/>
       <TextView>{{ $props.metadata.name }}</TextView>
     </div>
-    <div class="p-d-flex p-ai-center">
-      <div v-if="!!$props.metadata.keyword" class="p-text-secondary p-d-flex p-ai-center">
+    <div class="flex align-items-center">
+      <div v-if="!!$props.metadata.keyword" class="p-text-secondary flex align-items-center">
         <i class="pi pi-file-edit"/>
         <TextView type="Small-2">
           {{ $props.metadata.keyword }}
         </TextView>
       </div>
       <template v-if="!!$props.metadata.lastUpdated">
-        <div class="p-text-secondary p-px-2">•</div>
-        <div class="p-text-secondary p-d-flex p-ai-center">
+        <div class="p-text-secondary px-2">•</div>
+        <div class="p-text-secondary flex align-items-center">
           <TextView type="Small-2">
             {{ $props.metadata.lastUpdated }}
           </TextView>
@@ -53,8 +53,8 @@ export default defineComponent({
       </template>
 
       <template v-if="!!$props.metadata.downloadRate">
-        <div class="p-text-secondary p-px-2">•</div>
-        <div class="p-text-secondary p-d-flex p-ai-center">
+        <div class="p-text-secondary px-2">•</div>
+        <div class="p-text-secondary flex align-items-center">
           <i class="pi pi-arrow-down"/>
           <TextView type="Small-2">
             {{ $props.metadata.downloadRate }}
@@ -62,8 +62,8 @@ export default defineComponent({
         </div>
       </template>
       <template v-if="!!$props.metadata.likeRate">
-        <div class="p-text-secondary p-px-2">•</div>
-        <div class="p-text-secondary p-d-flex p-ai-center">
+        <div class="p-text-secondary px-2">•</div>
+        <div class="p-text-secondary flex align-items-center">
           <i class="pi pi-heart"/>
           <TextView type="Small-2">
             {{ $props.metadata.likeRate }}

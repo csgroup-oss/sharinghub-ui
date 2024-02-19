@@ -1,16 +1,16 @@
 <template>
-  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-    <div @click="seeModel($event)" v-if="!!stac" class="p-d-flex p-flex-column p-p-3 p-mt-5">
+  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mt-2 p-0 ">
+    <div @click="seeModel($event)" v-if="!!stac" class="flex flex-column p-3 ">
       <div class="items-card">
-        <div :class="['items-card__title p-d-flex p-flex-column', !getPreview() && 'no-preview']">
+        <div :class="['items-card__title flex flex-column', !getPreview() && 'no-preview']">
           <img v-if="getPreview()" :src="getPreview()">
-          <div class="p-d-flex p-ai-center p-justify-end my-2 mx-2">
+          <div class="flex align-items-center justify-content-end my-2 mx-2">
             <b-badge variant="secondary">
               <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
               {{ starsProject }}
             </b-badge>
           </div>
-          <div v-if="!!stac.properties.keywords" class="p-d-flex p-ai-center  p-flex-wrap items-card__content__tag ">
+          <div v-if="!!stac.properties.keywords" class="flex align-items-center flex-wrap items-card__content__tag ">
             <b-badge
               v-for="tag,idx in stac.properties.keywords.slice(0,6)"
               variant="primary"
@@ -21,20 +21,20 @@
             </b-badge>
           </div>
 
-          <div class="w-100 p-d-flex p-ai-center p-pl-2 items-card__category" v-if="!!category">
+          <div class="w-100 flex align-items-center pl-2 items-card__category" v-if="!!category">
             <text-view type="header__13">
               <small>{{ category }}</small>
             </text-view>
           </div>
 
         </div>
-        <div class="items-card__content p-px-3">
-          <div class="p-d-flex w-100 h-100 p-flex-column p-jc-between py-3">
+        <div class="items-card__content px-3">
+          <div class="flex w-100 h-100 flex-column justify-content-between py-3">
             <h3 class="items-card__content__title">
               <TextView type="header__b16">{{ stac.properties.title }}</TextView>
             </h3>
 
-            <div class="items-card__content__description p-mb-3">
+            <div class="items-card__content__description mb-3">
               <Description compact inline :description="getDescription"/>
             </div>
 
@@ -163,7 +163,6 @@ img {
   height: auto;
 }
 
-
 .loading {
   width: 300px;
   height: 360px;
@@ -262,5 +261,13 @@ img {
   }
 }
 
-
+@media screen and (max-width: 575px) {
+  .col{
+    &-sm-12{
+    width: 100% !important;
+      min-width: 300px;
+      height: fit-content;
+    }
+  }
+}
 </style>

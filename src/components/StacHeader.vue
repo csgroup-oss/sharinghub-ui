@@ -1,36 +1,41 @@
 <template>
   <b-row>
-    <b-col md="12">
-      <b-row v-if="!loading" class="float-right">
-        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data"/>
-      </b-row>
-      <text-view type="header__b20">
-        <template v-if="icon">
-          <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
-        </template>
-        <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill
-                  class="p-mr-2">
-          <b-icon-arrow-left/>
-        </b-button>
-        <span class="title">{{ title }}</span>
-      </text-view>
-      <text-view type="header__16" class="p-d-block p-pt-1 p-pb-3" v-if="url">
-        <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
-          <template #catalog>
-            <small>
-              <StacLink :data="containerLink"/>
-            </small>
-          </template>
-        </i18n>
-      </text-view>
 
-      <b-col cols="12">
-        <b-row v-if="!!data?.properties">
+
+    <div class="col-md-12">
+      <div v-if="!loading" class="float-right">
+        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data"/>
+      </div>
+
+      <div>
+        <text-view type="header__b20">
+          <template v-if="icon">
+            <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
+          </template>
+          <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill
+            class="mr-2">
+            <b-icon-arrow-left/>
+          </b-button>
+          <span class="title">{{ title }}</span>
+        </text-view>
+        <text-view type="header__16" class="block pt-1 pb-3" v-if="url">
+          <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
+            <template #catalog>
+              <small>
+                <StacLink :data="containerLink"/>
+              </small>
+            </template>
+          </i18n>
+        </text-view>
+      </div>
+
+      <div>
+        <div class="flex flex-wrap" v-if="!!data?.properties">
           <Keywords v-if="Array.isArray(data.properties.keywords) &&
             data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords"/>
-        </b-row>
-      </b-col>
-    </b-col>
+        </div>
+      </div>
+    </div>
   </b-row>
 </template>
 
@@ -118,4 +123,22 @@ h1 {
   display: none !important;
 }
 
+.lg\:{
+  &block{
+    display: block !important;
+  }
+  &hidden{
+    display: none !important;
+  }
+}
+@media screen and (max-width: 575px) {
+  .sm\:{
+   &hidden{
+    display: none !important;
+   }
+    &block{
+      display: block !important;
+    }
+  }
+}
 </style>

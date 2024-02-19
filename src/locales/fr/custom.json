@@ -15,7 +15,7 @@
     "model_deploy": "Déploiement de modèles",
     "no_data_found": "Aucun résultats {0}",
     "login": "Se connecter",
-    "copyright": "Tous droits réserves © Sharing HUB {0}",
+    "copyright": "Tous droits réserves © SharingHub {0}",
     "about": "A propos",
     "privacy": "Confidentialité",
     "terms_of_service": "Mentions légales",
@@ -26,7 +26,8 @@
       "common_tag": "Étiquettes courantes",
       "others": "Autres",
       "reset": "Réinitialiser",
-      "starred_project": "Montrer les projets votés"
+      "starred_project": "Montrer les projets votés",
+      "add_filter" : "Ajouter des filtres"
     },
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
