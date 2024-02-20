@@ -7,30 +7,31 @@
         :external-links="headerExternalLinks"
       />
 
-      <div v-if="!!alert_message" class="container">
-        <b-alert class="" show :variant="alert_message.type" fade dismissible
-                 @dismissed="closeAlert(alert_message.url)">
-          <div class="flex justify-items-start">
-            <div class="mr-2">
-              <b-icon icon="exclamation-circle-fill" variant="dark"/>
-            </div>
-            <div>
-              <text-view class="block" type="header__b14">{{ alert_message.title }}</text-view>
-              <text-view class="block" type="header__13">{{ alert_message.message }}</text-view>
-              <b-button v-if="alert_message.url"
-                        size="sm" class="mt-2"
-                        variant="light"
-                        @click="$event => closeAlert(alert_message.url)"
-              >
-                {{ $t('fields.i_understand') }}
-              </b-button>
-
-            </div>
-          </div>
-        </b-alert>
-      </div>
-
       <div class="body-content w-100 h-100">
+
+        <div v-if="!!alert_message" class="container">
+          <b-alert class="" show :variant="alert_message.type" fade dismissible
+            @dismissed="closeAlert(alert_message.url)">
+            <div class="flex justify-items-start">
+              <div class="mr-2">
+                <b-icon icon="exclamation-circle-fill" variant="dark"/>
+              </div>
+              <div>
+                <text-view class="block" type="header__b14">{{ alert_message.title }}</text-view>
+                <text-view class="block" type="header__13">{{ alert_message.message }}</text-view>
+                <b-button v-if="alert_message.url"
+                  size="sm" class="mt-2"
+                  variant="light"
+                  @click="$event => closeAlert(alert_message.url)"
+                  >
+                {{ $t('fields.i_understand') }}
+                </b-button>
+
+              </div>
+            </div>
+          </b-alert>
+        </div>
+
         <div v-if="isLoading" class="container w-100 h-100 pt-5">
           <Awaiter :is-visible="isLoading"/>
         </div>

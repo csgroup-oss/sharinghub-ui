@@ -64,7 +64,7 @@
           <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
         </b-dropdown>
         <div v-else class="ml-3">
-          <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
+          <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
             {{ $t('fields.login') }}
             <b-icon-box-arrow-in-right/>
           </b-button>
@@ -141,7 +141,7 @@
 
             <Localisation class="mt-3"/>
             <div v-if="!isAuthenticated" class="mt-5">
-              <b-button size="sm" :to="$route.name === 'Login' ? '?': '/login'" variant="dark">
+              <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
                 {{ $t('fields.login') }}
                 <b-icon-box-arrow-in-right/>
               </b-button>
@@ -199,7 +199,9 @@ export default defineComponent({
   computed: {
     ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig']),
     login() {
-      return LOGIN_URL;
+      const { path } = this.$route;
+      const base_login =  path ? "/login?redirect=".concat(path.substring(1)) : "/login";
+      return base_login;
     },
   },
   watch: {
