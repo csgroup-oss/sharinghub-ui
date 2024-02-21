@@ -31,8 +31,7 @@
 
       <div>
         <div class="flex flex-wrap" v-if="!!data?.properties">
-          <Keywords v-if="Array.isArray(data.properties.keywords) &&
-            data?.properties?.keywords?.length > 0" :keywords="data.properties.keywords"/>
+          <Keywords :keywords="keywords"/>
         </div>
       </div>
     </div>
@@ -101,6 +100,9 @@ export default {
     hasBack() {
       return !!window.history.state;
     },
+    keywords(){
+      return this.data?.getMetadata('keywords').length > 0  ? this.data?.getMetadata('keywords') : [];
+    }
   },
   async beforeMount() {
     this.jupyterLabUrl = this.provideConfig.jupyterlab?.url;
