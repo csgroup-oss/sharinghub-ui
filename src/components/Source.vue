@@ -299,8 +299,15 @@ export default {
           });
 
           if (this.jupyter && this.canUseJupyter) {
-            const notebooks = Object.values(this.data.assets).filter((el) => {
-              return Utils.hasNotebookAsset(el.title);
+
+            const notebooks = Object.values(this.data.assets)
+            .map(el => {
+              const {pathname} = new URL(el.href);
+              const target_file = pathname.split('/').reverse()[0];
+              return target_file;
+            })
+            .filter((el) => {
+              return Utils.hasNotebookAsset(el || "");
             });
             let projectID = data.getMetadata("sharinghub:id");
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
@@ -311,7 +318,7 @@ export default {
                 const repo_dir = repo_url.pathname.split("/").pop();
                 let lab_path = `lab/tree/${repo_dir}`;
                 if (notebooks.length > 0) {
-                  lab_path = lab_path.concat(`/${notebooks[0].title}`);
+                  lab_path = lab_path.concat(`/${notebooks[0]}`);
                 }
                 this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&urlpath=${lab_path}`;
               }
