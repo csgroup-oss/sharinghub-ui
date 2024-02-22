@@ -154,7 +154,7 @@ export default defineComponent({
       const topic = this.entriesRoute.find((el) => el.route === route);
       this.title = topic.title || " ";
 
-      let searchUrl = url.concat(`?collections=${route}&limit=30`);
+      let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=30`);
 
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);

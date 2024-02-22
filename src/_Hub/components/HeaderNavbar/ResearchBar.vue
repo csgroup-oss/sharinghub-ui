@@ -124,7 +124,8 @@ export default defineComponent({
     async searchRequest(query_terms) {
       this.is_loading = true;
       const buildUrl = (route, query_terms) => {
-        const _query = query_terms ? STAC_SEARCH.concat(`?collections=${route}&q=${query_terms}`) : STAC_SEARCH.concat(`?collections=${route}`);
+        const BASE_SEARCH = STAC_SEARCH.concat("?mode=reference&")
+        const _query = query_terms ? BASE_SEARCH.concat(`collections=${route}&q=${query_terms}`) : BASE_SEARCH.concat(`collections=${route}`);
         return _query.concat("&limit=4");
       };
       const all_requests = this.categories.map(({route}) => {
