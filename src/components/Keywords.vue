@@ -8,7 +8,7 @@
         {{ keyword }}
       </b-badge>
       <b-badge v-if="!!license" variant="secondary" target="_blank"
-               :href="extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2">
+               :href="get_license_link || extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2">
         <b-icon font-scale="1.25" icon="bank2"/>
         License : {{ license.value }}
       </b-badge>
@@ -68,7 +68,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(['data', 'entriesRoute'])
+    ...mapState(['data', 'entriesRoute']),
+    get_license_link(){
+      const license_link = this.data.links.find(el => el.rel ==="license");
+      return license_link.href;
+    }
   },
   beforeMount() {
     const dataFormatted = this.formatData();
