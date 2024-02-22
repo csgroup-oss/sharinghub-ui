@@ -11,19 +11,17 @@
 
         <div v-if="!!alert_message" class="container">
           <b-alert class="" show :variant="alert_message.type" fade dismissible
-            @dismissed="closeAlert(alert_message.url)">
+            @dismissed="closeAlert()">
             <div class="flex justify-items-start">
               <div class="mr-2">
                 <b-icon icon="exclamation-circle-fill" variant="dark"/>
               </div>
               <div>
                 <text-view class="block" type="header__b14">{{ alert_message.title }}</text-view>
-                <text-view class="block" type="header__13">{{ alert_message.message }}</text-view>
-                <b-button v-if="alert_message.url"
-                  size="sm" class="mt-2"
+                <text-view class="block" type="header__13" v-html="alert_message.message"></text-view>
+                <b-button  size="sm" class="mt-2"
                   variant="light"
-                  @click="$event => closeAlert(alert_message.url)"
-                  >
+                  @click="$event => closeAlert()">
                 {{ $t('fields.i_understand') }}
                 </b-button>
 
@@ -324,18 +322,8 @@ export default defineComponent({
     },
 
     closeAlert(url) {
-      const isValidUrl = (string) => {
-        let regex = new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-          '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
-        return !!regex.test(string);
-      };
       this.alert_message = undefined;
       setAlertLastDate(DateTime.now().toISO());
-      if (isValidUrl(url)) {
-        window.open(url);
-      } else {
-        this.$router.push(url);
-      }
     }
 
 
