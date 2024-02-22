@@ -159,7 +159,7 @@ export default defineComponent({
       }
       this.searchTimeout = setTimeout(async () => {
         await this.searchRequest(query_terms);
-      }, 250);
+      }, 750);
     },
 
 
