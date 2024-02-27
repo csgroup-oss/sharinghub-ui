@@ -15,8 +15,8 @@
           <div>
             <text-view class="pl-3" type="header__b20">
               {{ title }}</text-view>
-            <text-view type="header__16" class="text-secondary ml-2" v-if="dataList.length !== 0">{{ dataList.length
-            }}</text-view>
+            <text-view type="header__16" class="text-secondary ml-2" v-if="get_data_matched() !== 0">
+            {{ get_data_matched() }}</text-view>
           </div>
 
           <div class="flex align-items-center col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:mt-3">
@@ -102,6 +102,7 @@ export default defineComponent({
       options: {
         selected: null,
       },
+      data_context : undefined,
       only_starred_project: false,
     };
   },
@@ -154,7 +155,7 @@ export default defineComponent({
       const topic = this.entriesRoute.find((el) => el.route === route);
       this.title = topic.title || " ";
 
-      let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=30`);
+      let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=3`);
 
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
@@ -174,9 +175,10 @@ export default defineComponent({
       return get(searchUrl)
         .then((response) => {
           if (response.data) {
-            const { features, links } = response.data;
+            const { features, links, context } = response.data;
             this.next_link = links.find((el) => el.rel === "next")?.href;
             this.loading = false;
+            this.data_context = context;
             return features || [];
           } else {
             this.next_link = undefined;
@@ -313,6 +315,13 @@ export default defineComponent({
       }
       this.$router.push({ path: "", query });
     },
+    get_data_matched(){
+      if(!this.data_context){
+        return;
+      }
+      const {matched} = this.data_context;
+      return matched || 0;
+    }
   },
 });
 </script>
