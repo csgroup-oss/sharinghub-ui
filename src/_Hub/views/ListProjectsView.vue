@@ -150,6 +150,7 @@ export default defineComponent({
     },
     async fetchCollectionsItems(url = STAC_SEARCH) {
       this.loading = true;
+      this.data_context = undefined;
       let { q, topics, sortby, starred } = this.$route.query;
       let route = this.$route.params.pathMatch;
       const topic = this.entriesRoute.find((el) => el.route === route);

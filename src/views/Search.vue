@@ -282,6 +282,7 @@ export default {
       if (reset) {
         this.data = null;
       } else {
+        console.log('search', this.searchLink)
         await this.loadResults(this.searchLink);
       }
     },
