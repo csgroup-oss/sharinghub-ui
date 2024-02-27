@@ -266,10 +266,10 @@ export default {
       if (this.auth?.mode === CONNEXION_MODE.DEFAULT_TOKEN) {
         return false;
       }
-      return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:jupyter") === "enable" : false;
+      return (this.stac != undefined) ? this.stac?.getMetadata("sharinghub:jupyter") === "enable" : false;
     },
     canUseDVC() {
-      return (this.stac != undefined) ? this.stac.getMetadata("sharinghub:store-s3") === "enable" : false
+      return (this.stac != undefined) ? this.stac?.getMetadata("sharinghub:store-s3") === "enable" : false
       && this.dvcUrl() != null;
     }
   },
@@ -316,11 +316,9 @@ export default {
                 const {http_url_to_repo, default_branch} = res.data;
                 const repo_url = new URL(http_url_to_repo);
                 const repo_dir = repo_url.pathname.split("/").pop();
-                let lab_path = `lab/tree/${repo_dir}`;
-                if (notebooks.length > 0) {
-                  lab_path = lab_path.concat(`/${notebooks[0]}`);
-                }
-                this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&urlpath=${lab_path}`;
+                let lab_path="lab";
+                this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&app=${lab_path}`;
+                console.log('path', this.jupyter_link);
               }
             });
           }
