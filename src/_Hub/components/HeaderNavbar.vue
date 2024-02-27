@@ -4,7 +4,7 @@
       <div class="flex align-items-center">
         <text-view class="mr-4">
           <router-link to="/" class="cursor">
-            <h3><img width="40px" height="40px" :src="logo">SharingHub</h3>
+            <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
           </router-link>
         </text-view>
         <div class="" v-if="['md','lg'].includes(size)">
@@ -95,7 +95,7 @@
 
           <text-view class="mr-4">
             <router-link to="/" class="cursor">
-              <h3><img width="40px" height="40px" :src="logo">SharingHub</h3>
+              <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
             </router-link>
           </text-view>
 
