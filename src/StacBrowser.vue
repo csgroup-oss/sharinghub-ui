@@ -364,6 +364,10 @@ export default {
     this.$root.$on('error', this.showError);
     setInterval(() => this.$store.dispatch('loadBackground', 3), 200);
   },
+  beforeDestroy(){
+    document.title = this.catalogTitle;
+  },
+
   methods: {
     ...mapActions(['switchLocale']),
     detectLocale() {

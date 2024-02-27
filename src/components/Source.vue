@@ -318,7 +318,6 @@ export default {
                 const repo_dir = repo_url.pathname.split("/").pop();
                 let lab_path="lab";
                 this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&app=${lab_path}`;
-                console.log('path', this.jupyter_link);
               }
             });
           }
