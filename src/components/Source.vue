@@ -300,24 +300,24 @@ export default {
 
           if (this.jupyter && this.canUseJupyter) {
 
-            const notebooks = Object.values(this.data.assets)
-            .map(el => {
+            const notebooks = Object.values(this.data.assets).map(el => {
               const {pathname} = new URL(el.href);
-              const target_file = pathname.split('/').reverse()[0];
-              return target_file;
-            })
-            .filter((el) => {
+              return pathname;
+            }).filter((el) => {
               return Utils.hasNotebookAsset(el || "");
             });
             let projectID = data.getMetadata("sharinghub:id");
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
               if (res.data) {
                 const {token} = this.auth;
-                const {http_url_to_repo, default_branch} = res.data;
+                const {http_url_to_repo, default_branch, namespace : {full_path}} = res.data;
                 const repo_url = new URL(http_url_to_repo);
-                const repo_dir = repo_url.pathname.split("/").pop();
-                let lab_path="lab";
-                this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&app=${lab_path}`;
+                let lab_path ="";
+                if (notebooks.length > 0) {
+                  const notebook_path = this.extractNotebookfile(full_path, notebooks[0]);
+                  lab_path = notebook_path ? lab_path.concat(`&subpath=${notebook_path}`) : lab_path;
+                }
+                this.jupyter_link = `${this.jupyter}/hub/user-redirect/git-pull?repo=${repo_url.protocol}//oauth2:${token}@${repo_url.host}${repo_url.pathname}&branch=${default_branch}&app=lab${lab_path}`;
               }
             });
           }
@@ -365,6 +365,14 @@ export default {
 
     openJupyterLink(ev, url) {
       window.open(url, '_blank');
+    },
+    extractNotebookfile(full_path, download_path){
+      const truth_path = download_path.replace(`${full_path}/`, "")
+      const index =  truth_path.indexOf("repository");
+      if(index){
+        return truth_path.substring(index).split("/").splice(1).join("/")
+      }
+      return undefined;
     },
   }
 };
