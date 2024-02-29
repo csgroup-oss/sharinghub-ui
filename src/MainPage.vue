@@ -54,7 +54,7 @@
           </b-button-group>
 
           <b-button-group  size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
-            <b-button size="sm" variant="link" :href="docs('/legal/privacy')">
+            <b-button size="sm" variant="link" :href="docs('legal/privacy')">
               {{ $t("fields.privacy") }}
             </b-button>
           </b-button-group>
@@ -92,6 +92,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 import {DateTime, Interval} from "luxon";
 import TextView from "@/_Hub/components/TextView.vue";
+import { pathPrefix } from '../config';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -190,7 +191,7 @@ export default defineComponent({
       const match = search.match(regex);
       if(match){
         const redirectContent = decodeURIComponent(match[1]);
-        const url = new URL(`${window.origin}${this.pathPrefix}/#/${redirectContent}`);
+        const url = new URL(`${window.origin}${this.pathPrefix}#/${redirectContent}`);
         window.location.replace(url.toString());
       }
     }

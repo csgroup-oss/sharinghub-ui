@@ -4,14 +4,11 @@
   "description": "A full-fledged UI in Vue for browsing and searching static STAC catalogs and STAC APIs.",
   "main": "src/main.js",
   "scripts": {
-    "start": "vue-cli-service serve ",
-    "build": "vue-cli-service build",
-    "build:report": "vue-cli-service build --report",
-    "build:minimal": "vue-cli-service build --noSourceMaps",
+    "start": "vue-cli-service serve --catalogTitle=\"SharingHub\" --historyMode=\"hash\"",
+    "build": "vue-cli-service build --noSourceMaps --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"/ui\"",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.?(js|json)\"",
-    "i18n:fields": "node helpers/fields_locales.js",
-    "build-prod": "npm run build:minimal -- --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"/ui\""
+    "i18n:fields": "node helpers/fields_locales.js"
   },
   "bugs": {
     "url": "https://github.com/radiantearth/stac-browser/issues"
