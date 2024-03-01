@@ -136,7 +136,7 @@ export default {
     },
 
     filterByTags(keyword) {
-      const collection = this.$route.path.split("/")[3];
+      const collection = this.$route.path.split("/")[4];
       this.$router.push({path: `/${collection}`, query: {topics: keyword,}});
     }
 

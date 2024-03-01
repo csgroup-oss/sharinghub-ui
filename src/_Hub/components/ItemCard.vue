@@ -123,7 +123,7 @@ export default defineComponent({
   methods: {
     seeModel(event) {
       event.preventDefault();
-      this.$router.push({path: `/stac/${this.getUrl.split('/').splice(4).join("/")}`,});
+      this.$router.push({path: `/${this.getUrl.split('/').splice(3).join("/")}`,});
     },
     getPreview() {
       return this.stac.links.find(el => el.rel === "preview")?.href;

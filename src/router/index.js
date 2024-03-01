@@ -26,7 +26,7 @@ export function getRoutes() {
       component: Search
     },
     {
-      path: "/stac/*",
+      path: "/api/*",
       component: StacBrowser,
       name:"Stac",
       children: [

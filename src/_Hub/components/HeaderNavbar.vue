@@ -247,7 +247,7 @@ export default defineComponent({
       });
     },
     isActiveRoute(routeKey) {
-      return this.$route.path.split("/")[3] === routeKey || routeKey === this.$route.params?.pathMatch;
+      return this.$route.path.split("/")[4] === routeKey || routeKey === this.$route.params?.pathMatch;
     },
     updateNavbar({width}) {
       if (width <= 800) {
