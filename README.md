@@ -10,6 +10,8 @@
 
 ## Environment setup
 
+You will need Node v18 and NPM 9.
+
 Setup the environment:
 
 ```bash
