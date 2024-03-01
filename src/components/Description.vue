@@ -52,9 +52,7 @@ export default {
   h1, h2, h3, h4, h5, h6 {
     color: map-get($theme-colors, "primary");
     font-weight: 600;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-  Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: $font-family-sans-serif;
   }
   h1 {
     font-size: 1.3rem;
@@ -104,6 +102,7 @@ export default {
     }
     p {
       margin: 0.5em 0;
+      font-size:13px;
     }
     p:first-child {
       margin-top: 0;

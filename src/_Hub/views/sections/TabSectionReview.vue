@@ -85,8 +85,9 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
+@import "../../../theme/variables.scss";
 .vssue, .markdown-body {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI" !important;
+  font-family: $font-family-sans-serif;
 }
 
 .vssue {

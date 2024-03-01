@@ -20,7 +20,7 @@
             <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
               <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico"/>
               <b-icon v-else :icon="item.icon"/>
-              <text-view type="header__b13"> {{ item.title }}</text-view>
+              <text-view type="header__b15"> {{ item.title }}</text-view>
             </nav-item>
           </router-link>
 
@@ -31,7 +31,7 @@
             <a v-if="link.url" :href="link.url" target="_blank">
               <nav-item class="mx-1">
                 <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
-                <text-view type="header__b13"> {{ link.name }}</text-view>
+                <text-view type="header__b15"> {{ link.name }}</text-view>
               </nav-item>
             </a>
             <b-dropdown v-if="link.dropdown" right size="sm" variant="link" toggle-class="text-decoration-none"
@@ -39,7 +39,7 @@
               <template #button-content>
                 <nav-item class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon"/>
-                  <text-view type="header__b13"> {{ link.name }}</text-view>
+                  <text-view type="header__b15"> {{ link.name }}</text-view>
                 </nav-item>
               </template>
               <b-dropdown-item v-for="sublink in link.dropdown" :href="sublink.url">

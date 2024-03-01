@@ -35,10 +35,10 @@ export default defineComponent({
 
 <style scoped lang="scss">
 
+@import "../../theme/variables.scss";
+
 .text {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-  Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: $font-family-sans-serif;
 
   &__header {
     &__13 {
@@ -47,7 +47,7 @@ export default defineComponent({
 
     &__b13 {
       font-size: 13.5px;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     &__14 {
@@ -56,7 +56,16 @@ export default defineComponent({
 
     &__b14 {
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 700;
+    }
+
+    &__15 {
+      font-size: 14px;
+    }
+
+    &__b15 {
+      font-size: 15px;
+      font-weight: 700;
     }
 
     &__16 {
@@ -65,7 +74,7 @@ export default defineComponent({
 
     &__b16 {
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     &__20 {
@@ -75,20 +84,6 @@ export default defineComponent({
     &__b20 {
       font-size: 20px;
       font-weight: 800;
-    }
-  }
-
-  &__Title {
-    &-1 {
-      font-size: 20px;
-      line-height: 1.75rem;
-      font-weight: 700;
-    }
-
-    &-2 {
-      font-size: 16px;
-      line-height: 1.75rem;
-      font-weight: 600;
     }
   }
 
