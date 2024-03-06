@@ -1,6 +1,6 @@
 <template>
   <span :class="'text ' + detectTypo">
-    <slot/>
+    <slot />
   </span>
 </template>
 
@@ -8,11 +8,11 @@
 import {defineComponent} from 'vue';
 
 export default defineComponent({
-  name: "TextView",
+  name: 'TextView',
   props: {
     type: {
       type: String,
-      default: ""
+      default: ''
     }
   },
 

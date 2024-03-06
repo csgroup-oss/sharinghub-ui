@@ -11,7 +11,7 @@ import { mapGetters } from 'vuex';
 import Utils from '../utils';
 
 export default {
-  name: "CollectionLink",
+  name: 'CollectionLink',
   components: {
     Catalog
   },
@@ -36,7 +36,7 @@ export default {
       immediate: true,
       handler(newLink) {
         if (Utils.isObject(newLink)) {
-          this.$store.dispatch("load", { url: newLink.href });
+          this.$store.dispatch('load', { url: newLink.href });
         }
       }
     }

@@ -10,7 +10,7 @@
       />
       <l-tile-layer
         v-for="xyz of xyzLinks" ref="overlays" :key="xyz.url" layerType="overlay"
-        :name="xyz.name" :url="xyz.url" :subdomains="xyz.subdomains" :options="xyz.options" 
+        :name="xyz.name" :url="xyz.url" :subdomains="xyz.subdomains" :options="xyz.options"
       />
       <l-geo-json v-if="geojson" ref="geojson" :geojson="geojson" :options="{onEachFeature: showPopup}" :optionsStyle="{color: secondaryColor, weight: secondaryWeight}" />
     </l-map>
@@ -48,7 +48,7 @@ delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
 const LABEL_EXT = 'https://stac-extensions.github.io/label/v1.*/schema.json';
@@ -117,7 +117,7 @@ export default {
       return {
         title: {
           'false': this.$t('fullscreen.show'),
-          'true': this.$t('fullscreen.exit'),
+          'true': this.$t('fullscreen.exit')
         }
       };
     },
@@ -259,7 +259,7 @@ export default {
         else if (this.stac.isCollection()) {
           options.bbox = this.stac?.extent?.spatial?.bbox[0];
         }
-        
+
         if (this.stacLayerData.type === geojsonMediaType) {
           this.geojson = await this.$store.dispatch('loadGeoJson', this.stacLayerData);
           this.$emit('dataChanged', this.stacLayerData);
@@ -291,7 +291,7 @@ export default {
           this.$emit('dataChanged', this.stacLayer.stac);
         }
         this.addMapClickEvent(this.stacLayer);
-        this.stacLayer.on("fallback", event => this.$emit('dataChanged', event.stac));
+        this.stacLayer.on('fallback', event => this.$emit('dataChanged', event.stac));
         this.stacLayer.addTo(this.map);
         if (!this.fitBoundsOnce || !hadLayer) {
           this.fitBounds(this.stacLayer, this.selectBounds);
@@ -324,7 +324,7 @@ export default {
           labelAssets = labelAssets.filter(asset => asset.roles.includes('labels-vector'));
         }
         if (labelAssets.length === 0) {
-          if ("vector_labels" in this.stac.assets) {
+          if ('vector_labels' in this.stac.assets) {
             labelAssets.push(this.stac.assets.vector_labels);
           }
           else {
@@ -390,7 +390,7 @@ export default {
     },
     fitBounds(layer, noPadding = false) {
       let fitOptions = {
-        padding: noPadding ? [0,0] : [90,90],
+        padding: noPadding ? [0, 0] : [90, 90],
         animate: false,
         duration: 0
       };
@@ -413,7 +413,7 @@ export default {
       layer.bindPopup(html);
     },
     addBoundsSelector() {
-      this.areaSelect = L.areaSelect({ // eslint-disable-line 
+      this.areaSelect = L.areaSelect({ // eslint-disable-line
         width: 300,
         height: 200,
         minWidth: 20,
@@ -422,7 +422,7 @@ export default {
         minVerticalSpacing: 20
       });
       this.areaSelect.addTo(this.map);
-      this.areaSelect.on("change", () => this.emitBounds());
+      this.areaSelect.on('change', () => this.emitBounds());
       this.emitBounds();
     },
     emitBounds() {

@@ -21,7 +21,7 @@ const FORCE_TABLE = [
 ];
 
 export default {
-  name: "MetadataEntry",
+  name: 'MetadataEntry',
   components: {
     MetadataTable: () => import('./MetadataTable.vue')
   },

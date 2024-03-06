@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vue-cli-service serve --catalogTitle=\"SharingHub\" --historyMode=\"hash\"",
     "build": "vue-cli-service build --noSourceMaps --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"/ui\"",
-    "lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint --fix",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.?(js|json)\"",
     "i18n:fields": "node helpers/fields_locales.js"
   },

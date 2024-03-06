@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { BIconArrowLeftRight, BSidebar } from "bootstrap-vue";
+import { BIconArrowLeftRight, BSidebar } from 'bootstrap-vue';
 import { mapGetters, mapState } from 'vuex';
 import Loading from './Loading.vue';
 import Tree from './Tree.vue';
@@ -44,10 +44,10 @@ export default {
         }
 
         if (visible) {
-          document.body.classList.add("sidebar");
+          document.body.classList.add('sidebar');
         }
         else {
-          document.body.classList.remove("sidebar");
+          document.body.classList.remove('sidebar');
         }
       }
     }

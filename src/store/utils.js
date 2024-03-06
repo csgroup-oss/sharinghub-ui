@@ -1,7 +1,7 @@
-import axios from "axios";
-import URI from "urijs";
-import Utils from "../utils";
-import {getLocalToken} from "@/_Hub/tools/https";
+import axios from 'axios';
+import URI from 'urijs';
+import Utils from '../utils';
+import {getLocalToken} from '@/_Hub/tools/https';
 
 export class Loading {
 
@@ -14,10 +14,10 @@ export class Loading {
 
 export async function stacRequest(cx, link) {
   let opts;
-  const LOCAL_TOKEN = getLocalToken() || "";
+  const LOCAL_TOKEN = getLocalToken() || '';
   let headers = {
     'Accept-Language': cx.getters.acceptedLanguages,
-    'X-Gitlab-Token' : LOCAL_TOKEN,
+    'X-Gitlab-Token' : LOCAL_TOKEN
   };
   if (Utils.isObject(link)) {
     let method = typeof link.method === 'string' ? link.method.toLowerCase() : 'get';

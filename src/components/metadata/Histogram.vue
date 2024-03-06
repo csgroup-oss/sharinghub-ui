@@ -19,7 +19,7 @@ import {
 ChartJS.register(Title, Tooltip, Colors, BarElement, CategoryScale, LinearScale);
 
 export default {
-  name: "Histogram",
+  name: 'Histogram',
   components: {
     Bar
   },
@@ -46,7 +46,7 @@ export default {
         },
         plugins: {
           legend: {
-            display: false,
+            display: false
           }
         }
       };
@@ -72,7 +72,7 @@ export default {
           {
             data: values,
             barPercentage: 1,
-            categoryPercentage: 1,
+            categoryPercentage: 1
           }
         ]
       };

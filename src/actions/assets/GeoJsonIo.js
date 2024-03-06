@@ -1,7 +1,7 @@
-import AssetActionPlugin from "../AssetActionPlugin";
-import { geojsonMediaType } from "../../utils";
+import AssetActionPlugin from '../AssetActionPlugin';
+import { geojsonMediaType } from '../../utils';
 import URI from 'urijs';
-import i18n from "../../i18n";
+import i18n from '../../i18n';
 
 export default class GeoJsonIo extends AssetActionPlugin {
 
@@ -11,7 +11,7 @@ export default class GeoJsonIo extends AssetActionPlugin {
 
   get uri() {
     // Docs: https://github.com/Cenergy/geojson.io/blob/main/API.md
-    let uri = new URI("https://geojson.io");
+    let uri = new URI('https://geojson.io');
     uri.addQuery('data', `text/x-url,${this.component.href}`);
     return uri;
   }

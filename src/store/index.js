@@ -1,14 +1,14 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-import axios from "axios";
-import URI from "urijs";
+import axios from 'axios';
+import URI from 'urijs';
 
 import i18n from '../i18n';
-import {stacBrowserSpecialHandling} from "../rels";
+import {stacBrowserSpecialHandling} from '../rels';
 import Utils, {BrowserError} from '../utils';
 import STAC from '../models/stac';
-import {CONNEXION_MODE} from "@/_Hub/tools/https";
+import {CONNEXION_MODE} from '@/_Hub/tools/https';
 
 import {
   addQueryIfNotExists,
@@ -20,7 +20,7 @@ import {
   unproxyUrl
 } from './utils';
 import {getBest} from '../locale-id';
-import {TYPES} from "../components/ApiCapabilitiesMixin";
+import {TYPES} from '../components/ApiCapabilitiesMixin';
 
 function getStore(config, router) {
   // Local settings (e.g. for currently loaded STAC entity)
@@ -127,11 +127,11 @@ function getStore(config, router) {
           let uri = URI(state.url);
           let path = uri.segment(-2);
           if (['collections', 'items'].includes(path)) {
-            uri.segment(-1, "");
-            uri.segment(-1, "");
+            uri.segment(-1, '');
+            uri.segment(-1, '');
             if (path === 'items') {
-              uri.segment(-1, "");
-              uri.segment(-1, "");
+              uri.segment(-1, '');
+              uri.segment(-1, '');
             }
             return Utils.createLink(uri.toString(), 'root');
           }
@@ -151,8 +151,8 @@ function getStore(config, router) {
           let uri = URI(state.url);
           let path = uri.segment(-2);
           if (['collections', 'items'].includes(path)) {
-            uri.segment(-1, "");
-            uri.segment(-1, "");
+            uri.segment(-1, '');
+            uri.segment(-1, '');
             return Utils.createLink(uri.toString(), 'parent');
           }
         }
@@ -172,8 +172,8 @@ function getStore(config, router) {
           let uri = URI(state.url);
           let path = uri.segment(-2);
           if (path == 'items') {
-            uri.segment(-1, "");
-            uri.segment(-1, "");
+            uri.segment(-1, '');
+            uri.segment(-1, '');
             return Utils.createLink(uri.toString(), 'collection');
           }
         }
@@ -310,7 +310,7 @@ function getStore(config, router) {
           return false;
         }
         let relative;
-        if (absoluteUrl.is("relative")) {
+        if (absoluteUrl.is('relative')) {
           relative = absoluteUrl;
         } else {
           relative = absoluteUrl.relativeTo(state.catalogUrl);
@@ -366,7 +366,7 @@ function getStore(config, router) {
           .join(',');
       },
 
-      getToken: state => state.token,
+      getToken: state => state.token
 
     },
     mutations: {
@@ -612,7 +612,7 @@ function getStore(config, router) {
       },
       setUserInfo(state, payload) {
         if (payload) {
-          const {user, token , mode} = payload;
+          const {user, token, mode} = payload;
           state.auth = {user, token, mode};
         } else {
           state.auth = payload;
@@ -623,7 +623,7 @@ function getStore(config, router) {
       },
       setProvideConfig(state, payload) {
          state.provideConfig = payload;
-      },
+      }
 
 
     },
@@ -722,7 +722,7 @@ function getStore(config, router) {
 
         // Load the root catalog data if not available (e.g. after page refresh or external access)
         if (!loadRoot && path !== '/' && cx.state.catalogUrl && !cx.getters.getStac(cx.state.catalogUrl)) {
-          await cx.dispatch("load", {url: cx.state.catalogUrl, loadApi: true, loadRoot: true});
+          await cx.dispatch('load', {url: cx.state.catalogUrl, loadApi: true, loadRoot: true});
         }
 
         if (force) {
@@ -955,7 +955,7 @@ function getStore(config, router) {
           }
         }
       },
-      async validate(cx, url,) {
+      async validate(cx, url) {
         if (typeof cx.state.valid === 'boolean') {
           return;
         }
@@ -979,8 +979,8 @@ function getStore(config, router) {
         } catch (error) {
           cx.commit('valid', error);
         }
-      },
-    },
+      }
+    }
   });
 }
 

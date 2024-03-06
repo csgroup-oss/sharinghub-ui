@@ -63,7 +63,7 @@ import { mapState, mapGetters } from 'vuex';
 import Catalogs from '../components/Catalogs.vue';
 import Description from '../components/Description.vue';
 import Items from '../components/Items.vue';
-import ReadMore from "vue-read-more-smooth";
+import ReadMore from 'vue-read-more-smooth';
 import ShowAssetMixin from '../components/ShowAssetMixin';
 import StacFieldsMixin from '../components/StacFieldsMixin';
 import { formatLicense, formatTemporalExtents } from '@radiantearth/stac-fields/formatters';
@@ -72,7 +72,7 @@ import Utils from '../utils';
 import { addSchemaToDocument, createCatalogSchema } from '../schema-org';
 
 export default {
-  name: "Catalog",
+  name: 'Catalog',
   components: {
     AnonymizedNotice: () => import('../components/AnonymizedNotice.vue'),
     Assets: () => import('../components/Assets.vue'),
@@ -146,10 +146,10 @@ export default {
         return null;
       }
       if (this.isCollection || !this.hasThumbnails) {
-        return "right";
+        return 'right';
       }
       else {
-        return "left";
+        return 'left';
       }
     },
     apiItemsLoading() {
@@ -283,7 +283,7 @@ export default {
   &.catalog { // Catalog has items or catalogs
     .items-container, .catalogs-container {
       max-width: 100%;
-      
+
       .items, .catalogs {
         .card-columns {
           @include media-breakpoint-up(sm) {
@@ -346,7 +346,7 @@ export default {
     .items-container, .catalogs-container {
       max-width: 33%;
 
-      
+
       .items, .catalogs {
         .card-columns {
           @include media-breakpoint-up(lg) {

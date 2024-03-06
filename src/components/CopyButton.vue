@@ -7,10 +7,10 @@
 
 <script>
 import { BIconClipboard, BIconClipboardCheck, BIconClipboardX } from 'bootstrap-vue';
-import { Clipboard } from "v-clipboard";
+import { Clipboard } from 'v-clipboard';
 
 export default {
-    name: "CopyButton",
+    name: 'CopyButton',
     components: {
         BIconClipboard,
         BIconClipboardCheck,
@@ -23,7 +23,7 @@ export default {
         },
         variant: {
             type: String,
-            default: "primary"
+            default: 'primary'
         },
         buttonProps: {
             type: Object,
@@ -64,7 +64,7 @@ export default {
     methods: {
         async copy() {
             try {
-                // We need to store the focus and restore it again as the clipboard 
+                // We need to store the focus and restore it again as the clipboard
                 // may steal the focus
                 let focus = document.activeElement;
                 await Clipboard.copy(this.copyText);

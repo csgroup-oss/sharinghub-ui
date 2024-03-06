@@ -50,7 +50,7 @@ const BASEMAPS = {
  */
 
 /**
- * 
+ *
  * @param {Object} stac The STAC object
  * @param {Object} map The Leaflet map object
  * @param {Object} i18n Vue I18N object

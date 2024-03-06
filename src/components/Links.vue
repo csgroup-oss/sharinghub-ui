@@ -26,7 +26,7 @@ import { mapState } from 'vuex';
 
 
 export default {
-  name: "Links",
+  name: 'Links',
   components: {
     Link
   },
@@ -44,7 +44,7 @@ export default {
     ...mapState(['uiLanguage']),
     groups() {
       let groups = this.links.reduce((summary, link) => {
-        let rel = typeof link.rel === 'string' ? link.rel.toLowerCase() : "";
+        let rel = typeof link.rel === 'string' ? link.rel.toLowerCase() : '';
         if (rel in summary) {
           summary[rel].links.push(link);
         }
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     formatRel(rel) {
-      let lc = typeof rel === 'string' ? rel.toLowerCase() : "";
+      let lc = typeof rel === 'string' ? rel.toLowerCase() : '';
       if (lc in Fields.links.rel.mapping) {
         return translateFields(Fields.links.rel.mapping[lc]);
       }

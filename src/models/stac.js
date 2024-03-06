@@ -1,4 +1,4 @@
-import Utils, { geojsonMediaType } from "../utils";
+import Utils, { geojsonMediaType } from '../utils';
 import Migrate from '@radiantearth/stac-migrate';
 import { getBest } from '../locale-id';
 
@@ -271,12 +271,12 @@ class STAC {
     }
     // Nothing available, return "untitled"
     else {
-      return "Untitled";
+      return 'Untitled';
     }
   }
 
   getTitle() {
-    return this.getMetadata("title");
+    return this.getMetadata('title');
   }
 
   _linkToAbsolute(link) {
@@ -296,7 +296,7 @@ class STAC {
    * @param {?string} prefer - If not `null` (default), prefers a role over the other. Either `thumbnail` or `overview`.
    * @returns
    */
-  getThumbnails(browserOnly = false, prefer = null) { // prefer can be either 
+  getThumbnails(browserOnly = false, prefer = null) { // prefer can be either
     let thumbnails = this.getAssetsWithRoles(['thumbnail', 'overview']);
     if (prefer && thumbnails.length > 1) {
       thumbnails.sort(a => a.roles.includes(prefer) ? -1 : 1);

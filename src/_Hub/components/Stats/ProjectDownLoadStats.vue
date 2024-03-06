@@ -1,3 +1,19 @@
+<template>
+  <LineChartGenerator
+    v-if="!loading"
+    :data="chartData"
+    :options="chartOptions"
+    :chart-data="chartData"
+    :id="chartId"
+    :dataset-id-key="datasetIdKey"
+    :plugins="plugins"
+    :css-classes="cssClasses"
+    :styles="styles"
+    :width="width"
+    :height="height"
+  />
+</template>
+
 <script>
 import {defineComponent} from 'vue';
 import {Line as LineChartGenerator} from 'vue-chartjs';
@@ -11,10 +27,10 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
-import {mapState} from "vuex";
-import Utils from "@/utils";
-import {PROXY_URL} from "@/_Hub/Endpoint";
-import {get} from "@/_Hub/tools/https";
+import {mapState} from 'vuex';
+import Utils from '@/utils';
+import {PROXY_URL} from '@/_Hub/Endpoint';
+import {get} from '@/_Hub/tools/https';
 
 ChartJS.register(
   Title,
@@ -28,7 +44,7 @@ ChartJS.register(
 
 
 export default defineComponent({
-  name: "ProjectDownLoadStats",
+  name: 'ProjectDownLoadStats',
   components: {
     LineChartGenerator
   },
@@ -64,7 +80,7 @@ export default defineComponent({
     }
   },
   computed : {
-    ...mapState(['data','url'])
+    ...mapState(['data', 'url'])
   },
   // eslint-disable-next-line vue/order-in-components
   data() {
@@ -93,7 +109,7 @@ export default defineComponent({
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: false,
+            display: false
           }
         },
         elements:{
@@ -115,29 +131,13 @@ export default defineComponent({
           let times = fetches.days.map(el => el.date);
           this.chartData.labels = times;
           this.chartData.datasets = [
-            {fill: true, data: chart_data, }
+            {fill: true, data: chart_data }
           ];
         }
       }
   }
 });
 </script>
-
-<template>
-  <LineChartGenerator
-    v-if="!loading"
-    :data="chartData"
-    :options="chartOptions"
-    :chart-data="chartData"
-    :id="chartId"
-    :dataset-id-key="datasetIdKey"
-    :plugins="plugins"
-    :css-classes="cssClasses"
-    :styles="styles"
-    :width="width"
-    :height="height"
-  />
-</template>
 
 <style scoped lang="scss">
 

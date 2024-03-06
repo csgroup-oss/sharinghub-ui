@@ -43,7 +43,7 @@ export default {
     this.keyDownFn = this.onkeyDown.bind(this);
     let el = this.getElement();
     if (el) {
-      el.style.position = "relative";
+      el.style.position = 'relative';
       el.addEventListener('keydown', this.keyDownFn);
     }
   },
@@ -56,7 +56,7 @@ export default {
   methods: {
     onkeyDown(e) {
       // ToDo: This is bugged and needs some attention
-      if(this.isFullscreen && (e.key === "F11" || e.key === "Escape")) {
+      if(this.isFullscreen && (e.key === 'F11' || e.key === 'Escape')) {
         this.toggleFullscreen();
         e.preventDefault();
         e.stopPropagation();
@@ -76,7 +76,7 @@ export default {
     toggleFullscreen() {
       let el = this.getElement();
       if (!this.isFullscreen) {
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = 'hidden';
         this.isFullscreen = true;
         el.classList.add('fullscreen');
         this.oldZIndex = el.style.zIndex;
@@ -91,7 +91,7 @@ export default {
       }
 
       this.$emit('changed', this.isFullscreen);
-    },
+    }
   }
 };
 </script>

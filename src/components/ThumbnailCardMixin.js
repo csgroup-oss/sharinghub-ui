@@ -32,12 +32,12 @@ export default {
             alt: t.title,
             crossorigin: this.crossOriginMedia,
             right: this.isList,
-            blankColor: "rgba(0, 0, 0, 0.125)",
+            blankColor: 'rgba(0, 0, 0, 0.125)',
             width,
             height,
             // for b-card-img-lazy
-            "blank-width": width,
-            "blank-height": height
+            'blank-width': width,
+            'blank-height': height
           };
         }
       }

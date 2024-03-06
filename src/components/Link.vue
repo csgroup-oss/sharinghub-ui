@@ -1,9 +1,9 @@
 <template>
   <li v-if="!!dataLink">
-    <StacLink :id="popoverId" :data="dataLink" :fallbackTitle="fallbackTitle" class="pr-1"/>
+    <StacLink :id="popoverId" :data="dataLink" :fallbackTitle="fallbackTitle" class="pr-1" />
     <b-popover :target="popoverId" triggers="hover" placement="right" container="#stac-browser">
       <h6 class="small text-muted text-center">{{ $t('additionalActions') }}</h6>
-      <HrefActions vertical :data="dataLink" size="sm"/>
+      <HrefActions vertical :data="dataLink" size="sm" />
     </b-popover>
   </li>
 </template>
@@ -12,12 +12,12 @@
 import HrefActions from './HrefActions.vue';
 import StacLink from './StacLink.vue';
 import {BPopover} from 'bootstrap-vue';
-import Utils from "@/utils";
+import Utils from '@/utils';
 
 let linkId = 0;
 
 export default {
-  name: "Link",
+  name: 'Link',
   components: {
     BPopover,
     HrefActions,
@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     popoverId() {
-      return "popover-link-" + linkId;
+      return 'popover-link-' + linkId;
     }
   },
   beforeCreate() {
@@ -49,13 +49,13 @@ export default {
   async mounted() {
     if (Utils.isMlModeltrainData(this.link.rel)) {
       this.hrefBrowserLink = await Utils.browsifyUrl(this.link.href);
-      let base = Object.assign({target:"_blank"}, this.link);
+      let base = Object.assign({target:'_blank'}, this.link);
       this.dataLink = Object.assign(base, {href: this.hrefBrowserLink});
     } else {
       this.dataLink = this.link;
     }
 
-  },
+  }
 
 };
 </script>

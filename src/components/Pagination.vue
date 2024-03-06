@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "Pagination",
+  name: 'Pagination',
   props: {
     pagination: {
       type: Object,
@@ -17,7 +17,7 @@ export default {
     },
     placement: { // top or bottom
       type: String,
-      default: "bottom"
+      default: 'bottom'
     }
   },
   computed: {

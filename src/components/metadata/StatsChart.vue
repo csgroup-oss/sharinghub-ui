@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import { formatKey } from "@radiantearth/stac-fields/helper";
-import { extension } from "@radiantearth/stac-fields/interface";
-import { formatMediaType } from "@radiantearth/stac-fields/formatters";
-import Utils from "../../utils";
+import { formatKey } from '@radiantearth/stac-fields/helper';
+import { extension } from '@radiantearth/stac-fields/interface';
+import { formatMediaType } from '@radiantearth/stac-fields/formatters';
+import Utils from '../../utils';
 
 import { Bar, Pie } from 'vue-chartjs';
 import {
@@ -25,7 +25,7 @@ import {
 ChartJS.register(Title, Tooltip, Colors, ArcElement, BarElement, CategoryScale, LinearScale);
 
 export default {
-  name: "StatsChart",
+  name: 'StatsChart',
   components: {
     Bar,
     Pie
@@ -76,7 +76,7 @@ export default {
           title: {
             display: true,
             text: this.title
-          },
+          }
         },
         scales: {
           y: {

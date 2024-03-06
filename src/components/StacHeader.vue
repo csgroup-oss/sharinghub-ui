@@ -1,10 +1,8 @@
 <template>
   <b-row>
-
-
     <div class="col-md-12">
       <div v-if="!loading" class="float-right">
-        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data"/>
+        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
       </div>
 
       <div>
@@ -12,9 +10,12 @@
           <template v-if="icon">
             <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
           </template>
-          <b-button v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary" pill
-            class="mr-2">
-            <b-icon-arrow-left/>
+          <b-button
+            v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
+            pill
+            class="mr-2"
+          >
+            <b-icon-arrow-left />
           </b-button>
           <span class="title">{{ title }}</span>
         </text-view>
@@ -22,7 +23,7 @@
           <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
             <template #catalog>
               <small>
-                <StacLink :data="containerLink"/>
+                <StacLink :data="containerLink" />
               </small>
             </template>
           </i18n>
@@ -31,7 +32,7 @@
 
       <div>
         <div class="flex flex-wrap" v-if="!!data?.properties">
-          <Keywords :keywords="keywords"/>
+          <Keywords :keywords="keywords" />
         </div>
       </div>
     </div>
@@ -44,8 +45,8 @@ import Source from './Source.vue';
 import StacLink from './StacLink.vue';
 import STAC from '../models/stac';
 import Utils from '../utils';
-import Keywords from "@/components/Keywords.vue";
-import TextView from "@/_Hub/components/TextView.vue";
+import Keywords from '@/components/Keywords.vue';
+import TextView from '@/_Hub/components/TextView.vue';
 
 
 export default {
@@ -59,7 +60,7 @@ export default {
   data() {
     return {
       jupyterLabUrl: undefined,
-      loading: true,
+      loading: true
     };
   },
   computed: {
@@ -84,9 +85,9 @@ export default {
         if (Utils.equalUrl(this.root.getAbsoluteUrl(), this.url)) {
           return null;
         } else {
-          const provider = this.data?.getMetadata("providers").find(el => el.roles.includes("host"));
+          const provider = this.data?.getMetadata('providers').find(el => el.roles.includes('host'));
           const href = provider ? provider.url : this.root.getAbsoluteUrl();
-          const title = `${this.data?.getMetadata("sharinghub:name")}`;
+          const title = `${this.data?.getMetadata('sharinghub:name')}`;
           return {
             href: href,
             rel: 'root',

@@ -6,40 +6,38 @@
         id="select" :label="$t('index.specifyCatalog')" label-for="url"
         :invalid-feedback="error" :state="valid"
       >
-        <b-form-input id="url" type="url" :value="url" @input="setUrl" placeholder="https://..."/>
+        <b-form-input id="url" type="url" :value="url" @input="setUrl" placeholder="https://..." />
       </b-form-group>
 
       <b-form-group
         id="select-token" :label="$t('index.specifyToken')" label-for="token"
-        :invalid-feedback="tokenError" :state="this.token===undefined || this.token?.length<1"
+        :invalid-feedback="tokenError" :state="token===undefined || token?.length<1"
       >
-        <b-form-input id="token" type="password" :value="token" @input="setToken" placeholder="token..."/>
+        <b-form-input id="token" type="password" :value="token" @input="setToken" placeholder="token..." />
         <small> {{ $t('index.specifyTokenDetail') }} </small>
       </b-form-group>
 
       <b-button type="submit" variant="primary">{{ $t('index.load') }}</b-button>
-
     </b-form>
-
   </main>
 </template>
 
 <script>
 import {BForm, BFormGroup, BFormInput} from 'bootstrap-vue';
-import {mapGetters} from "vuex";
-import {BASE_URL} from "@/_Hub/Endpoint";
+import {mapGetters} from 'vuex';
+import {BASE_URL} from '@/_Hub/Endpoint';
 
 export default {
-  name: "SelectDataSource",
+  name: 'SelectDataSource',
   components: {
     BForm,
     BFormGroup,
-    BFormInput,
+    BFormInput
   },
   data() {
     return {
       url: undefined,
-      token: "",
+      token: ''
     };
   },
   computed: {
@@ -67,7 +65,7 @@ export default {
       if (this.token) {
         return null;
       }
-      return this.$t("index.tokenError");
+      return this.$t('index.tokenError');
     }
   },
   async created() {
@@ -88,14 +86,14 @@ export default {
     go(e) {
       e.preventDefault();
       if (!this.token || !this.url)
-        return;
-      const repository = this.url.replace("https://", "");
-      const url = BASE_URL.concat(`${repository}/stac/`).concat("?gitlab_token=").concat(this.token);
-      this.$store.commit("setBaseUrl", url);
-      this.$store.commit("setToken", this.token);
-      this.$router.push("models");
+        {return;}
+      const repository = this.url.replace('https://', '');
+      const url = BASE_URL.concat(`${repository}/stac/`).concat('?gitlab_token=').concat(this.token);
+      this.$store.commit('setBaseUrl', url);
+      this.$store.commit('setToken', this.token);
+      this.$router.push('models');
     }
-  },
+  }
 };
 </script>
 

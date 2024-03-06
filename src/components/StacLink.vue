@@ -9,13 +9,13 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex';
-import {stacBrowserNavigatesTo} from "../rels";
+import {stacBrowserNavigatesTo} from '../rels';
 import Utils from '../utils';
 import STAC from '../models/stac';
 import URI from 'urijs';
 
 export default {
-  name: "StacLink",
+  name: 'StacLink',
   props: {
     data: {
       type: [Object, Array],
@@ -114,10 +114,10 @@ export default {
         let href;
         if (this.stac) {
           href = this.stac.getBrowserPath();
-          href = this.stac.getAbsoluteUrl().split("/").splice(3).join('/');
+          href = this.stac.getAbsoluteUrl().split('/').splice(3).join('/');
         } else {
           href = this.toBrowserPath(this.link.href);
-          href = this.link.href.split("/").splice(3).join('/');
+          href = this.link.href.split('/').splice(3).join('/');
         }
         if (!href.startsWith('/')) {
           href = '/' + href;

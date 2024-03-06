@@ -5,19 +5,29 @@
         <Loading v-if="!loaded" fill />
 
         <b-card-title v-if="title" :title="title" />
-        <b-form-group v-if="canFilterFreeText" :label="$t('search.freeText')" :label-for="ids.q"
-          :description="$t('search.freeTextDescription')">
-          <multiselect :id="ids.q" :value="query.q" @input="setSearchTerms" multiple taggable :options="query.ids"
+        <b-form-group
+          v-if="canFilterFreeText" :label="$t('search.freeText')" :label-for="ids.q"
+          :description="$t('search.freeTextDescription')"
+        >
+          <multiselect
+            :id="ids.q" :value="query.q" @input="setSearchTerms" multiple
+            taggable :options="query.ids"
             :placeholder="$t('search.enterSearchTerms')" :tagPlaceholder="$t('search.addSearchTerm')"
-            :noOptions="$t('search.addSearchTerm')" @tag="addSearchTerm">
+            :noOptions="$t('search.addSearchTerm')" @tag="addSearchTerm"
+          >
             <template #noOptions>{{ $t('search.noOptions') }}</template>
           </multiselect>
         </b-form-group>
 
-        <b-form-group v-if="canFilterExtents" :label="$t('search.temporalExtent')" :label-for="ids.datetime"
-          :description="$t('search.dateDescription')">
-          <date-picker range :id="ids.datetime" :lang="datepickerLang" :format="datepickerFormat" :value="query.datetime"
-            @input="setDateTime" input-class="form-control mx-input" />
+        <b-form-group
+          v-if="canFilterExtents" :label="$t('search.temporalExtent')" :label-for="ids.datetime"
+          :description="$t('search.dateDescription')"
+        >
+          <date-picker
+            range :id="ids.datetime" :lang="datepickerLang" :format="datepickerFormat"
+            :value="query.datetime"
+            @input="setDateTime" input-class="form-control mx-input"
+          />
         </b-form-group>
 
         <b-form-group v-if="canFilterExtents" :label="$t('search.spatialExtent')" :label-for="ids.bbox">
@@ -27,18 +37,21 @@
           <Map class="mb-4" v-if="provideBBox" :stac="stac" selectBounds @bounds="setBBox" scrollWheelZoom />
         </b-form-group>
 
-        <b-form-group v-if="conformances.CollectionIdFilter" :label="$tc('stacCollection', 1)"
-          :label-for="ids.collections">
-          <b-form-select @change="addCollection" v-bind="collectionSelectOptions">
-          </b-form-select>
+        <b-form-group
+          v-if="conformances.CollectionIdFilter" :label="$tc('stacCollection', 1)"
+          :label-for="ids.collections"
+        >
+          <b-form-select @change="addCollection" v-bind="collectionSelectOptions" />
         </b-form-group>
 
         <!-- #filter tags -->
         <b-form-group :label="$tc('stacTag', topics.length)" :label-for="ids.topics">
-          <multiselect :id="ids.topics" multiple taggable :value="this.selectedTopics"
+          <multiselect
+            :id="ids.topics" multiple taggable :value="selectedTopics"
             :options="topics.concat(getAdditionalTopicsByCategory(selectedCollections))" label="text"
             trackBy="value" :placeholder="$t('search.selectTopics')" :tagPlaceholder="$t('search.addItemIds')"
-            :noOptions="$t('search.addItemIds')" @input="setTags">
+            :noOptions="$t('search.addItemIds')" @input="setTags"
+          >
             <template #noOptions>{{ $t('search.noOptions') }}</template>
             <template v-if="additionalCollectionCount > 0" #afterList>
               <li>
@@ -51,9 +64,12 @@
         </b-form-group>
 
         <b-form-group v-if="conformances.ItemIdFilter" :label="$t('search.itemIds')" :label-for="ids.ids">
-          <multiselect :id="ids.ids" :value="query.ids" @input="setIds" multiple taggable :options="query.ids"
+          <multiselect
+            :id="ids.ids" :value="query.ids" @input="setIds" multiple
+            taggable :options="query.ids"
             :placeholder="$t('search.enterItemIds')" :tagPlaceholder="$t('search.addItemIds')"
-            :noOptions="$t('search.addItemIds')" @tag="addId">
+            :noOptions="$t('search.addItemIds')" @tag="addId"
+          >
             <template #noOptions>{{ $t('search.noOptions') }}</template>
           </multiselect>
         </b-form-group>
@@ -62,45 +78,67 @@
           <b-form-group :label="$t('search.additionalFilters')">
             <b-form-radio-group v-model="filtersAndOr" :options="andOrOptions" name="logical" size="sm" />
 
-            <b-dropdown size="sm" :text="$t('search.addFilter')" block variant="primary" class="queryables mt-2 mb-3"
-              menu-class="w-100">
+            <b-dropdown
+              size="sm" :text="$t('search.addFilter')" block variant="primary"
+              class="queryables mt-2 mb-3"
+              menu-class="w-100"
+            >
               <template v-for="queryable in sortedQueryables">
-                <b-dropdown-item v-if="queryable.supported" :key="queryable.id"
-                  @click="additionalFieldSelected(queryable)">
+                <b-dropdown-item
+                  v-if="queryable.supported" :key="queryable.id"
+                  @click="additionalFieldSelected(queryable)"
+                >
                   {{ queryable.title }}
                   <b-badge variant="dark" class="ml-2">{{ queryable.id }}</b-badge>
                 </b-dropdown-item>
               </template>
             </b-dropdown>
 
-            <QueryableInput v-for="(filter, index) in filters" :key="filter.id" :value.sync="filter.value"
+            <QueryableInput
+              v-for="(filter, index) in filters" :key="filter.id" :value.sync="filter.value"
               :operator.sync="filter.operator" :queryable="filter.queryable" :index="index" :cql="cql"
-              @remove-queryable="removeQueryable(index)" />
+              @remove-queryable="removeQueryable(index)"
+            />
           </b-form-group>
         </div>
 
         <hr
-          v-if="canFilterExtents || conformances.CollectionIdFilter || conformances.ItemIdFilter || showAdditionalFilters">
+          v-if="canFilterExtents || conformances.CollectionIdFilter || conformances.ItemIdFilter || showAdditionalFilters"
+        >
 
-        <b-form-group v-if="canSort" :label="$t('sort.title')" :label-for="ids.sort"
-          :description="$t('search.notFullySupported')">
-          <multiselect :id="ids.sort" :value="sortTerm" @input="sortFieldSet" :options="sortOptions" track-by="value"
+        <b-form-group
+          v-if="canSort" :label="$t('sort.title')" :label-for="ids.sort"
+          :description="$t('search.notFullySupported')"
+        >
+          <multiselect
+            :id="ids.sort" :value="sortTerm" @input="sortFieldSet" :options="sortOptions"
+            track-by="value"
             label="text" :placeholder="$t('default')" :selectLabel="$t('multiselect.selectLabel')"
-            :selectedLabel="$t('multiselect.selectedLabel')" :deselectLabel="$t('multiselect.deselectLabel')" />
-          <SortButtons v-if="sortTerm && sortTerm.value" class="mt-1" :value="sortOrder" enforce
-            @input="sortDirectionSet" />
+            :selectedLabel="$t('multiselect.selectedLabel')" :deselectLabel="$t('multiselect.deselectLabel')"
+          />
+          <SortButtons
+            v-if="sortTerm && sortTerm.value" class="mt-1" :value="sortOrder" enforce
+            @input="sortDirectionSet"
+          />
         </b-form-group>
 
-        <b-form-group :label="$t('search.itemsPerPage')" :label-for="ids.limit"
-          :description="$t('search.itemsPerPageDescription', { maxItems })">
-          <b-form-input :id="ids.limit" :value="query.limit" @change="setLimit" min="1" :max="maxItems" type="number"
-            :placeholder="$t('defaultWithValue', { value: itemsPerPage })" />
+        <b-form-group
+          :label="$t('search.itemsPerPage')" :label-for="ids.limit"
+          :description="$t('search.itemsPerPageDescription', { maxItems })"
+        >
+          <b-form-input
+            :id="ids.limit" :value="query.limit" @change="setLimit" min="1"
+            :max="maxItems" type="number"
+            :placeholder="$t('defaultWithValue', { value: itemsPerPage })"
+          />
         </b-form-group>
       </b-card-body>
       <b-card-footer>
-        <b-alert v-if="!this.selectedCollections" variant="danger" show>{{ $t('fields.search.collection_mandatory')
-        }}</b-alert>
-        <b-button :disabled="!this.selectedCollections" type="submit" variant="primary">{{ $t('submit') }}</b-button>
+        <b-alert v-if="!selectedCollections" variant="danger" show>
+          {{ $t('fields.search.collection_mandatory')
+          }}
+        </b-alert>
+        <b-button :disabled="!selectedCollections" type="submit" variant="primary">{{ $t('submit') }}</b-button>
         <b-button type="reset" variant="danger" class="ml-3">{{ $t('reset') }}</b-button>
       </b-card-footer>
     </b-card>
@@ -119,11 +157,11 @@ import {
   BFormRadioGroup
 } from 'bootstrap-vue';
 import Multiselect from 'vue-multiselect';
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapState } from 'vuex';
 import refParser from '@apidevtools/json-schema-ref-parser';
 
 import Utils, { schemaMediaType } from '../utils';
-import { ogcQueryables } from "../rels";
+import { ogcQueryables } from '../rels';
 
 import ApiCapabilitiesMixin, { TYPES } from './ApiCapabilitiesMixin';
 import DatePickerMixin from './DatePickerMixin';
@@ -136,9 +174,9 @@ import CqlValue from '../models/cql2/value';
 import CqlLogicalOperator from '../models/cql2/operators/logical';
 import { CqlEqual } from '../models/cql2/operators/comparison';
 import { stacRequest } from '../store/utils';
-import { PROXY_URL } from "@/_Hub/Endpoint";
-import { get } from "@/_Hub/tools/https";
-import _ from "lodash"
+import { PROXY_URL } from '@/_Hub/Endpoint';
+import { get } from '@/_Hub/tools/https';
+import _ from 'lodash';
 
 function getQueryDefaults() {
   return {
@@ -150,7 +188,7 @@ function getQueryDefaults() {
     collections: [],
     sortby: null,
     filters: null,
-    topics: [],
+    topics: []
 
   };
 }
@@ -164,7 +202,7 @@ function getDefaults() {
     filtersAndOr: 'and',
     filters: [],
     selectedCollections: null,
-    selectedTopics: [],
+    selectedTopics: []
   };
 }
 
@@ -233,8 +271,8 @@ export default {
           { value: null, text: this.$t('search.selectCollection') },
           ...this.collections
         ], // query.collections
-        trackBy: "value",
-        label: "text",
+        trackBy: 'value',
+        label: 'text'
       };
     },
     collectionSearchLink() {
@@ -245,7 +283,7 @@ export default {
     },
     ids() {
       let obj = {};
-      ['q', 'datetime', 'bbox', 'collections', 'ids', 'sort', 'limit', "topics"]
+      ['q', 'datetime', 'bbox', 'collections', 'ids', 'sort', 'limit', 'topics']
         .forEach(field => obj[field] = field + formId);
       return obj;
     },
@@ -258,7 +296,7 @@ export default {
     andOrOptions() {
       return [
         { value: 'and', text: this.$i18n.t('search.logical.and') },
-        { value: 'or', text: this.$i18n.t('search.logical.or') },
+        { value: 'or', text: this.$i18n.t('search.logical.or') }
       ];
     },
     showAdditionalFilters() {
@@ -381,12 +419,12 @@ export default {
             { value: el, text: el }
           )).sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage));
           this.additionnal_topics = sections;
-          this.topics = _topics_from_gitlab 
+          this.topics = _topics_from_gitlab;
           return this.topics;
         }
       }).catch(() => {
-        if (this.$route.name !== "Login") {
-          this.$router.push("/login");
+        if (this.$route.name !== 'Login') {
+          this.$router.push('/login');
         }
       });
     },
@@ -537,7 +575,7 @@ export default {
       this.$set(this.query, 'datetime', datetime);
     },
     addCollection(collection) {
-      this.selectedCollections = collection
+      this.selectedCollections = collection;
       this.query.collections = [collection];
     },
     addId(id) {
@@ -572,7 +610,7 @@ export default {
     },
     getAdditionalTopicsByCategory(category){
       if(!category){
-        return []
+        return [];
       }
       const result = this.additionnal_topics
       .filter(section => section.enabled_for.includes(category))
@@ -580,11 +618,11 @@ export default {
          return section.keywords.map(el => ({value:el, text:el}));
       })
       .reduce((ac, nex) => ac.concat(nex), [])
-      .sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage))
+      .sort((a, b) => a.text.localeCompare(b.text, this.uiLanguage));
       return result;
-    },
-   
-    
+    }
+
+
 
   }
 };

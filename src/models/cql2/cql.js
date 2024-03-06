@@ -8,14 +8,14 @@ export default class Cql {
 
   toJSON() {
     return {
-      "filter-lang": "cql2-json",
+      'filter-lang': 'cql2-json',
       filter: this.filters.toJSON()
     };
   }
 
   toText() {
     return {
-      "filter-lang": "cql2-text",
+      'filter-lang': 'cql2-text',
       filter: this.filters.toText()
     };
   }

@@ -7,7 +7,7 @@ export const stacHierarchy = [
   'item',
   'parent',
   'root',
-  'self',
+  'self'
 ];
 
 // STAC API Pagination
@@ -16,7 +16,7 @@ export const stacPagination = [
   'last',
   'next',
   'prev',
-  'previous',
+  'previous'
 ];
 
 // Queryables
@@ -45,7 +45,7 @@ export const stacBrowserSpecialHandling = [
   'items',
   'search',
   'icon', // Other v
-  'license',
+  'license'
 ].concat(stacHierarchy).concat(stacPagination).concat(ogcQueryables);
 
 // OGC APIs

@@ -1,25 +1,26 @@
 <template>
   <div class="research-bar">
     <b-input-group size="md" class="">
-      <b-form-input :disabled="!canSearch"
-                    type="text"
-                    ref="input_search"
-                    v-model="value"
-                    autocomplete="false"
-                    @update="handleSearch"
-                    @focus="handleOpenSearchResult"
-                    :placeholder="$t('fields.search_placeholder') ">
-      </b-form-input>
-      <b-input-group-prepend style="height: 33px">
-
-      </b-input-group-prepend>
+      <b-form-input
+        :disabled="!canSearch"
+        type="text"
+        ref="input_search"
+        v-model="value"
+        autocomplete="false"
+        @update="handleSearch"
+        @focus="handleOpenSearchResult"
+        :placeholder="$t('fields.search_placeholder') "
+      />
+      <b-input-group-prepend style="height: 33px" />
       <b-input-group-prepend style="height: 33px">
         <b-button v-if="is_loading" variant="outline-primary">
-          <b-icon style="padding-bottom: 3px;" icon="circle-fill" animation="throb"/>
+          <b-icon style="padding-bottom: 3px;" icon="circle-fill" animation="throb" />
         </b-button>
-        <b-button v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
-                  :variant="variant">
-          <b-icon style="padding-bottom: 3px;" icon="sliders"/>
+        <b-button
+          v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
+          :variant="variant"
+        >
+          <b-icon style="padding-bottom: 3px;" icon="sliders" />
         </b-button>
       </b-input-group-prepend>
       <b-tooltip target="tooltip-target-advance-research" triggers="hover">
@@ -29,28 +30,32 @@
 
     <div v-if="open_search" ref="search_container" class="research-bar__results">
       <div v-if="!search_result_is_empty" class="flex flex-column mt-3">
-        <div v-for="(result, idx) in search_results">
+        <div v-for="(result, idx) in search_results" :key="idx">
           <template v-for="([key, val] ) in Object.entries(result)">
-            <div :class="['mt-2']" v-if="Array.isArray(val.features) && val.features.length!==0">
+            <div :class="['mt-2']" :key="key" v-if="Array.isArray(val.features) && val.features.length!==0">
               <text-view type="header__b14" :class="['block px-3', `text-${getRandomColor(idx)}`]">
                 {{ translateCategories(key) }}
               </text-view>
-              <a v-for="(el) in val.features.slice(0, limit_displayed)"
-                 :class="['research-bar__results__item px-4']"
-                 @click="$event => handleSelectResult($event, itemLink(el.links))"
-                 :href="itemLink(el.links)">
+              <a
+                v-for="(el, el_idx) in val.features.slice(0, limit_displayed)"
+                :key="el_idx"
+                :class="['research-bar__results__item px-4']"
+                @click="$event => handleSelectResult($event, itemLink(el.links))"
+                :href="itemLink(el.links)"
+              >
                 <small> {{ el.properties['title'] }}
                 </small>
               </a>
-              <router-link v-if="val.numberMatched > limit_displayed && value.length > 2 "
-                           class="research-bar__results__item px-4 see_more"
-                           :to="`/${key}?q=${value}`">
+              <router-link
+                v-if="val.numberMatched > limit_displayed && value.length > 2 "
+                class="research-bar__results__item px-4 see_more"
+                :to="`/${key}?q=${value}`"
+              >
                 <small class="">
-                  <b-icon icon="arrow-right-short"/>
+                  <b-icon icon="arrow-right-short" />
                   {{ $t('fields.see_more', [val.numberMatched, translateCategories(key), value]) }} </small>
               </router-link>
             </div>
-
           </template>
         </div>
       </div>
@@ -59,33 +64,32 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
 import {defineComponent} from 'vue';
-import TextView from "@/_Hub/components/TextView.vue";
-import {get} from "@/_Hub/tools/https";
-import {STAC_SEARCH} from "@/_Hub/Endpoint";
-import {mapGetters, mapState} from "vuex";
-import _ from "lodash";
+import TextView from '@/_Hub/components/TextView.vue';
+import {get} from '@/_Hub/tools/https';
+import {STAC_SEARCH} from '@/_Hub/Endpoint';
+import {mapGetters, mapState} from 'vuex';
+import _ from 'lodash';
 
 export default defineComponent({
-  name: "ResearchBar",
+  name: 'ResearchBar',
   components: {TextView},
   props: {
     categories: {
       type: Array,
-      required: true,
+      required: true
     },
     canSearch: {
       type: Boolean,
-      required: true,
+      required: true
     },
     variant:{
       type: String,
       required: false,
-      default: "outline-secondary",
+      default: 'outline-secondary'
     }
   },
   data() {
@@ -96,12 +100,12 @@ export default defineComponent({
       searchTimeout: null,
       search_result_is_empty: true,
       is_loading: false,
-      limit_displayed: 4,
+      limit_displayed: 4
     };
   },
   computed: {
     ...mapState(['']),
-    ...mapGetters(['toBrowserPath']),
+    ...mapGetters(['toBrowserPath'])
   },
 
   watch: {
@@ -124,9 +128,9 @@ export default defineComponent({
     async searchRequest(query_terms) {
       this.is_loading = true;
       const buildUrl = (route, query_terms) => {
-        const BASE_SEARCH = STAC_SEARCH.concat("?mode=reference&")
+        const BASE_SEARCH = STAC_SEARCH.concat('?mode=reference&');
         const _query = query_terms ? BASE_SEARCH.concat(`collections=${route}&q=${query_terms}`) : BASE_SEARCH.concat(`collections=${route}`);
-        return _query.concat("&limit=4");
+        return _query.concat('&limit=4');
       };
       const all_requests = this.categories.map(({route}) => {
         return get(buildUrl(route, query_terms))
@@ -164,7 +168,7 @@ export default defineComponent({
 
 
     getRandomColor(index) {
-      const colors = ["primary", "info", "success", "warning", "danger", "dark"];
+      const colors = ['primary', 'info', 'success', 'warning', 'danger', 'dark'];
       return colors[index % colors.length];
     },
     translateCategories(entry) {
@@ -172,12 +176,12 @@ export default defineComponent({
       return el.title;
     },
     itemLink(links = []) {
-      return links.find(el => el.rel === "self").href;
+      return links.find(el => el.rel === 'self').href;
     },
     async handleSelectResult(event, url) {
       event.preventDefault();
       event.stopPropagation();
-      const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join("/")}`;
+      const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join('/')}`;
       if (external !== this.$route.path) {
         this.$router.push({path: external});
       }

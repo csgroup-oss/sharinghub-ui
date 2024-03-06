@@ -1,23 +1,22 @@
 <template>
   <div class="container h-100">
-    <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError"/>
-  
+    <ErrorAlert class="global-error" v-if="globalError" v-bind="globalError" @close="hideError" />
+
     <!-- Header  TODO -->
     <header>
       <div class="logo">{{ displayCatalogTitle }}</div>
-      <StacHeader @enableSidebar="sidebar = true"/>
+      <StacHeader @enableSidebar="sidebar = true" />
     </header>
 
     <div class="w-100 pt-5 ">
       <b-tabs class="pb-3">
-
         <b-tab class="pt-4">
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.asset_card') }}</TextView>
           </template>
           <TextView>
             <!-- Content (Item / Catalog) -->
-            <router-view/>
+            <router-view />
           </TextView>
         </b-tab>
 
@@ -25,7 +24,7 @@
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.reviews') }}</TextView>
           </template>
-          <TabSectionReview/>
+          <TabSectionReview />
         </b-tab>
 
 
@@ -33,18 +32,16 @@
           <template #title>
             <TextView type="header__b16">{{ $t('fields.model_deploy') }}</TextView>
           </template>
-          <TabSectionDeployment/>
+          <TabSectionDeployment />
         </b-tab>
 
         <b-tab class="pt-4">
           <template #title>
             <TextView type="header__b16">STAC API</TextView>
           </template>
-          <TabSectionApiStac v-if="data" :title="title" :stacUrl="url" :stac="data"/>
+          <TabSectionApiStac v-if="data" :title="title" :stacUrl="url" :stac="data" />
         </b-tab>
-
       </b-tabs>
-
     </div>
 
     <footer hidden="hidden">
@@ -58,8 +55,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 import {mapActions, mapGetters, mapState} from 'vuex';
 import CONFIG from './config';
 
@@ -75,9 +72,9 @@ import {
   SpinnerPlugin,
   VBToggle,
   VBVisible
-} from "bootstrap-vue";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+} from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import ErrorAlert from './components/ErrorAlert.vue';
 import StacHeader from './components/StacHeader.vue';
@@ -89,11 +86,11 @@ import URI from 'urijs';
 import I18N from '@radiantearth/stac-fields/I18N';
 import {API_LANGUAGE_CONFORMANCE, loadMessages, translateFields} from './i18n';
 import {getBest, prepareSupported} from './locale-id';
-import TextView from "@/_Hub/components/TextView.vue";
-import TabSectionApiStac from "@/_Hub/views/sections/TabSectionApiStac.vue";
-import TabSectionReview from "@/_Hub/views/sections/TabSectionReview.vue";
-import TabSectionDeployment from "@/_Hub/views/sections/TabSectionDeployment.vue";
-import {CONNEXION_MODE} from "@/_Hub/tools/https";
+import TextView from '@/_Hub/components/TextView.vue';
+import TabSectionApiStac from '@/_Hub/views/sections/TabSectionApiStac.vue';
+import TabSectionReview from '@/_Hub/views/sections/TabSectionReview.vue';
+import TabSectionDeployment from '@/_Hub/views/sections/TabSectionDeployment.vue';
+import {CONNEXION_MODE} from '@/_Hub/tools/https';
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -156,7 +153,7 @@ export default {
       isMlModelCompliant: false,
       sidebar: false,
       error: null,
-      onDataLoaded: null,
+      onDataLoaded: null
     };
   },
   computed: {
@@ -174,12 +171,12 @@ export default {
       if (typeof STAC_BROWSER_VERSION !== 'undefined') {
         return STAC_BROWSER_VERSION;
       } else {
-        return "";
+        return '';
       }
     },
     canDeploy() {
       if (this.data instanceof STAC) {
-        return this.data.getMetadata("sharinghub:deployment") === "enable";
+        return this.data.getMetadata('sharinghub:deployment') === 'enable';
       }
       return false;
     },
@@ -195,7 +192,7 @@ export default {
     description(description) {
       let element = document.getElementById('meta-description');
       if (element) {
-        element.setAttribute("content", Utils.summarizeMd(description, 200));
+        element.setAttribute('content', Utils.summarizeMd(description, 200));
       }
     },
     uiLanguage: {
@@ -216,7 +213,7 @@ export default {
         this.$root.$i18n.locale = locale;
 
         // Update the HTML lang tag
-        document.documentElement.setAttribute("lang", locale);
+        document.documentElement.setAttribute('lang', locale);
       }
     },
     dataLanguage: {
@@ -234,11 +231,11 @@ export default {
           } else if (this.supportsConformance(API_LANGUAGE_CONFORMANCE)) {
             // this.url gets reset with resetCatalog so store the url for use in load
             let url = this.url;
-            // Todo: Resetting the catalogs is not ideal. 
+            // Todo: Resetting the catalogs is not ideal.
             // A better way would be to combine the language code and URL as the index in the browser database
             // This needs a database refactor though: https://github.com/radiantearth/stac-browser/issues/231
             this.$store.commit('resetCatalog', true);
-            await this.$store.dispatch("load", {url, loadApi: true, show: true});
+            await this.$store.dispatch('load', {url, loadApi: true, show: true});
           }
         }
       }
@@ -246,7 +243,7 @@ export default {
     catalogUrlFromVueX(url) {
       if (url) {
         // Load the root catalog data if not available (e.g. after page refresh or external access)
-        this.$store.dispatch("load", {url, loadApi: true});
+        this.$store.dispatch('load', {url, loadApi: true});
       }
     },
     stateQueryParameters: {
@@ -458,7 +455,7 @@ export default {
     },
     hideError() {
       this.$store.commit('showGlobalError', null);
-    },
+    }
   }
 };
 </script>

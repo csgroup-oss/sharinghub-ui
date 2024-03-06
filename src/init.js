@@ -1,14 +1,14 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import MainPage from "@/MainPage.vue";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import MainPage from '@/MainPage.vue';
 import i18n, {loadDefaultMessages} from './i18n';
-import "primeflex/primeflex.css";
+import 'primeflex/primeflex.css';
 
 
-import Vuex from "vuex";
-import getStore from "@/store";
-import CONFIG from "@/config";
-import {getRoutes} from "@/router";
+import Vuex from 'vuex';
+import getStore from '@/store';
+import CONFIG from '@/config';
+import {getRoutes} from '@/router';
 
 
 Vue.use(VueRouter);
@@ -29,6 +29,6 @@ export default function init() {
       router,
       i18n,
       render: h => h(MainPage)
-    }).$mount("#stac-browser");
+    }).$mount('#stac-browser');
   });
 }

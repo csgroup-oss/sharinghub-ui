@@ -1,6 +1,6 @@
 <template>
   <div class="inline-flex align-items-center tag-custom px-2">
-    <i v-if="!!$props.icon" :class="'mr-1 py-1 ' + $props.icon"/>
+    <i v-if="!!$props.icon" :class="'mr-1 py-1 ' + $props.icon" />
     <text-view type="Small-3" class="py-1">{{ label }}</text-view>
     <template v-if="!!$props.subLabel">
       <div class="p-divider--vertical" />
@@ -12,10 +12,10 @@
 
 <script>
 import {defineComponent} from 'vue';
-import TextView from "@/_Hub/components/TextView.vue";
+import TextView from '@/_Hub/components/TextView.vue';
 
 export default defineComponent({
-  name: "TagCustom",
+  name: 'TagCustom',
   components: {TextView},
   props: {
     icon: {
@@ -31,7 +31,7 @@ export default defineComponent({
       default: undefined,
       type: String
     }
-  },
+  }
 });
 </script>
 

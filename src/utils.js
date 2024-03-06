@@ -1,17 +1,17 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
-import {stacPagination} from "./rels";
-import {BASE_URL} from "@/_Hub/Endpoint";
+import {stacPagination} from './rels';
+import {BASE_URL} from '@/_Hub/Endpoint';
 
 export const STAC_EXTENSIONS = {
-  "ml-model": "https://stac-extensions.github.io/ml-model/v1.0.0/schema.json"
+  'ml-model': 'https://stac-extensions.github.io/ml-model/v1.0.0/schema.json'
 };
 
 export const commonFileNames = ['catalog', 'collection', 'item'];
 
-export const geojsonMediaType = "application/geo+json";
+export const geojsonMediaType = 'application/geo+json';
 
-export const schemaMediaType = "application/schema+json";
+export const schemaMediaType = 'application/schema+json';
 
 export const stacMediaTypes = [
   'application/json',
@@ -29,14 +29,14 @@ export const browserImageTypes = [
 ];
 
 export const cogMediaTypes = [
-  "image/tiff; application=geotiff; profile=cloud-optimized",
-  "image/vnd.stac.geotiff; cloud-optimized=true"
+  'image/tiff; application=geotiff; profile=cloud-optimized',
+  'image/vnd.stac.geotiff; cloud-optimized=true'
 ];
 
 export const geotiffMediaTypes = [
-  "application/geotiff",
-  "image/tiff; application=geotiff",
-  "image/vnd.stac.geotiff",
+  'application/geotiff',
+  'image/tiff; application=geotiff',
+  'image/vnd.stac.geotiff'
 ].concat(cogMediaTypes);
 
 export const browserProtocols = [
@@ -149,13 +149,13 @@ export default class Utils {
     // Parse URL and make absolute, if required
     let uri = URI(href);
     // Don't convert GDAL VFS URIs: https://github.com/radiantearth/stac-browser/issues/116
-    if (baseUrl && uri.is("relative") && !Utils.isGdalVfsUri(href)) {
+    if (baseUrl && uri.is('relative') && !Utils.isGdalVfsUri(href)) {
       uri = uri.absoluteTo(baseUrl);
     }
     uri.normalize();
     if (noParams) {
-      uri.query("");
-      uri.fragment("");
+      uri.query('');
+      uri.fragment('');
     }
     return stringify ? uri.toString() : uri;
   }
@@ -206,8 +206,8 @@ export default class Utils {
     var isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
     if (!isVisible) {
       el.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+        behavior: 'smooth',
+        block: 'start'
       });
     }
   }
@@ -273,8 +273,11 @@ export default class Utils {
       filters.limit = itemsPerPage;
     }
 
-    filters = {...filters,
-      q : [...filters.q, ...filters.topics?.map(el => `[${el}]`)]
+    const _topics = filters.topics.map(el => `[${el}]`);
+    if(_topics){
+      filters = {...filters,
+        q : [...filters.q, ..._topics]
+      };
     }
     if(filters.q.length===0){
       delete filters.q;
@@ -306,7 +309,7 @@ export default class Utils {
     } else { // GET
       // Construct new link with search params
       let url = URI(link.href);
-      
+
       for (let key in filters) {
         let value = filters[key];
         if (isEmpty(value)) {
@@ -458,8 +461,8 @@ export default class Utils {
     return Utils.mergeDeep(target, ...sources);
   }
 
-  static getProjectID(stac_id = "") {
-    const reversed = stac_id.split("-").reverse();
+  static getProjectID(stac_id = '') {
+    const reversed = stac_id.split('-').reverse();
     if (reversed.length === 0) {
       return undefined;
     }
@@ -468,17 +471,17 @@ export default class Utils {
 
   static browsifyUrl(url) {
     const urlObject = new URL(url);
-    const url_to_resolve = urlObject.pathname.split("/").splice(1).join("/");
-    const prefix = window.location.hash.includes("#") ? "/ui/#/" : "/ui/";
+    const url_to_resolve = urlObject.pathname.split('/').splice(1).join('/');
+    const prefix = window.location.hash.includes('#') ? '/ui/#/' : '/ui/';
     return `${window.location.origin}${prefix}${url_to_resolve}`;
   }
 
   static isMlModelCompliant(array) {
-    return Array.isArray(array) && array.includes(STAC_EXTENSIONS["ml-model"]);
+    return Array.isArray(array) && array.includes(STAC_EXTENSIONS['ml-model']);
   }
 
   static isMlModeltrainData(rel) {
-    return rel === "ml-model:train-data";
+    return rel === 'ml-model:train-data';
   }
 
   static isBrowserUrl(url) {

@@ -1,18 +1,18 @@
 <template>
   <div v-bind="$attrs" v-on="$listeners" :class="['flex align-items-center py-1 px-2', $props.isSimple ?'nav-item-simple' : 'nav-item']">
-    <i v-if="$props.icon !== undefined" :class="$props.icon +' '+ 'mr-2' "></i>
+    <i v-if="$props.icon !== undefined" :class="$props.icon +' '+ 'mr-2' " />
     <text-view type="Title-2">
-      <slot/>
+      <slot />
     </text-view>
   </div>
 </template>
 
 <script>
 import {defineComponent} from 'vue';
-import TextView from "@/_Hub/components/TextView.vue";
+import TextView from '@/_Hub/components/TextView.vue';
 
 export default defineComponent({
-  name: "NavItem",
+  name: 'NavItem',
   components: {TextView},
   props: {
     icon: {
@@ -22,8 +22,8 @@ export default defineComponent({
     isSimple: {
       type: Boolean,
       default: false
-    },
-  },
+    }
+  }
 });
 </script>
 

@@ -1,8 +1,6 @@
 <template>
   <div class="share">
-
     <b-button-group size="sm">
-
       <template v-if="!action || action==='share' ">
         <b-button
           v-if="canUseJupyter"
@@ -13,7 +11,7 @@
           v-b-tooltip
           :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
         >
-          <b-icon-terminal variant="warning"/>
+          <b-icon-terminal variant="warning" />
           <TextView class="button-label" type="Small-1">
             <span class="button-label"> {{ $t("source.jupyter.open") }}</span>
           </TextView>
@@ -25,48 +23,53 @@
           size="sm"
           :title="$t('source.dvc.hover')"
         >
-          <b-icon-info-circle/>
+          <b-icon-info-circle />
           <TextView class="button-label" type="Small-1">
             <span class="button-label"> {{ $t('source.dvc.label') }} </span>
           </TextView>
         </b-button>
         <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
-          <b-icon-share/>
+          <b-icon-share />
           <TextView class="button-label" type="Small-1">
             <span class="button-label"> {{ $t('source.share.label') }}</span>
           </TextView>
         </b-button>
-        <b-button :disabled="!can_rate" size="sm" @click="has_rated ?  UnStarProject() :starProject()"
-                  variant="outline-primary">
-          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.8" aria-hidden="true"></b-icon>
-          <TextView type="Small-1" v-html="has_rated ? ' Unstar': ' Star'"></TextView>
+        <b-button
+          :disabled="!can_rate" size="sm" @click="has_rated ? UnStarProject() :starProject()"
+          variant="outline-primary"
+        >
+          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.8" aria-hidden="true" />
+          <TextView type="Small-1" v-html="has_rated ? ' Unstar': ' Star'" />
         </b-button>
         <b-button size="sm" disabled variant="outline-dark"> {{ rank_rate }}</b-button>
       </template>
 
 
-      <b-dropdown v-if="!action || action==='language' " size="sm" variant="outline-primary" right
-                  :title="$t('source.language.switch')">
+      <b-dropdown
+        v-if="!action || action==='language' " size="sm" variant="outline-primary" right
+        :title="$t('source.language.switch')"
+      >
         <template #button-content>
-          <b-icon-flag/>
+          <b-icon-flag />
           <span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
         </template>
         <b-dropdown-item
           v-for="l of languages" :key="l.code" class="lang-item"
           @click="switchLocale({locale: l.code, userSelected: true})"
         >
-          <b-icon-check v-if="locale === l.code"/>
-          <b-icon-blank v-else/>
+          <b-icon-check v-if="locale === l.code" />
+          <b-icon-blank v-else />
           <span class="title">
             {{ l.native }}
             <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
           </span>
-          <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)"
-                                       :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
-                                       class="ml-2"/>
+          <b-icon-exclamation-triangle
+            v-if="supportsLanguageExt && (!l.ui || !l.data)"
+            :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
+            class="ml-2"
+          />
         </b-dropdown-item>
       </b-dropdown>
-
     </b-button-group>
 
     <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom" :title="$t('source.dvc.title')">
@@ -81,16 +84,18 @@
         {{ $t('source.dvc.tutorial') }}
       </b-button>
     </b-popover>
-    <b-popover id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
-               container="stac-browser" :title="$t('source.share.title')">
-      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false"/>
+    <b-popover
+      id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
+      container="stac-browser" :title="$t('source.share.title')"
+    >
+      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
       <hr>
       <b-button class="twitter mr-1" :href="twitterUrl">
-        <b-icon-twitter/>
+        <b-icon-twitter />
         {{ $t('source.share.twitter') }}
       </b-button>
       <b-button variant="dark" :href="mailTo">
-        <b-icon-envelope/>
+        <b-icon-envelope />
         {{ $t('source.share.email') }}
       </b-button>
     </b-popover>
@@ -105,21 +110,21 @@ import Url from './Url.vue';
 import URI from 'urijs';
 import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
-import TextView from "@/_Hub/components/TextView.vue";
-import {CONNEXION_MODE, get, post} from "@/_Hub/tools/https";
-import {DOCS_URL, PROXY_URL, STORE_DVC_URL} from "@/_Hub/Endpoint";
+import TextView from '@/_Hub/components/TextView.vue';
+import {CONNEXION_MODE, get, post} from '@/_Hub/tools/https';
+import {DOCS_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
 import STAC from '../models/stac';
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
 
 export default {
-  name: "Source",
+  name: 'Source',
   components: {
     TextView,
     BDropdown,
     BDropdownItem,
-    Url,
+    Url
   },
   props: {
     title: {
@@ -148,7 +153,7 @@ export default {
       can_rate: false,
       rank_rate: undefined,
       has_rated: false,
-      jupyter_link: undefined,
+      jupyter_link: undefined
     };
   },
   computed: {
@@ -205,7 +210,7 @@ export default {
       return this.$t('source.share.message', {title: this.title, url: this.browserUrl()});
     },
     dvcDocsUrl() {
-      return DOCS_URL.concat("tutorials/manage_dataset_with_dvc/");
+      return DOCS_URL.concat('tutorials/manage_dataset_with_dvc/');
     },
     twitterUrl() {
       let text = encodeURIComponent(this.message);
@@ -266,10 +271,10 @@ export default {
       if (this.auth?.mode === CONNEXION_MODE.DEFAULT_TOKEN) {
         return false;
       }
-      return (this.stac != undefined) ? this.stac?.getMetadata("sharinghub:jupyter") === "enable" : false;
+      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:jupyter') === 'enable' : false;
     },
     canUseDVC() {
-      return (this.stac != undefined) ? this.stac?.getMetadata("sharinghub:store-s3") === "enable" : false
+      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:store-s3') === 'enable' : false
       && this.dvcUrl() != null;
     }
   },
@@ -280,7 +285,7 @@ export default {
         this.jupyter_link = undefined;
         this.can_rate = false;
         if (data) {
-          let projectID =  data.getMetadata("sharinghub:id");
+          let projectID =  data.getMetadata('sharinghub:id');
           get(PROXY_URL.concat(`projects/${projectID}/starrers`)).then((response) => {
             if (response.data) {
               this.rank_rate = response.data.length;
@@ -293,7 +298,7 @@ export default {
                   const my_rate = response.data.find( el => el.user.username === user.username || el.user.web_url === user.web_url );
                   this.has_rated = !!my_rate;
                 }
-              
+
               }
             }
           });
@@ -304,15 +309,15 @@ export default {
               const {pathname} = new URL(el.href);
               return pathname;
             }).filter((el) => {
-              return Utils.hasNotebookAsset(el || "");
+              return Utils.hasNotebookAsset(el || '');
             });
-            let projectID = data.getMetadata("sharinghub:id");
+            let projectID = data.getMetadata('sharinghub:id');
             get(PROXY_URL.concat(`projects/${projectID}`)).then((res) => {
               if (res.data) {
                 const {token} = this.auth;
                 const {http_url_to_repo, default_branch, namespace : {full_path}} = res.data;
                 const repo_url = new URL(http_url_to_repo);
-                let lab_path ="";
+                let lab_path ='';
                 if (notebooks.length > 0) {
                   const notebook_path = this.extractNotebookfile(full_path, notebooks[0]);
                   lab_path = notebook_path ? lab_path.concat(`&subpath=${notebook_path}`) : lab_path;
@@ -323,8 +328,8 @@ export default {
           }
 
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     ...mapActions(['switchLocale']),
@@ -332,15 +337,15 @@ export default {
       return window.location.toString();
     },
     dvcUrl() {
-      if (!this.data || !this.data instanceof STAC) return null;
-      const projectID = this.data.getMetadata("sharinghub:id");
-      if (!projectID) return null;
+      if (!this.data || !(this.data instanceof STAC)) {return null;}
+      const projectID = this.data.getMetadata('sharinghub:id');
+      if (!projectID) {return null;}
       return STORE_DVC_URL + projectID;
     },
     starProject() {
-      if (!this.data || !this.data instanceof STAC) throw  new Error('STAC is not defined');
-      const projectID = this.data.getMetadata("sharinghub:id");
-      if (!projectID) throw new Error('project is wrong');
+      if (!this.data || !(this.data instanceof STAC)) {throw  new Error('STAC is not defined');}
+      const projectID = this.data.getMetadata('sharinghub:id');
+      if (!projectID) {throw new Error('project is wrong');}
       post(PROXY_URL.concat(`projects/${projectID}/star`))
         .then((response) => {
           if (response.data) {
@@ -350,9 +355,9 @@ export default {
         });
     },
     UnStarProject() {
-      if (!this.data || !this.data instanceof STAC) throw  new Error('STAC is not defined');
-      const projectID = this.data.getMetadata("sharinghub:id");
-      if (!projectID) throw new Error('project id is wrong');
+      if (!this.data || !(this.data instanceof STAC)) {throw  new Error('STAC is not defined');}
+      const projectID = this.data.getMetadata('sharinghub:id');
+      if (!projectID) {throw new Error('project id is wrong');}
       post(PROXY_URL.concat(`projects/${projectID}/unstar`))
         .then((response) => {
           if (response.data) {
@@ -367,13 +372,13 @@ export default {
       window.open(url, '_blank');
     },
     extractNotebookfile(full_path, download_path){
-      const truth_path = download_path.replace(`${full_path}/`, "")
-      const index =  truth_path.indexOf("repository");
+      const truth_path = download_path.replace(`${full_path}/`, '');
+      const index =  truth_path.indexOf('repository');
       if(index){
-        return truth_path.substring(index).split("/").splice(1).join("/")
+        return truth_path.substring(index).split('/').splice(1).join('/');
       }
       return undefined;
-    },
+    }
   }
 };
 </script>

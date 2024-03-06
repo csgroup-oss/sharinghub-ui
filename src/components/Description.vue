@@ -35,7 +35,7 @@ export default {
       const md = markdownit({
         html: this.allowHTML,
         linkify: true,
-        typographer: true,
+        typographer: true
       });
       return md.render(text);
     }

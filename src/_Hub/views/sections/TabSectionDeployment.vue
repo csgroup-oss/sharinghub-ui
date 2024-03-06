@@ -1,24 +1,12 @@
-<script>
-import {defineComponent} from 'vue';
-import ProjectDownLoadStats from "@/_Hub/components/Stats/ProjectDownLoadStats.vue";
-
-export default defineComponent({
-  name: "TabSectionDeployment",
-  components: {ProjectDownLoadStats},
-
-});
-</script>
-
 <template>
-
   <b-row>
     <b-col cols="4">
-      <ProjectDownLoadStats/>
+      <ProjectDownLoadStats />
     </b-col>
     <b-col class="mt-5" cols="12">
       <b-dropdown>
         <template #button-content>
-          <b-icon scale="0.8" icon="file-code-fill"/>
+          <b-icon scale="0.8" icon="file-code-fill" />
           deploy
         </template>
         <b-dropdown-item>
@@ -27,12 +15,19 @@ export default defineComponent({
         </b-dropdown-item>
       </b-dropdown>
     </b-col>
-
-
   </b-row>
-
-
 </template>
+
+<script>
+import {defineComponent} from 'vue';
+import ProjectDownLoadStats from '@/_Hub/components/Stats/ProjectDownLoadStats.vue';
+
+export default defineComponent({
+  name: 'TabSectionDeployment',
+  components: {ProjectDownLoadStats}
+
+});
+</script>
 
 <style scoped lang="scss">
 #my-chart-id {

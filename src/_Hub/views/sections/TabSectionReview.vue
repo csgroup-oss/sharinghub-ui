@@ -1,13 +1,21 @@
+<template>
+  <div class="w-100">
+    <Awaiter v-if="isLoading" :is-visible="isLoading" />
+    <Vssue :title="title" :options="options" v-if="!isLoading" />
+  </div>
+</template>
+
+
 <script>
 import Vue, {defineComponent} from 'vue';
-import {PROXY_URL} from "@/_Hub/Endpoint";
+import {PROXY_URL} from '@/_Hub/Endpoint';
 
-import Vssue, {VssueComponent} from "../../../../vendors-release/dist/vssue";
+import Vssue, {VssueComponent} from '../../../../vendors-release/dist/vssue';
 import '../../../../vendors-release/dist/vssue.css';
-import GitlabV4 from "../../../../vendors-release/lib/index";
+import GitlabV4 from '../../../../vendors-release/lib/index';
 
-import {mapState} from "vuex";
-import Awaiter from "@/_Hub/components/Awaiter.vue";
+import {mapState} from 'vuex';
+import Awaiter from '@/_Hub/components/Awaiter.vue';
 
 
 Vue.use(Vssue);
@@ -19,17 +27,17 @@ const vsOptions = {
   labels: ['discussion', 'sharingHub'],
   prefix: 'Review -',
   admins: [],
-  locale: "en",
+  locale: 'en',
   baseURL: PROXY_URL,
   issueContent: ({url}) => url,
-  autoCreateIssue: true,
+  autoCreateIssue: true
 };
 
 export default defineComponent({
-  name: "TabSectionReview",
+  name: 'TabSectionReview',
   components: {
     Awaiter,
-    'Vssue': VssueComponent,
+    'Vssue': VssueComponent
   },
   computed: {
     ...mapState(['data', 'uiLanguage', 'auth'])
@@ -38,9 +46,9 @@ export default defineComponent({
   data() {
     return {
       isLoading: true,
-      title: "SharingHub",
+      title: 'SharingHub',
       options: {
-        ...vsOptions,
+        ...vsOptions
       },
       refreshTimeout:null
     };
@@ -54,8 +62,8 @@ export default defineComponent({
         if (data) {
           this.refreshTimeout = setTimeout(() => {
             this.options = Object.assign(this.options, {
-              repo: data.properties["sharinghub:id"],
-              clientId: this.auth.token,
+              repo: data.properties['sharinghub:id'],
+              clientId: this.auth.token
             });
             this.isLoading = false;
           }, 250);
@@ -76,14 +84,6 @@ export default defineComponent({
 });
 </script>
 
-
-<template>
-  <div class="w-100">
-    <Awaiter v-if="isLoading" :is-visible="isLoading"/>
-    <Vssue :title="title" :options="options" v-if="!isLoading"/>
-  </div>
-</template>
-
 <style scoped lang="scss">
 @import "../../../theme/variables.scss";
 .vssue, .markdown-body {
@@ -97,4 +97,3 @@ export default defineComponent({
 }
 
 </style>
-

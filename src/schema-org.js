@@ -19,10 +19,10 @@ function toBrowserUrl(url, store) {
 function addSpatialCoverage(schema, bbox) {
   if (Array.isArray(bbox) && bbox.length >= 4) {
     schema.spatialCoverage = {
-      "@type": "Place",
+      '@type': 'Place',
       geo: {
-        "@type": "GeoShape",
-        box: (bbox || []).join(" ")
+        '@type': 'GeoShape',
+        box: (bbox || []).join(' ')
       }
     };
   }
@@ -38,7 +38,7 @@ function formatTemporalCoverage(dates) {
 function makeAssets(data) {
   if (Utils.size(data.assets) > 0) {
     return Object.values(data.assets).map(a => ({
-      "@type": "DataDownload",
+      '@type': 'DataDownload',
       contentUrl: Utils.toAbsolute(a.href, data.getAbsoluteUrl()),
       encodingFormat: a.type,
       name: a.title
@@ -47,7 +47,7 @@ function makeAssets(data) {
   return [];
 }
 
-function makeLinks(links, data, store, type = "DataCatalog") {
+function makeLinks(links, data, store, type = 'DataCatalog') {
   return links.map(link => {
     let name, isBasedOn;
     if (link instanceof STAC) {
@@ -59,7 +59,7 @@ function makeLinks(links, data, store, type = "DataCatalog") {
       isBasedOn = Utils.toAbsolute(link.href, data.getAbsoluteUrl());
     }
     let obj = {
-      "@type": type,
+      '@type': type,
       name,
       url: toBrowserUrl(isBasedOn, store),
       isBasedOn
@@ -75,22 +75,22 @@ function makeProvider(providers, role) {
   return providers
     .filter(p => Utils.isObject(p) && Array.isArray(p.roles) && p.roles.includes(role))
     .map(p => ({
-      "@type": "Organization",
-      "name": p.name,
-      "description": p.description,
-      "url": p.url,
-      "email": p.email || p.mail,
+      '@type': 'Organization',
+      'name': p.name,
+      'description': p.description,
+      'url': p.url,
+      'email': p.email || p.mail
     }));
 }
 
 function fallbackDescription(data, store) {
   let stacType, container;
   if (data instanceof STAC) {
-    stacType = data.isItem() ? "Item" : data.type;
+    stacType = data.isItem() ? 'Item' : data.type;
     container = data.collection;
   }
   else if (Utils.isObject(data) && data.rel === 'item') {
-    stacType = "Item";
+    stacType = 'Item';
   }
   if (stacType) {
     let type = i18n.tc(`stac${stacType}`);
@@ -126,20 +126,20 @@ function createBaseSchema(data, type, store) {
   let provider; // host
   let creator; // processor
   if (Utils.size(providers) > 0) {
-    copyrightHolder = makeProvider(providers, "licensor");
-    producer = makeProvider(providers, "producer");
-    provider = makeProvider(providers, "host");
-    creator = makeProvider(providers, "processor");
+    copyrightHolder = makeProvider(providers, 'licensor');
+    producer = makeProvider(providers, 'producer');
+    provider = makeProvider(providers, 'host');
+    creator = makeProvider(providers, 'processor');
   }
 
   return {
-    "@context": "https://schema.org/",
-    "@type": type,
+    '@context': 'https://schema.org/',
+    '@type': type,
     name,
-    description: data.getMetadata("description") || fallbackDescription(data, store),
-    citation: data.getMetadata("sci:citation"),
-    identifier: data.getMetadata("sci:doi") || data.id,
-    keywords: data.getMetadata("keywords"),
+    description: data.getMetadata('description') || fallbackDescription(data, store),
+    citation: data.getMetadata('sci:citation'),
+    identifier: data.getMetadata('sci:doi') || data.id,
+    keywords: data.getMetadata('keywords'),
     license,
     url,
     isBasedOn: stacUrl,
@@ -183,7 +183,7 @@ export function createCatalogSchema(data, parents, store) {
   }
 
   schema.hasPart = makeLinks(store.getters.catalogs, data, store);
-  schema.dataset = makeLinks(store.getters.items, data, store, "Dataset");
+  schema.dataset = makeLinks(store.getters.items, data, store, 'Dataset');
   schema.isPartOf = makeLinks(parents, data, store);
 
   return schema;

@@ -13,7 +13,7 @@ L.AreaSelect = L.Class.extend({
     minHeight: 30,
     minHorizontalSpacing: 30,
     minVerticalSpacing: 30,
-    keepAspectRatio: false,
+    keepAspectRatio: false
   },
 
   initialize: function (options) {
@@ -27,11 +27,11 @@ L.AreaSelect = L.Class.extend({
     this.map = map;
     if (this._container) { this.map._controlContainer.appendChild(this._container); }
     else { this._createElements(); }
-    this.map.on("moveend", this._onMapChange, this);
-    this.map.on("zoomend", this._onMapChange, this);
-    this.map.on("resize", this._onMapResize, this);
+    this.map.on('moveend', this._onMapChange, this);
+    this.map.on('zoomend', this._onMapChange, this);
+    this.map.on('resize', this._onMapResize, this);
 
-    this.fire("change");
+    this.fire('change');
     this._render();
     return this;
   },
@@ -74,16 +74,16 @@ L.AreaSelect = L.Class.extend({
       { sw: this.map.containerPointToLatLng(bottomLeft) },
       { nw: this.map.containerPointToLatLng(topLeft) },
       { ne: this.map.containerPointToLatLng(topRight) },
-      { se: this.map.containerPointToLatLng(bottomRight) },
+      { se: this.map.containerPointToLatLng(bottomRight) }
     ];
 
     return coordinates;
   },
 
   remove: function () {
-    this.map.off("moveend", this._onMapChange);
-    this.map.off("zoomend", this._onMapChange);
-    this.map.off("resize", this._onMapResize);
+    this.map.off('moveend', this._onMapChange);
+    this.map.off('zoomend', this._onMapChange);
+    this.map.off('resize', this._onMapResize);
 
     this._container.parentNode.removeChild(this._container);
   },
@@ -94,56 +94,56 @@ L.AreaSelect = L.Class.extend({
     this._height = parseInt(dimensions.height) || this._height;
     this._width = parseInt(dimensions.width) || this._width;
     this._render();
-    this.fire("change");
+    this.fire('change');
   },
 
   _createElements: function () {
     if (this._container) { return; }
 
     this._container = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-container",
+      'div',
+      'leaflet-areaselect-container',
       this.map._controlContainer
     );
     this._topShade = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-shade leaflet-control",
+      'div',
+      'leaflet-areaselect-shade leaflet-control',
       this._container
     );
     this._bottomShade = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-shade leaflet-control",
+      'div',
+      'leaflet-areaselect-shade leaflet-control',
       this._container
     );
     this._leftShade = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-shade leaflet-control",
+      'div',
+      'leaflet-areaselect-shade leaflet-control',
       this._container
     );
     this._rightShade = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-shade leaflet-control",
+      'div',
+      'leaflet-areaselect-shade leaflet-control',
       this._container
     );
 
     this._nwHandle = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-handle leaflet-control",
+      'div',
+      'leaflet-areaselect-handle leaflet-control',
       this._container
     );
     this._swHandle = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-handle leaflet-control",
+      'div',
+      'leaflet-areaselect-handle leaflet-control',
       this._container
     );
     this._neHandle = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-handle leaflet-control",
+      'div',
+      'leaflet-areaselect-handle leaflet-control',
       this._container
     );
     this._seHandle = L.DomUtil.create(
-      "div",
-      "leaflet-areaselect-handle leaflet-control",
+      'div',
+      'leaflet-areaselect-handle leaflet-control',
       this._container
     );
 
@@ -162,7 +162,7 @@ L.AreaSelect = L.Class.extend({
       event.stopPropagation();
       event.preventDefault();
       self.map.dragging.disable();
-      L.DomEvent.removeListener(this, "onpointerdown", onPointerDown);
+      L.DomEvent.removeListener(this, 'onpointerdown', onPointerDown);
       let curX = event.pageX;
       let curY = event.pageY;
       const ratio = self._width / self._height;
@@ -206,15 +206,15 @@ L.AreaSelect = L.Class.extend({
       }
       function onPointerUp() {
         self.map.dragging.enable();
-        L.DomEvent.removeListener(mapContainer, "pointerup", onPointerUp);
-        L.DomEvent.removeListener(mapContainer, "pointermove", onPointerMove);
-        L.DomEvent.addListener(handle, "pointerdown", onPointerDown);
-        self.fire("change");
+        L.DomEvent.removeListener(mapContainer, 'pointerup', onPointerUp);
+        L.DomEvent.removeListener(mapContainer, 'pointermove', onPointerMove);
+        L.DomEvent.addListener(handle, 'pointerdown', onPointerDown);
+        self.fire('change');
       }
-      L.DomEvent.addListener(mapContainer, "pointermove", onPointerMove);
-      L.DomEvent.addListener(mapContainer, "pointerup", onPointerUp);
+      L.DomEvent.addListener(mapContainer, 'pointermove', onPointerMove);
+      L.DomEvent.addListener(mapContainer, 'pointerup', onPointerUp);
     }
-    L.DomEvent.addListener(handle, "pointerdown", onPointerDown);
+    L.DomEvent.addListener(handle, 'pointerdown', onPointerDown);
   },
 
   _onMapResize: function () {
@@ -222,7 +222,7 @@ L.AreaSelect = L.Class.extend({
   },
 
   _onMapChange: function () {
-    this.fire("change");
+    this.fire('change');
   },
 
   _render: function () {
@@ -235,12 +235,12 @@ L.AreaSelect = L.Class.extend({
     var leftRightHeight = size.y - (topBottomHeight * 2);
 
     function setDimensions(element, dimension) {
-      element.style.width = dimension.width + "px";
-      element.style.height = dimension.height + "px";
-      element.style.top = dimension.top + "px";
-      element.style.left = dimension.left + "px";
-      element.style.bottom = dimension.bottom + "px";
-      element.style.right = dimension.right + "px";
+      element.style.width = dimension.width + 'px';
+      element.style.height = dimension.height + 'px';
+      element.style.top = dimension.top + 'px';
+      element.style.left = dimension.left + 'px';
+      element.style.bottom = dimension.bottom + 'px';
+      element.style.right = dimension.right + 'px';
     }
 
     setDimensions(this._topShade, {
@@ -270,21 +270,21 @@ L.AreaSelect = L.Class.extend({
 
     setDimensions(this._nwHandle, {
       left: leftRightWidth - handleOffset,
-      top: topBottomHeight - 7,
+      top: topBottomHeight - 7
     });
     setDimensions(this._neHandle, {
       right: leftRightWidth - handleOffset,
-      top: topBottomHeight - 7,
+      top: topBottomHeight - 7
     });
     setDimensions(this._swHandle, {
       left: leftRightWidth - handleOffset,
-      bottom: topBottomHeight - 7,
+      bottom: topBottomHeight - 7
     });
     setDimensions(this._seHandle, {
       right: leftRightWidth - handleOffset,
-      bottom: topBottomHeight - 7,
+      bottom: topBottomHeight - 7
     });
-  },
+  }
 });
 
 L.areaSelect = function (options) {

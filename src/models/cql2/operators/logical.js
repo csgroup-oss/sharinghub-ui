@@ -23,7 +23,7 @@ export default class CqlLogicalOperator extends CqlOperator {
 
 export class CqlAnd extends CqlLogicalOperator {
 
-  static SYMBOL = "and";
+  static SYMBOL = 'and';
 
   constructor(args = []) {
     super(CqlAnd.SYMBOL, args);
@@ -33,7 +33,7 @@ export class CqlAnd extends CqlLogicalOperator {
 
 export class CqlOr extends CqlLogicalOperator {
 
-  static SYMBOL = "or";
+  static SYMBOL = 'or';
 
   constructor(args = []) {
     super(CqlOr.SYMBOL, args);
@@ -43,7 +43,7 @@ export class CqlOr extends CqlLogicalOperator {
 
 export class CqlNot extends CqlLogicalOperator {
 
-  static SYMBOL = "not";
+  static SYMBOL = 'not';
 
   constructor(arg = null) {
     super(CqlNot.SYMBOL, arg ? [arg] : null);

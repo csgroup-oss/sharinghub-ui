@@ -115,13 +115,13 @@ export default {
       return `${this.type}-${this.id}`;
     },
     fileFormat() {
-      if (typeof this.asset.type === "string" && this.asset.type.length > 0) {
+      if (typeof this.asset.type === 'string' && this.asset.type.length > 0) {
         return this.formatMediaType(this.asset.type);
       }
       return null;
     },
     shortFileFormat() {
-      if (typeof this.asset.type === "string" && this.asset.type.length > 0) {
+      if (typeof this.asset.type === 'string' && this.asset.type.length > 0) {
         return this.formatMediaType(this.asset.type, null, {shorten: true});
       }
       return null;

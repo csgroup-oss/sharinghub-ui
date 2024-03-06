@@ -6,7 +6,7 @@
           <b-col cols="4">{{ $t('source.id') }}</b-col>
           <b-col>
             <code>{{ stacId }}</code>
-            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2"/>
+            <CopyButton :copyText="stacId" :button-props="{size: 'sm'}" variant="primary" class="ml-2" />
           </b-col>
         </b-row>
         <b-row v-if="stacVersion" class="stac-version">
@@ -16,7 +16,7 @@
         <b-row v-if="canValidate" class="validation">
           <b-col cols="4">{{ $t('source.valid') }}</b-col>
           <b-col>
-            <b-spinner v-if="valid === null" :label="$t('source.validating')" small/>
+            <b-spinner v-if="valid === null" :label="$t('source.validating')" small />
             <template v-else-if="valid === true">✔️</template>
             <template v-else-if="valid === false">❌</template>
             <template v-else>{{ $t('source.validationNA') }}</template>
@@ -24,34 +24,33 @@
         </b-row>
         <hr>
       </template>
-      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')"/>
+      <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')" />
     </div>
 
     <div v-if="showRoot">
-      <RootStats/>
+      <RootStats />
     </div>
   </div>
-
 </template>
 
 <script>
-import {defineComponent} from 'vue'
-import CopyButton from "@/components/CopyButton.vue";
-import Url from "@/components/Url.vue";
-import {mapActions, mapGetters, mapState} from "vuex";
-import Utils from "@/utils";
-import URI from "urijs";
-import {getBest, prepareSupported} from "@/locale-id";
-import RootStats from "@/components/RootStats.vue";
+import {defineComponent} from 'vue';
+import CopyButton from '@/components/CopyButton.vue';
+import Url from '@/components/Url.vue';
+import {mapActions, mapGetters, mapState} from 'vuex';
+import Utils from '@/utils';
+import URI from 'urijs';
+import {getBest, prepareSupported} from '@/locale-id';
+import RootStats from '@/components/RootStats.vue';
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
 
 export default defineComponent({
-  name: "TabSectionApiStac",
+  name: 'TabSectionApiStac',
   components: {
     RootStats,
     Url,
-    CopyButton,
+    CopyButton
   },
   props: {
     title: {
@@ -195,7 +194,7 @@ export default defineComponent({
     browserUrl() {
       return window.location.toString();
     }
-  },
+  }
 });
 
 </script>

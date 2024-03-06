@@ -33,7 +33,7 @@ import ViewMixin from './ViewMixin';
 import Utils from '../utils';
 
 export default {
-  name: "Catalogs",
+  name: 'Catalogs',
   components: {
     Catalog,
     Loading,
@@ -132,7 +132,7 @@ export default {
       }
       // Sort
       if (!this.hasMore && this.sort !== 0) {
-        catalogs = catalogs.slice(0).sort((a,b) => STAC.getDisplayTitle(a).localeCompare(STAC.getDisplayTitle(b), this.uiLanguage));
+        catalogs = catalogs.slice(0).sort((a, b) => STAC.getDisplayTitle(a).localeCompare(STAC.getDisplayTitle(b), this.uiLanguage));
         if (this.sort === -1) {
           catalogs = catalogs.reverse();
         }

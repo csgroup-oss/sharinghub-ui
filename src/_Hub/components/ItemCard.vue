@@ -6,7 +6,7 @@
           <img v-if="getPreview()" :src="getPreview()">
           <div class="flex align-items-center justify-content-end my-2 mx-2">
             <b-badge variant="secondary">
-              <b-icon icon="star-fill" scale="0.8" aria-hidden="true"></b-icon>
+              <b-icon icon="star-fill" scale="0.8" aria-hidden="true" />
               {{ starsProject }}
             </b-badge>
           </div>
@@ -26,7 +26,6 @@
               <small>{{ category }}</small>
             </text-view>
           </div>
-
         </div>
         <div class="items-card__content px-3">
           <div class="flex w-100 h-100 flex-column justify-content-between py-3">
@@ -35,16 +34,14 @@
             </h3>
 
             <div class="items-card__content__description mb-3">
-              <Description compact inline :description="getDescription"/>
+              <Description compact inline :description="getDescription" />
             </div>
 
             <div class="items-card__content__extra" v-if="!!updatedTime">
               <small class="">{{ updatedTime.charAt(0).toUpperCase() + updatedTime.slice(1) }}</small>
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   </b-col>
@@ -52,17 +49,17 @@
 
 <script>
 import {defineComponent} from 'vue';
-import TextView from "@/_Hub/components/TextView.vue";
-import {DateTime, Interval} from "luxon";
-import {mapGetters, mapState} from "vuex";
-import linuxIco from "@/assets/img/confused-linux.jpg";
-import Description from "@/components/Description.vue";
+import TextView from '@/_Hub/components/TextView.vue';
+import {DateTime, Interval} from 'luxon';
+import {mapGetters, mapState} from 'vuex';
+import linuxIco from '@/assets/img/confused-linux.jpg';
+import Description from '@/components/Description.vue';
 
 export default defineComponent({
-  name: "ItemCard",
+  name: 'ItemCard',
   components: {
     Description,
-    TextView,
+    TextView
   },
   props: {
     stac: {
@@ -71,13 +68,13 @@ export default defineComponent({
     },
     category: {
       type: String,
-      default: undefined,
+      default: undefined
     }
   },
   data() {
     return {
       owner: linuxIco,
-      rankRate: 0,
+      rankRate: 0
     };
   },
   computed: {
@@ -92,27 +89,27 @@ export default defineComponent({
       const days = interval.length('days');
       if (hours <= 24) {
           if(hours < 1){
-            return `${this.$t('fields.date.update_less_hour', [Math.round(hours)])}`; 
+            return `${this.$t('fields.date.update_less_hour', [Math.round(hours)])}`;
           }
         return `${this.$t('fields.date.update_hours', [Math.round(hours)])}`;
       } else if (days <= 30) {
         return `${this.$t('fields.date.update_days', [Math.round(days)])}`;
       } else {
-        const lang = ["fr", "en"].includes(this.uiLanguage) ? this.uiLanguage : "en";
+        const lang = ['fr', 'en'].includes(this.uiLanguage) ? this.uiLanguage : 'en';
         return `${this.$t('fields.date.update_date', [date.setLocale(lang).toLocaleString({
           month: 'long',
           day: 'numeric',
-          year: "numeric"
+          year: 'numeric'
         })])}`;
       }
     },
     getDescription() {
       const regex = /!\[.*?\]\((.*?)\)|<img.*?>|\[.*\]?|\(https:.*?\) | \(<ul>.*.<\/ul>\) /g;
-      const r = this.stac.properties?.description?.replace(regex, "") || " ";
-      return r.substr(0, 120).concat(" ...");
+      const r = this.stac.properties?.description?.replace(regex, '') || ' ';
+      return r.substr(0, 120).concat(' ...');
     },
     getUrl() {
-      return this.toBrowserPath(this.stac.links.find(el => el.rel === "self").href);
+      return this.toBrowserPath(this.stac.links.find(el => el.rel === 'self').href);
     },
     starsProject() {
       return this.stac.properties['sharinghub:stars'];
@@ -123,19 +120,19 @@ export default defineComponent({
   methods: {
     seeModel(event) {
       event.preventDefault();
-      this.$router.push({path: `/${this.getUrl.split('/').splice(3).join("/")}`,});
+      this.$router.push({path: `/${this.getUrl.split('/').splice(3).join('/')}`});
     },
     getPreview() {
-      return this.stac.links.find(el => el.rel === "preview")?.href;
+      return this.stac.links.find(el => el.rel === 'preview')?.href;
     },
     handleFilterByTag(event, tag) {
       event.stopImmediatePropagation();
       const {topics, q, sortby} = this.$route.query;
-      const topics_array = topics?.split(",") || []
+      const topics_array = topics?.split(',') || [];
       if(topics_array.includes(tag)) {
         return;
       }
-      topics_array.push(tag)
+      topics_array.push(tag);
       let query = {topics : topics_array.join(',')};
        if(q){
          query = {...query, q};
@@ -143,7 +140,7 @@ export default defineComponent({
        if(sortby){
          query = {...query, sortby};
        }
-       this.$router.push({path: "", query});
+       this.$router.push({path: '', query});
 
     }
   }

@@ -18,7 +18,7 @@ export default class CqlOperator {
   }
 
   static get description() {
-    return "";
+    return '';
   }
 
   static get label() {

@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { formatKey } from "@radiantearth/stac-fields/helper";
-import { mapGetters, mapState } from "vuex";
-import Utils from "../utils";
+import { formatKey } from '@radiantearth/stac-fields/helper';
+import { mapGetters, mapState } from 'vuex';
+import Utils from '../utils';
 
 export default {
-  name: "RootStats",
+  name: 'RootStats',
   components: {
     StatsChart: () => import('./metadata/StatsChart.vue')
   },
@@ -55,7 +55,7 @@ export default {
       let obj = {
         OGC: {},
         STAC: {},
-        Other: {} 
+        Other: {}
       };
       for(let uri of this.conformsTo) {
         let confClass =  this.parseConformance(uri);

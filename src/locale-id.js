@@ -35,7 +35,7 @@ export default function parse(locale) {
 
   const retVar = {
     keyword,
-    language: language.toLowerCase(),
+    language: language.toLowerCase()
   };
 
   if (!parts.length) {
@@ -125,7 +125,7 @@ export function prepareSupported(supported) {
       lgs[language] = {
         countries: {},
         firstCountry: undefined,
-        main: undefined,
+        main: undefined
       };
     }
 

@@ -2,27 +2,30 @@
   <ul class="tree" v-b-visible="load">
     <li>
       <b-button v-if="pagination" size="sm" variant="light" disabled>
-        <b-icon-three-dots/>
+        <b-icon-three-dots />
       </b-button>
       <template v-else-if="mayHaveChildren">
         <b-button size="sm" variant="light" @click="toggle">
-          <b-icon-folder-minus v-if="expanded"/>
-          <b-icon-folder-plus v-else/>
+          <b-icon-folder-minus v-if="expanded" />
+          <b-icon-folder-plus v-else />
         </b-button>
       </template>
       <b-button v-else size="sm" variant="light" :to="to">
-        <b-icon-file-earmark-richtext/>
+        <b-icon-file-earmark-richtext />
       </b-button>
 
-      <b-button size="sm" variant="light" :class="{path: onPath || active}" :disabled="!to && !active" :to="to"
-                @click="onClick">
+      <b-button
+        size="sm" variant="light" :class="{path: onPath || active}" :disabled="!to && !active"
+        :to="to"
+        @click="onClick"
+      >
         {{ title }}
       </b-button>
 
       <template v-if="expanded && mayHaveChildren">
         <ul v-if="loading" class="tree">
           <li>
-            <b-spinner :label="$t('loading')" small/>
+            <b-spinner :label="$t('loading')" small />
           </li>
         </ul>
         <ul v-else-if="childs.length === 0" class="tree">
@@ -33,7 +36,7 @@
           </li>
         </ul>
         <template v-else>
-          <Tree v-for="(child, i) in shownChilds" :key="i" :item="child" :parent="stac" :path="path"/>
+          <Tree v-for="(child, i) in shownChilds" :key="i" :item="child" :parent="stac" :path="path" />
           <b-button class="show-more" v-if="hasMore" variant="light" @click="showMore" v-b-visible.300="showMore">
             {{ $t('showMore') }}
           </b-button>
@@ -44,11 +47,10 @@
 </template>
 
 <script>
-import {BIconFileEarmarkRichtext, BIconFolderMinus, BIconFolderPlus, BIconThreeDots} from "bootstrap-vue";
+import {BIconFileEarmarkRichtext, BIconFolderMinus, BIconFolderPlus, BIconThreeDots} from 'bootstrap-vue';
 import {mapGetters, mapState} from 'vuex';
 import Utils from '../utils';
 import STAC from '../models/stac';
-import config from "../../src/config";
 
 export default {
   name: 'Tree',
@@ -217,9 +219,7 @@ export default {
       if (this.expanded && !this.pagination) {
         this.loading = true;
         let url = this.item instanceof STAC ? this.item.getAbsoluteUrl() : this.item.href;
-        console.log("url", url);
-        let projetID = this.getProjectID(url);
-        await this.$store.dispatch("load", {url, loadApi: true});
+        await this.$store.dispatch('load', {url, loadApi: true});
         this.loading = false;
       }
     }

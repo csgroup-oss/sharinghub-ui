@@ -2,50 +2,62 @@
   <div class="w-100 container">
     <div class="section lg:ml-5 xl:ml-5">
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 p-0">
-        <TagFilterComponent v-if="!!tags" 
-          :handle-reset-tags="handleResetTags" 
+        <TagFilterComponent
+          v-if="!!tags"
+          :handle-reset-tags="handleResetTags"
           :handle-filter-tags="handleFilterTag"
           :filtered-tags="filtered_tags" :tags="tags"
-          
-          />
+        />
       </div>
 
       <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12">
         <div class="flex sm:flex-column lg:flex-row align-items-center justify-content-between">
           <div>
             <text-view class="pl-3" type="header__b20">
-              {{ title }}</text-view>
+              {{ title }}
+            </text-view>
             <text-view type="header__16" class="text-secondary ml-2" v-if="get_data_matched() !== 0">
-            {{ get_data_matched() }}</text-view>
+              {{ get_data_matched() }}
+            </text-view>
           </div>
 
           <div class="flex align-items-center col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:mt-3">
             <b-input-group size="sm" class="">
-              <b-form-input type="text" v-model="term_filter" autocomplete="false" @update="handleFilterByTerms"
-                :placeholder="$t('fields.filter_by_name')">
-              </b-form-input>
+              <b-form-input
+                type="text" v-model="term_filter" autocomplete="false" @update="handleFilterByTerms"
+                :placeholder="$t('fields.filter_by_name')"
+              />
             </b-input-group>
 
             <b-form-select :disabled="only_starred_project" @change="handleSort" v-model="options.selected" class="ml-3" size="sm">
-              <b-form-select-option :value="null">{{
-                $t("fields.sort.sort_by")
-              }}</b-form-select-option>
-              <b-form-select-option value="+properties.title">{{
-                $t("fields.sort.title")
-              }}</b-form-select-option>
-              <b-form-select-option value="-properties.sharinghub:stars">{{ $t("fields.sort.like") }}
+              <b-form-select-option :value="null">
+                {{
+                  $t("fields.sort.sort_by")
+                }}
               </b-form-select-option>
-              <b-form-select-option value="-properties.created">{{ $t("fields.sort.created") }}
+              <b-form-select-option value="+properties.title">
+                {{
+                  $t("fields.sort.title")
+                }}
               </b-form-select-option>
-              <b-form-select-option value="-properties.updated">{{ $t("fields.sort.updated") }}
+              <b-form-select-option value="-properties.sharinghub:stars">
+                {{ $t("fields.sort.like") }}
+              </b-form-select-option>
+              <b-form-select-option value="-properties.created">
+                {{ $t("fields.sort.created") }}
+              </b-form-select-option>
+              <b-form-select-option value="-properties.updated">
+                {{ $t("fields.sort.updated") }}
               </b-form-select-option>
             </b-form-select>
 
-            <b-button v-if="isAuthenticated" @click="handleSelectStarredProject(!only_starred_project)" 
+            <b-button
+              v-if="isAuthenticated" @click="handleSelectStarredProject(!only_starred_project)"
               v-b-tooltip.hover.topleft :title="$t('fields.tags.starred_project')"
               class="ml-2" :variant="only_starred_project ? 'primary':'outline-primary'"
-              size="sm">
-                <b-icon icon="star"/>
+              size="sm"
+            >
+              <b-icon icon="star" />
             </b-button>
           </div>
         </div>
@@ -56,7 +68,11 @@
         <template v-else>
           <b-overlay :show="over_loading" rounded="sm">
             <b-row v-if="dataList.length !== 0" class="flex flex-wrap align-items-center">
-              <item-card v-for="dataset in dataList" :stac="dataset" />
+              <item-card
+                v-for="(dataset, idx) in dataList"
+                :key="idx"
+                :stac="dataset"
+              />
             </b-row>
             <h3 class="mt-6" v-else>
               {{ $t("fields.no_data_found", [":("]) }}
@@ -74,23 +90,23 @@
 </template>
 
 <script>
-import {defineComponent } from "vue";
-import TextView from "@/_Hub/components/TextView.vue";
-import { mapState } from "vuex";
-import ItemCard from "@/_Hub/components/ItemCard.vue";
-import { get, CONNEXION_MODE } from "@/_Hub/tools/https";
-import { PROXY_URL, STAC_SEARCH } from "@/_Hub/Endpoint";
-import Awaiter from "@/_Hub/components/Awaiter.vue";
-import _ from "lodash";
-import TagFilterComponent from "@/_Hub/components/TagFilterComponent.vue";
+import {defineComponent } from 'vue';
+import TextView from '@/_Hub/components/TextView.vue';
+import { mapState } from 'vuex';
+import ItemCard from '@/_Hub/components/ItemCard.vue';
+import { get, CONNEXION_MODE } from '@/_Hub/tools/https';
+import { PROXY_URL, STAC_SEARCH } from '@/_Hub/Endpoint';
+import Awaiter from '@/_Hub/components/Awaiter.vue';
+import _ from 'lodash';
+import TagFilterComponent from '@/_Hub/components/TagFilterComponent.vue';
 
 export default defineComponent({
-  name: "ListProjectsView",
+  name: 'ListProjectsView',
   components: { TagFilterComponent, Awaiter, ItemCard, TextView },
   data() {
     return {
       dataList: [],
-      title: "",
+      title: '',
       loading: true,
       tags: undefined,
       pagination: 1,
@@ -100,14 +116,14 @@ export default defineComponent({
       term_filter: null,
       nameSearchTimeout: null,
       options: {
-        selected: null,
+        selected: null
       },
       data_context : undefined,
-      only_starred_project: false,
+      only_starred_project: false
     };
   },
   computed: {
-    ...mapState(["data", "auth", "entriesRoute", "uiLanguage"]),
+    ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage']),
     isAuthenticated(){
       return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
     }
@@ -120,7 +136,7 @@ export default defineComponent({
         this.filtered_tags = [];
         this.dataList = [];
         this.dataList = [...(await this.fetchCollectionsItems())];
-      },
+      }
     },
     entriesRoute: {
       immediate: true,
@@ -129,8 +145,8 @@ export default defineComponent({
           this.dataList = [];
           this.dataList = [...(await this.fetchCollectionsItems())];
         }
-      },
-    },
+      }
+    }
   },
   async beforeMount() {
     this.getTopics();
@@ -139,7 +155,7 @@ export default defineComponent({
   },
   methods: {
     async getTopics() {
-      return get(PROXY_URL.concat("tags"))
+      return get(PROXY_URL.concat('tags'))
         .then((response) => {
           if (response.data) {
             this.tags = response.data;
@@ -154,7 +170,7 @@ export default defineComponent({
       let { q, topics, sortby, starred } = this.$route.query;
       let route = this.$route.params.pathMatch;
       const topic = this.entriesRoute.find((el) => el.route === route);
-      this.title = topic.title || " ";
+      this.title = topic.title || ' ';
 
       let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=30`);
 
@@ -177,7 +193,7 @@ export default defineComponent({
         .then((response) => {
           if (response.data) {
             const { features, links, context } = response.data;
-            this.next_link = links.find((el) => el.rel === "next")?.href;
+            this.next_link = links.find((el) => el.rel === 'next')?.href;
             this.loading = false;
             this.data_context = context;
             return features || [];
@@ -187,10 +203,10 @@ export default defineComponent({
           }
         })
         .catch(() => {
-          if (this.$route.name !== "Login") {
+          if (this.$route.name !== 'Login') {
             this.$router.push({
-              path: "/login",
-              query: { redirect: this.$route.params?.pathMatch },
+              path: '/login',
+              query: { redirect: this.$route.params?.pathMatch }
             });
           }
         });
@@ -198,7 +214,7 @@ export default defineComponent({
     async handleFilterTag(item) {
       let query = {};
       const { topics, q, sortby, starred } = this.$route.query;
-      let array_topics = topics ? topics.split(",") : [];
+      let array_topics = topics ? topics.split(',') : [];
       if (!array_topics.includes(item)) {
         array_topics.push(item);
       } else {
@@ -206,18 +222,18 @@ export default defineComponent({
       }
       this.filtered_tags = array_topics;
       if (array_topics.length !== 0) {
-        query = { ...query, topics: array_topics.join(",") };
+        query = { ...query, topics: array_topics.join(',') };
       }
       query = q ? { ...query, q } : query;
       query = sortby ? { ...query, sortby } : query;
       query = starred ? { ...query, starred } : query;
-      this.$router.push({ path: "", query });
+      this.$router.push({ path: '', query });
     },
     async loadItemsData(url) {
       return get(url).then((response) => {
         if (response.data) {
           const { features, links } = response.data;
-          this.next_link = links.find((el) => el.rel === "next")?.href;
+          this.next_link = links.find((el) => el.rel === 'next')?.href;
           return features || [];
         }
       });
@@ -237,7 +253,7 @@ export default defineComponent({
           query = topics ? { ...query, topics } : query;
           query = sortby ? { ...query, sortby } : query;
           query = starred ? { ...query, starred } : query;
-          this.$router.push({ path: "", query });
+          this.$router.push({ path: '', query });
         }, 750);
       } else {
         query = { ...query, q: term_query };
@@ -245,7 +261,7 @@ export default defineComponent({
         query = sortby ? { ...query, sortby } : query;
         query = starred ? { ...query, starred } : query;
         this.nameSearchTimeout = setTimeout(() => {
-          this.$router.push({ path: "", query });
+          this.$router.push({ path: '', query });
         }, 750);
       }
     },
@@ -255,18 +271,18 @@ export default defineComponent({
       query = q ? { ...query, q } : query;
       query = topics ? { ...query, topics } : query;
       query = criteria ? { ...query, sortby: criteria } : query;
-      this.$router.push({ path: "", query });
+      this.$router.push({ path: '', query });
     },
     addQueryToUrl(_url, q) {
-      let has_freetext_query = _url.includes("&q=");
+      let has_freetext_query = _url.includes('&q=');
       return has_freetext_query ? _url.concat(`,${q}`) : _url.concat(`&q=${q}`);
     },
     addSortToUrl(_url, criteria) {
       return _url.concat(`&sortby=${criteria}`);
     },
     addTopicsToUrl(_url, topics = []) {
-      let has_freetext_query = _url.includes("&q=");
-      let url = has_freetext_query ? _url : _url.concat("&q=");
+      let has_freetext_query = _url.includes('&q=');
+      let url = has_freetext_query ? _url : _url.concat('&q=');
       topics.forEach((topic, index) => {
         url = has_freetext_query
           ? url.concat(`,[${topic}]`)
@@ -277,14 +293,14 @@ export default defineComponent({
       return url;
     },
     addStarredToUrl(_url) {
-      let has_freetext_query = _url.includes("&q=");
+      let has_freetext_query = _url.includes('&q=');
       return has_freetext_query
         ? _url.concat(`,:starred`)
         : _url.concat(`&q=:starred`);
     },
     selectedFilterFromURL(queryTopics) {
-      queryTopics.split(",").forEach((el) => {
-        if (el && el !== "") {
+      queryTopics.split(',').forEach((el) => {
+        if (el && el !== '') {
           this.filtered_tags = [...this.filtered_tags, el];
         }
       });
@@ -299,11 +315,11 @@ export default defineComponent({
         return;
       }
       this.filtered_tags = [];
-   
+
       let query = {};
       query = q ? { ...query, q } : query;
       query = sortby ? { ...query, sortby } : query;
-      this.$router.push({ path: "", query });
+      this.$router.push({ path: '', query });
     },
     handleSelectStarredProject(only_starred) {
       this.only_starred_project = only_starred;
@@ -314,7 +330,7 @@ export default defineComponent({
       if (only_starred) {
         query = { ...query, starred: true };
       }
-      this.$router.push({ path: "", query });
+      this.$router.push({ path: '', query });
     },
     get_data_matched(){
       if(!this.data_context){
@@ -323,7 +339,7 @@ export default defineComponent({
       const {matched} = this.data_context;
       return matched || 0;
     }
-  },
+  }
 });
 </script>
 

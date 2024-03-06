@@ -4,6 +4,7 @@ STAC Browser exposes a wide variety of configuration options.
 The following options can be provided in various ways to STAC Browser, either when running it or when building it.
 
 The following ways to set config options are possible:
+
 - Customize the **[config file](../config.js)** (recommended)
 - Additionally, some options can be [provided through the **root catalog**](../README.md#customize-through-root-catalog) for consistency across multiple deployments (recommended)
 - Append them to the **CLI** command as parameter (see [Get Started](../README.md#get-started) for an example)
@@ -14,35 +15,36 @@ The following ways to set config options are possible:
   Then run the build procedure and after completion, you can fill the `dist/config.js` with any options that you want to customize.
 
 **The following options are available:**
-* [catalogUrl](#catalogurl)
-* [catalogTitle](#catalogtitle)
-* [allowExternalAccess](#allowexternalaccess)
-* [allowedDomains](#alloweddomains)
-* [apiCatalogPriority](#apicatalogpriority)
-* [detectLocaleFromBrowser](#detectlocalefrombrowser)
-* [storeLocale](#storelocale)
-* [locale](#locale)
-* [fallbackLocale](#fallbacklocale)
-* [supportedLocales](#supportedlocales)
-* [stacLint](#staclint)
-* [historyMode](#historymode)
-* [pathPrefix](#pathprefix)
-* [stacProxyUrl](#stacproxyurl)
-* [buildTileUrlTemplate](#buildtileurltemplate)
-* [useTileLayerAsFallback](#usetilelayerasfallback)
-* [displayGeoTiffByDefault](#displaygeotiffbydefault)
-* [redirectLegacyUrls](#redirectlegacyurls)
-* [itemsPerPage](#itemsperpage)
-* [maxPreviewsOnMap](#maxpreviewsonmap)
-* [cardViewMode](#cardviewmode)
-* [cardViewSort](#cardviewsort)
-* [showThumbnailsAsAssets](#showthumbnailsasassets)
-* [defaultThumbnailSize](#defaultthumbnailsize)
-* [crossOriginMedia](#crossoriginmedia)
-* [requestHeaders](#requestheaders)
-* [requestQueryParameters](#requestqueryparameters)
-* [authConfig](#authconfig)
-* [preprocessSTAC](#preprocessstac)
+
+- [catalogUrl](#catalogurl)
+- [catalogTitle](#catalogtitle)
+- [allowExternalAccess](#allowexternalaccess)
+- [allowedDomains](#alloweddomains)
+- [apiCatalogPriority](#apicatalogpriority)
+- [detectLocaleFromBrowser](#detectlocalefrombrowser)
+- [storeLocale](#storelocale)
+- [locale](#locale)
+- [fallbackLocale](#fallbacklocale)
+- [supportedLocales](#supportedlocales)
+- [stacLint](#staclint)
+- [historyMode](#historymode)
+- [pathPrefix](#pathprefix)
+- [stacProxyUrl](#stacproxyurl)
+- [buildTileUrlTemplate](#buildtileurltemplate)
+- [useTileLayerAsFallback](#usetilelayerasfallback)
+- [displayGeoTiffByDefault](#displaygeotiffbydefault)
+- [redirectLegacyUrls](#redirectlegacyurls)
+- [itemsPerPage](#itemsperpage)
+- [maxPreviewsOnMap](#maxpreviewsonmap)
+- [cardViewMode](#cardviewmode)
+- [cardViewSort](#cardviewsort)
+- [showThumbnailsAsAssets](#showthumbnailsasassets)
+- [defaultThumbnailSize](#defaultthumbnailsize)
+- [crossOriginMedia](#crossoriginmedia)
+- [requestHeaders](#requestheaders)
+- [requestQueryParameters](#requestqueryparameters)
+- [authConfig](#authconfig)
+- [preprocessSTAC](#preprocessstac)
 
 ## catalogUrl
 
@@ -72,12 +74,14 @@ This applies to query paramaters and request headers.
 ## apiCatalogPriority
 
 For STAC APIs there are two potential sources for catalogs and collections:
+
 1. Collections loaded from `/collections` and detected through the `data` link
 2. Childs (i.e. Catalogs and Collections) loaded from various sources and detected through the `child` links
 
 By default, STAC Browser loads and shows data from both sources, but tries to eliminate duplicates.
 If you only want to show the data from one of the sources, you can use this option.
 The following options are available:
+
 - `collections`: Show only collections
 - `childs`: Show only children
 - `null`: Default behavior
@@ -121,6 +125,7 @@ Enables or disables a feature that validates the STAC catalog when opening the "
 Validation uses the external service [staclint.com](https://staclint.com).
 
 Validation is automatically disabled in the following cases:
+
 - the host of a catalog is `localhost`, `127.0.0.1` or `::1`
 - [private query parameters](../README.md#private-query-parameters) have been set
 - `stacProxyUrl` is set
@@ -130,11 +135,12 @@ Validation is automatically disabled in the following cases:
 ***build-only option***
 
 ### `history`
-STAC Browser defaults to _history mode_ (value `history` in the config file), which is based on 
+
+STAC Browser defaults to *history mode* (value `history` in the config file), which is based on
 [HTML5 History Mode](https://v3.router.vuejs.org/guide/essentials/history-mode.html#html5-history-mode).
 It gives the best experience and allows search engines to better crawl STAC Browser so that it can be found in search engines.
 
-**History mode requires that you enable custom URL rewriting rules on your host/server**, otherwise people can not reload pages 
+**History mode requires that you enable custom URL rewriting rules on your host/server**, otherwise people can not reload pages
 or share URLs without getting a "page not found" error (404).
 The following link explains the details and provides examples for various common server software:
 **<https://v3.router.vuejs.org/guide/essentials/history-mode.html#example-server-configurations>**
@@ -144,7 +150,8 @@ will redirect all requests to these (sub)-folders and included files to STAC Bro
 This also excludes hosting your STAC catalog in the STAC Browser (sub-)folders.
 
 ### `hash`
-If your host/server doesn't support URL rewriting or you experience other related problems, you can enable _hash mode_.
+
+If your host/server doesn't support URL rewriting or you experience other related problems, you can enable *hash mode*.
 Either set this option to `hash` in the config file or append `--historyMode=hash` when running or building.
 Known hosts that require hash mode are Amazon S3 and GitHub Pages.
 
@@ -175,8 +182,9 @@ npm start -- --open --stacProxyUrl=/home/user http://localhost:8888
 ```
 
 Notice the format of the value:
-* In CLI it is the original location and the proxy location separated by a space character, i.e. `{original} {proxy}` as in the example above.
-* In the config file it is a two-element array with the original location as first element and the proxy location as the second element. Set the option to `null` to disable it (default).
+
+- In CLI it is the original location and the proxy location separated by a space character, i.e. `{original} {proxy}` as in the example above.
+- In the config file it is a two-element array with the original location as first element and the proxy location as the second element. Set the option to `null` to disable it (default).
 
 In this example, any href contained in the STAC (including link or asset hrefs) will replace any occurrence of `/home/user/` with `http://localhost:8888`.
 
@@ -200,7 +208,7 @@ The v3-dev option `tileSourceTemplate` has been removed in favor of this option.
 
 Depending on this option, either client-side or server-side rendering of imagery such as (cloud-optimized) GeoTiffs can be enabled/disabled.
 
-If `buildTileUrlTemplate` is given server-side rendering of GeoTiffs is enabled. 
+If `buildTileUrlTemplate` is given server-side rendering of GeoTiffs is enabled.
 If server-side rendering should only be used as a fallback for client-side rendering, enable the boolean `useTileLayerAsFallback` option.
 
 To clarify the behavior, please have a look at the following table:
@@ -235,11 +243,12 @@ The maximum number of previews (thumbnails or overviews) of items that will be s
 
 ## cardViewMode
 
-The default view mode for lists of catalogs/collections. Either `"list"` or `"cards"` (default). 
+The default view mode for lists of catalogs/collections. Either `"list"` or `"cards"` (default).
 
 ## cardViewSort
 
 The default sorting for lists of catalogs/collections or items. One of:
+
 - `"asc"`: ascending sort (default)
 - `"desc"`: descending sort
 - `null`: sorted as in the source files
@@ -288,10 +297,10 @@ It is disabled by default (`null`). If enabled, the token provided by the user c
 
 There are four options you can set in the `authConfig` object:
 
-* `type` (string): `null` (disabled), `"query"` (use token in query parameters), or `"header"` (use token in HTTP request headers).
-* `key` (string): The query string parameter name or the HTTP header name respecively.
-* `formatter` (function|string|null): You can optionally specify a formatter for the query string value or HTTP header value respectively. If the string `"Bearer"` is provided formats as a Bearer token according to RFC 6750. If not given, the token is provided as provided by the user.
-* `description` (string|null): Optionally a description that is shown to the user. This should explain how the token can be obtained for example. CommonMark is allowed.
+- `type` (string): `null` (disabled), `"query"` (use token in query parameters), or `"header"` (use token in HTTP request headers).
+- `key` (string): The query string parameter name or the HTTP header name respecively.
+- `formatter` (function|string|null): You can optionally specify a formatter for the query string value or HTTP header value respectively. If the string `"Bearer"` is provided formats as a Bearer token according to RFC 6750. If not given, the token is provided as provided by the user.
+- `description` (string|null): Optionally a description that is shown to the user. This should explain how the token can be obtained for example. CommonMark is allowed.
     **Note:** You can leave the description empty in the config file and instead provide a localized string with the key `authConfig` -> `description` in the file for custom phrases (`src/locales/custom.js`).
 
 Please note that this option can only be provided through a config file and is not available via CLI/ENV.
@@ -328,8 +337,9 @@ For a given token `123` this results in the following query parameter:
 
 This allows to preprocess the STAC Items, Catalogs and Collections that are requested from the servers using a function.
 The function receives two parameters:
-* `stac` (object of type `STAC`)
-* `state` (the vuex state)
+
+- `stac` (object of type `STAC`)
+- `state` (the vuex state)
 
 Please note that this option can only be provided through a config file and is not available via CLI/ENV.
 

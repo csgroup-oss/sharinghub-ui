@@ -8,44 +8,43 @@
       />
 
       <div class="body-content w-100 h-100">
-
         <div v-if="!!alert_message" class="container">
-          <b-alert class="" show :variant="alert_message.type" fade dismissible
-            @dismissed="closeAlert()">
+          <b-alert
+            class="" show :variant="alert_message.type" fade
+            dismissible
+            @dismissed="closeAlert()"
+          >
             <div class="flex justify-items-start">
               <div class="mr-2">
-                <b-icon icon="exclamation-circle-fill" variant="dark"/>
+                <b-icon icon="exclamation-circle-fill" variant="dark" />
               </div>
               <div>
                 <text-view class="block" type="header__b14">{{ alert_message.title }}</text-view>
-                <text-view class="block" type="header__13" v-html="alert_message.message"></text-view>
-                <b-button  size="sm" class="mt-2"
+                <text-view class="block" type="header__13" v-html="alert_message.message" />
+                <b-button
+                  size="sm" class="mt-2"
                   variant="light"
-                  @click="$event => closeAlert()">
-                {{ $t('fields.i_understand') }}
+                  @click="$event => closeAlert()"
+                >
+                  {{ $t('fields.i_understand') }}
                 </b-button>
-
               </div>
             </div>
           </b-alert>
         </div>
 
         <div v-if="isLoading" class="container w-100 h-100 pt-5">
-          <Awaiter :is-visible="isLoading"/>
+          <Awaiter :is-visible="isLoading" />
         </div>
 
         <div v-else class="w-100 h-100 pt-0">
-          <router-view/>
+          <router-view />
         </div>
-
       </div>
-
-
     </div>
 
     <footer class="w-100 mt-6">
       <div class="px-4 py-3 container footer">
-
         <div class="flex justify-content-between  sm:flex-column md:flex-row lg:flex-row ">
           <b-button-group size="sm" class="left">
             <b-button size="sm" variant="link" disabled>
@@ -53,26 +52,23 @@
             </b-button>
           </b-button-group>
 
-          <b-button-group  size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
+          <b-button-group size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
             <b-button size="sm" variant="link" :href="docs('legal/privacy')">
               {{ $t("fields.privacy") }}
             </b-button>
           </b-button-group>
-
         </div>
       </div>
     </footer>
-
   </div>
-
 </template>
 
 
 <script>
 import Vue, {defineComponent} from 'vue';
 
-import HeaderNavbar from "@/_Hub/components/HeaderNavbar.vue";
-import {BootstrapVue, BootstrapVueIcons} from "bootstrap-vue";
+import HeaderNavbar from '@/_Hub/components/HeaderNavbar.vue';
+import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue';
 import {
   CONNEXION_MODE,
   get,
@@ -80,29 +76,28 @@ import {
   getLocalToken,
   removeLocalToken,
   setAlertLastDate
-} from "@/_Hub/tools/https";
-import {CONFIG_URL, DOCS_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from "@/_Hub/Endpoint";
-import {mapState} from "vuex";
-import Awaiter from "@/_Hub/components/Awaiter.vue";
-import I18N from "@radiantearth/stac-fields/I18N";
-import {loadMessages, translateFields} from "@/i18n";
-import "./assets/base.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+} from '@/_Hub/tools/https';
+import {CONFIG_URL, DOCS_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
+import {mapState} from 'vuex';
+import Awaiter from '@/_Hub/components/Awaiter.vue';
+import I18N from '@radiantearth/stac-fields/I18N';
+import {loadMessages, translateFields} from '@/i18n';
+import './assets/base.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
-import {DateTime, Interval} from "luxon";
-import TextView from "@/_Hub/components/TextView.vue";
-import { pathPrefix } from '../config';
+import {DateTime, Interval} from 'luxon';
+import TextView from '@/_Hub/components/TextView.vue';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
 export default defineComponent({
-  name: "MainPage",
+  name: 'MainPage',
   components: {
     TextView,
     Awaiter,
-    HeaderNavbar,
+    HeaderNavbar
   },
   data() {
     return {
@@ -110,7 +105,7 @@ export default defineComponent({
       headerRoutes: undefined,
       headerExternalLinks: undefined,
       alert_message: undefined,
-      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN,
+      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN
     };
   },
   computed: {
@@ -130,7 +125,7 @@ export default defineComponent({
             this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
             this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
             await this.initWithUserCredentials();
-            this.$store.commit("setEntriesRoutes", this.headerRoutes);
+            this.$store.commit('setEntriesRoutes', this.headerRoutes);
           }
         }
 
@@ -154,11 +149,11 @@ export default defineComponent({
         this.$root.$i18n.locale = locale;
 
         // Update the HTML lang tag
-        document.documentElement.setAttribute("lang", locale);
+        document.documentElement.setAttribute('lang', locale);
         const {categories, external_urls, alert_info} = this.provideConfig;
         this.headerRoutes = this.buildRouting(categories, locale);
         this.headerExternalLinks = this.buildExternalLinks(external_urls, locale);
-        this.$store.commit("setEntriesRoutes", this.headerRoutes);
+        this.$store.commit('setEntriesRoutes', this.headerRoutes);
         const connexion_mode = this.auth.mode;
         if (!this.isLoading && this.showAlert(alert_info, connexion_mode)) {
           this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
@@ -182,7 +177,7 @@ export default defineComponent({
   },
   beforeCreate() {
     removeLocalToken();
-    this.$store.commit("setBaseUrl", STAC_ROOT_URL);
+    this.$store.commit('setBaseUrl', STAC_ROOT_URL);
   },
   async beforeMount() {
     const {search} = window.location;
@@ -198,7 +193,7 @@ export default defineComponent({
     const {categories, external_urls, alert_info} = await this.getConfig();
     this.headerRoutes = this.buildRouting(categories, this.uiLanguage);
     this.headerExternalLinks = this.buildExternalLinks(external_urls, this.uiLanguage);
-    this.$store.commit("setEntriesRoutes", this.headerRoutes);
+    this.$store.commit('setEntriesRoutes', this.headerRoutes);
     const connexion_mode = await this.initWithUserCredentials();
     if (this.showAlert(alert_info, connexion_mode)) {
       this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
@@ -228,7 +223,7 @@ export default defineComponent({
                 connexion_mode = CONNEXION_MODE.DEFAULT_TOKEN;
               }
             }
-            await this.$store.commit("setUserInfo", {user, token: token, mode: connexion_mode});
+            await this.$store.commit('setUserInfo', {user, token: token, mode: connexion_mode});
             this.isLoading = false;
             return connexion_mode;
           }
@@ -236,8 +231,8 @@ export default defineComponent({
         })
         .catch(() => {
           this.isLoading = false;
-          if (!["Login", "Home"].includes(this.$route.name)) {
-            this.$router.push("/login");
+          if (!['Login', 'Home'].includes(this.$route.name)) {
+            this.$router.push('/login');
           }
         });
     },
@@ -246,7 +241,7 @@ export default defineComponent({
       return get(CONFIG_URL).then(async (response) => {
         const {data} = response;
         if (data) {
-          await this.$store.commit("setProvideConfig", data);
+          await this.$store.commit('setProvideConfig', data);
           return data;
         }
         return undefined;
@@ -257,25 +252,25 @@ export default defineComponent({
       let entries = {};
       let routes = [];
       Object.entries(categories).forEach(([category, values]) => {
-        entries[category] = {...values['locales'], icon: values["icon"]};
+        entries[category] = {...values['locales'], icon: values['icon']};
       });
 
-      if (typeof entries !== "object") {
-        throw new Error("entries point are undefined");
+      if (typeof entries !== 'object') {
+        throw new Error('entries point are undefined');
       }
       Object.entries(entries).map(([key, value]) => {
         let icon;
-        if (key.toLowerCase().includes("processor")) {
-          icon = "tools";
-        } else if (key.toLowerCase().includes("model")) {
-          icon = "box-seam";
-        } else if (key.toLowerCase().includes("dataset")) {
-          icon = "view-list";
+        if (key.toLowerCase().includes('processor')) {
+          icon = 'tools';
+        } else if (key.toLowerCase().includes('model')) {
+          icon = 'box-seam';
+        } else if (key.toLowerCase().includes('dataset')) {
+          icon = 'view-list';
         } else {
-          icon = "view-stacked";
+          icon = 'view-stacked';
         }
         const val = value[locale] ? value[locale] : value['en'];
-        routes.push({...val, route: key, ico: value["icon"] || icon});
+        routes.push({...val, route: key, ico: value['icon'] || icon});
       });
       return routes;
     },
@@ -322,13 +317,13 @@ export default defineComponent({
       return interval_days ? interval_days >= timeout : false;
     },
 
-    closeAlert(url) {
+    closeAlert() {
       this.alert_message = undefined;
       setAlertLastDate(DateTime.now().toISO());
     }
 
 
-  },
+  }
 });
 
 </script>

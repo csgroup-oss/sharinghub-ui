@@ -12,12 +12,12 @@ import ErrorAlert from '../components/ErrorAlert.vue';
 import Loading from '../components/Loading.vue';
 import Item from './Item.vue';
 import Catalog from './Catalog.vue';
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapState } from 'vuex';
 import Utils, { BrowserError } from '../utils';
 import URI from 'urijs';
 
 export default {
-  name: "Browse",
+  name: 'Browse',
   components: {
     ErrorAlert,
     Loading,
@@ -31,8 +31,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(["allowExternalAccess", "url", "data", "redirectLegacyUrls"]),
-    ...mapGetters(["fromBrowserPath", "isItem", "error", "loading"]),
+    ...mapState(['allowExternalAccess', 'url', 'data', 'redirectLegacyUrls']),
+    ...mapGetters(['fromBrowserPath', 'isItem', 'error', 'loading']),
     errorId() {
       if (this.error instanceof Error && this.error.isAxiosError && Utils.isObject(this.error.response)) {
         let res = this.error.response;
@@ -45,7 +45,7 @@ export default {
       }
       return null;
     },
-    errorDescription() {      
+    errorDescription() {
       if (this.error instanceof Error && this.error.isAxiosError && Utils.isObject(this.error.response)) {
         let res = this.error.response;
         if (Utils.isObject(res.data) && typeof res.data.description === 'string') { // STAC API compliant error response
@@ -82,7 +82,7 @@ export default {
       }
     },
     isExternal() {
-      return URI(this.path).is("absolute");
+      return URI(this.path).is('absolute');
     }
   },
   watch: {

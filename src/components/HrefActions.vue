@@ -1,7 +1,7 @@
 <template>
   <b-button-group class="actions" :vertical="vertical" :size="size" v-if="href">
     <b-button v-if="isBrowserProtocol && isAsset" :href="href" target="_blank" variant="primary">
-      <b-icon-box-arrow-up-right v-if="browserCanOpenFile" /> 
+      <b-icon-box-arrow-up-right v-if="browserCanOpenFile" />
       <b-icon-download v-else />
       {{ buttonText }}
     </b-button>

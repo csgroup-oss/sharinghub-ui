@@ -1,45 +1,38 @@
 <template>
   <div>
     <div class="keywords d-flex flex-wrap">
-      <b-badge v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
-               :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2 cursor">
-        <b-icon v-if="!!getIcon(keyword)" font-scale="1.25"
-                :icon="getIcon(keyword)"/>
+      <b-badge
+        v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
+        :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2 cursor"
+      >
+        <b-icon
+          v-if="!!getIcon(keyword)" font-scale="1.25"
+          :icon="getIcon(keyword)"
+        />
         {{ keyword }}
       </b-badge>
-      <b-badge v-if="!!license" variant="secondary" target="_blank"
-               :href="get_license_link || extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2">
-        <b-icon font-scale="1.25" icon="bank2"/>
+      <b-badge
+        v-if="!!license" variant="secondary" target="_blank"
+        :href="get_license_link || extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2"
+      >
+        <b-icon font-scale="1.25" icon="bank2" />
         License : {{ license.value }}
       </b-badge>
-      <b-badge v-if="!!doi" variant="light" target="_blank"
-               :href="extractHref(doi.formatted)" class="mr-1 mb-1 px-2 py-2">
-        <b-icon font-scale="1.25" icon="bank2"/>
+      <b-badge
+        v-if="!!doi" variant="light" target="_blank"
+        :href="extractHref(doi.formatted)" class="mr-1 mb-1 px-2 py-2"
+      >
+        <b-icon font-scale="1.25" icon="bank2" />
         DOI : {{ doi.value }}
       </b-badge>
     </div>
-    <div class="keywords d-flex flex-wrap">
-
-    </div>
+    <div class="keywords d-flex flex-wrap" />
   </div>
-
 </template>
 
-<style lang="scss" scoped>
-.badge {
-  opacity: 0.8;
-  transition: all linear 0.2s;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-</style>
-
 <script>
-import _ from "lodash";
-import {mapState} from "vuex";
-import {formatItemProperties,} from "@radiantearth/stac-fields";
+import {mapState} from 'vuex';
+import {formatItemProperties} from '@radiantearth/stac-fields';
 
 export default {
   name: 'Keywords',
@@ -70,18 +63,18 @@ export default {
   computed: {
     ...mapState(['data', 'entriesRoute']),
     get_license_link(){
-      const license_link = this.data.links.find(el => el.rel ==="license");
+      const license_link = this.data.links.find(el => el.rel ==='license');
       return license_link.href;
     }
   },
   beforeMount() {
     const dataFormatted = this.formatData();
     if (dataFormatted.length > 0) {
-      const generalMetadata = dataFormatted.find(el => el.extension === "");
+      const generalMetadata = dataFormatted.find(el => el.extension === '');
       this.license = generalMetadata.properties.license;
-      const sciMetadata = dataFormatted.find(el => el.extension === "sci");
+      const sciMetadata = dataFormatted.find(el => el.extension === 'sci');
       if (sciMetadata) {
-        this.doi = sciMetadata.properties["sci:doi"];
+        this.doi = sciMetadata.properties['sci:doi'];
       }
     }
 
@@ -89,7 +82,7 @@ export default {
   },
   methods: {
     getRandomColor(index) {
-      const colors = ["primary", "secondary", "success", "danger", "warning", "info", "dark"];
+      const colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'];
       return colors[index % colors.length];
     },
     getIcon(keyword = null) {
@@ -97,27 +90,27 @@ export default {
         return matches.some((el) => (keyword.toLowerCase().includes(el) > 0));
       }
 
-      if (isMatching(["model", "text", "ai", "generation"], keyword)) {
-        return "pencil-square";
+      if (isMatching(['model', 'text', 'ai', 'generation'], keyword)) {
+        return 'pencil-square';
       }
-      if (isMatching(["test", "build", "ci"], keyword)) {
-        return "shield-fill-check";
+      if (isMatching(['test', 'build', 'ci'], keyword)) {
+        return 'shield-fill-check';
       }
-      if (isMatching(["gitlab", "github"], keyword)) {
-        return "github";
+      if (isMatching(['gitlab', 'github'], keyword)) {
+        return 'github';
       }
-      if (isMatching(["imagery", "view"], keyword)) {
-        return "file-image";
+      if (isMatching(['imagery', 'view'], keyword)) {
+        return 'file-image';
       }
-      if (isMatching(["data",], keyword)) {
-        return "box-seam";
+      if (isMatching(['data'], keyword)) {
+        return 'box-seam';
       }
-      if (isMatching(["service", "application"], keyword)) {
-        return "app-indicator";
+      if (isMatching(['service', 'application'], keyword)) {
+        return 'app-indicator';
       }
 
-      if (isMatching(["sentinel", "callisto", "smap", "satellite"], keyword)) {
-        return "flag";
+      if (isMatching(['sentinel', 'callisto', 'smap', 'satellite'], keyword)) {
+        return 'flag';
       }
       return undefined;
     },
@@ -130,17 +123,28 @@ export default {
     },
 
     extractHref(text) {
-      const regex = /<a href=\"(.*?)\".*>/g;
+      const regex = /<a href="(.*?)".*>/g;
       const match = regex.exec(text);
       return match[1];
     },
 
     filterByTags(keyword) {
-      const collection = this.$route.path.split("/")[4];
-      this.$router.push({path: `/${collection}`, query: {topics: keyword,}});
+      const collection = this.$route.path.split('/')[4];
+      this.$router.push({path: `/${collection}`, query: {topics: keyword}});
     }
 
   }
 
 };
 </script>
+
+<style lang="scss" scoped>
+.badge {
+  opacity: 0.8;
+  transition: all linear 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+</style>

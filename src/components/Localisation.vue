@@ -1,25 +1,29 @@
 <template>
   <div class="share">
-    <b-dropdown size="sm" variant="link" right  toggle-class="text-decoration-none"
-                  :title="$t('source.language.switch')">
-        <template #button-content>
-          <b-icon-globe/> {{ uiLanguage }}
-        </template>
-        <b-dropdown-item
-          v-for="l of languages" :key="l.code" class="lang-item"
-          @click="switchLocale({locale: l.code, userSelected: true})"
-        >
-          <b-icon-check v-if="locale === l.code"/>
-          <b-icon-blank v-else/>
-          <span class="title">
-            {{ l.native }}
-            <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
-          </span>
-          <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)"
-                                       :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
-                                       class="ml-2"/>
-        </b-dropdown-item>
-      </b-dropdown>
+    <b-dropdown
+      size="sm" variant="link" right toggle-class="text-decoration-none"
+      :title="$t('source.language.switch')"
+    >
+      <template #button-content>
+        <b-icon-globe /> {{ uiLanguage }}
+      </template>
+      <b-dropdown-item
+        v-for="l of languages" :key="l.code" class="lang-item"
+        @click="switchLocale({locale: l.code, userSelected: true})"
+      >
+        <b-icon-check v-if="locale === l.code" />
+        <b-icon-blank v-else />
+        <span class="title">
+          {{ l.native }}
+          <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
+        </span>
+        <b-icon-exclamation-triangle
+          v-if="supportsLanguageExt && (!l.ui || !l.data)"
+          :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
+          class="ml-2"
+        />
+      </b-dropdown-item>
+    </b-dropdown>
   </div>
 </template>
 
@@ -33,14 +37,14 @@ import {getBest, prepareSupported} from '../locale-id';
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
 
 export default {
-  name: "Localisation",
+  name: 'Localisation',
   components: {
     BDropdown,
-    BDropdownItem,
+    BDropdownItem
   },
   computed: {
-    ...mapState(['dataLanguages', 'locale', 'data', 'supportedLocales','uiLanguage',]),
-    ...mapGetters(['supportsExtension',]),
+    ...mapState(['dataLanguages', 'locale', 'data', 'supportedLocales', 'uiLanguage']),
+    ...mapGetters(['supportsExtension']),
     currentLanguage() {
       let lang = this.languages.find(l => l.code === this.locale);
       if (lang) {
@@ -93,13 +97,13 @@ export default {
         }
       }
 
-      return languages.sort((a,b) => a.global.localeCompare(b.global, this.uiLanguage));
+      return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },
   watch: {
   },
   methods: {
-    ...mapActions(['switchLocale']),
+    ...mapActions(['switchLocale'])
   }
 };
 </script>

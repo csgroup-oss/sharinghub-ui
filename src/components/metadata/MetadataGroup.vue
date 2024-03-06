@@ -14,7 +14,7 @@
 import MetadataEntry from './MetadataEntry.vue';
 
 export default {
-  name: "MetadataGroup",
+  name: 'MetadataGroup',
   components: {
     MetadataEntry
   },
@@ -34,7 +34,7 @@ export default {
   },
   methods : {
     ignoreMetadata(){
-      const blackList = ["keywords", "license", "sci:doi", 'long_title'];
+      const blackList = ['keywords', 'license', 'sci:doi', 'long_title'];
       let data = {};
       if(this.properties){
         Object.entries(this.properties).forEach(([key, value]) =>{

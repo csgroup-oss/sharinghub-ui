@@ -73,7 +73,7 @@ body {
         .nav-pills {
             margin: 0;
             padding: 0;
-            
+
             > li {
                 margin: 0 0.5rem;
                 &:only-child {
@@ -196,7 +196,7 @@ body {
         gap: 0.25rem;
         padding: 0.5rem;
         background-color: rgba(0,0,0,0.03);
-        
+
         > .title {
             text-align: left;
             flex-grow: 9;
@@ -212,12 +212,12 @@ body {
         }
     }
 
-    
+
     .items, .catalogs {
         > .list {
             position: relative;
         }
-    
+
         > header {
             margin-bottom: 0.5rem;
 

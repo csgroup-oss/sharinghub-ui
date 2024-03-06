@@ -11,7 +11,7 @@ const CQL_JSON = [
 
 const CQL_ADV_COMPARISON = ['http://www.opengis.net/spec/cql2/1.*/req/advanced-comparison-operators'];
 
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export const TYPES = {
   // OGC / STAC API - Features

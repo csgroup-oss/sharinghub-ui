@@ -15,10 +15,10 @@ import { mapState } from 'vuex';
 // Register custom fields for the metadata rendering
 // eslint-disable-next-line
 import __ from '../../fields.config';
-import config from "@/config";
+import config from '@/config';
 
 export default {
-    name: "Metadata",
+    name: 'Metadata',
     components: {
         MetadataGroup
     },
@@ -50,7 +50,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['uiLanguage']),
+        ...mapState(['uiLanguage'])
     },
     watch: {
         uiLanguage: {
@@ -59,7 +59,7 @@ export default {
                 if (!locale) {
                     return;
                 }
-                
+
                 // Update durations (for stac-fields)
                 const en = (await import(`../locales/${locale}/duration.js`)).default;
                 isoDuration.setLocales({en});
@@ -72,7 +72,7 @@ export default {
     },
     methods: {
         formatData() {
-            // Filter all fields as given in ignoreFields and also 
+            // Filter all fields as given in ignoreFields and also
             // ignore fields starting with an underscore which is likely originating from the STAC class
             let filter = key => !key.startsWith('_') && !this.ignoreFields.includes(key);
             switch(this.type) {
@@ -99,7 +99,7 @@ export default {
                             core.push(summaryGroup);
                         }
                     });
-                    return core.sort((a,b) => a.label.localeCompare(b.label, this.uiLanguage));
+                    return core.sort((a, b) => a.label.localeCompare(b.label, this.uiLanguage));
                 }
                 case 'FeatureCollection':
                     return {};
@@ -228,7 +228,7 @@ export default {
             }
             .description {
                 display: inline-block;
-                
+
                 > p:only-child {
                     display: inline;
                 }
@@ -249,7 +249,7 @@ export default {
 
         .color {
             text-align: center;
-            
+
             .color-code {
                 color: white;
                 text-shadow: 1px 1px 1px #000;

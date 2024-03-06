@@ -1,6 +1,6 @@
 <template>
   <main class="search d-flex flex-column container">
-    <Loading v-if="!parent" stretch/>
+    <Loading v-if="!parent" stretch />
     <b-alert v-else-if="!canSearch" variant="danger" show>{{ $t('search.notSupported') }}</b-alert>
     <b-row v-else>
       <b-col class="left">
@@ -21,12 +21,12 @@
       </b-col>
       <b-col class="right">
         <b-alert v-if="error" variant="error" show>{{ error }}</b-alert>
-        <Loading v-else-if="!data && loading" fill top/>
+        <Loading v-else-if="!data && loading" fill top />
         <b-alert v-else-if="data === null" variant="info" show>{{ $t('search.modifyCriteria') }}</b-alert>
         <b-alert v-else-if="results.length === 0" variant="warning" show>{{ $t('search.noItemsFound') }}</b-alert>
         <template v-else>
           <div id="search-map" v-if="itemCollection">
-            <Map :stac="stac" :stacLayerData="itemCollection" scrollWheelZoom popover/>
+            <Map :stac="stac" :stacLayerData="itemCollection" scrollWheelZoom popover />
           </div>
           <Catalogs
             v-if="isCollectionSearch" :catalogs="results" collectionsOnly
@@ -35,14 +35,18 @@
           >
             <template #catalogFooter="slot">
               <b-button-group v-if="canSearchItems || canFilterItems(slot.data)" vertical size="sm">
-                <b-button v-if="canSearchItems" variant="outline-primary" :pressed="selectedCollections[slot.data.id]"
-                          @click="selectForItemSearch(slot.data)">
-                  <b-icon-check-square v-if="selectedCollections[slot.data.id]"/>
-                  <b-icon-square v-else/>
+                <b-button
+                  v-if="canSearchItems" variant="outline-primary" :pressed="selectedCollections[slot.data.id]"
+                  @click="selectForItemSearch(slot.data)"
+                >
+                  <b-icon-check-square v-if="selectedCollections[slot.data.id]" />
+                  <b-icon-square v-else />
                   <span class="ml-2">{{ $t('search.selectForItemSearch') }}</span>
                 </b-button>
-                <StacLink :button="{variant: 'outline-primary', disabled: !canFilterItems(slot.data)}" :data="slot.data"
-                          :title="$t('search.filterCollection')" :state="{itemFilterOpen: 1}"/>
+                <StacLink
+                  :button="{variant: 'outline-primary', disabled: !canFilterItems(slot.data)}" :data="slot.data"
+                  :title="$t('search.filterCollection')" :state="{itemFilterOpen: 1}"
+                />
               </b-button-group>
             </template>
           </Catalogs>
@@ -64,17 +68,17 @@
 </template>
 
 <script>
-import {mapGetters, mapState} from "vuex";
+import {mapGetters, mapState} from 'vuex';
 import Utils from '../utils';
 import SearchFilter from '../components/SearchFilter.vue';
 import Loading from '../components/Loading.vue';
 import STAC from '../models/stac';
 import {BIconCheckSquare, BIconSquare, BTab, BTabs} from 'bootstrap-vue';
 import {processSTAC, stacRequest} from '../store/utils';
-import {STAC_ROOT_URL} from "@/_Hub/Endpoint";
+import {STAC_ROOT_URL} from '@/_Hub/Endpoint';
 
 export default {
-  name: "Search",
+  name: 'Search',
   components: {
     BIconCheckSquare,
     BIconSquare,
@@ -224,7 +228,7 @@ export default {
           await this.$store.dispatch('load', {url: url});
       }
       if (!this.root) {
-        this.$store.commit("config", {catalogUrl: url});
+        this.$store.commit('config', {catalogUrl: url});
       }
       this.parent = this.getStac(url);
       this.showPage();
