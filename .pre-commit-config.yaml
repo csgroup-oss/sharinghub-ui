@@ -10,6 +10,7 @@ repos:
     rev: v4.5.0
     hooks:
       - id: check-added-large-files
+        exclude: package-lock.json
       - id: check-case-conflict
       - id: check-json
       - id: check-merge-conflict
@@ -29,6 +30,7 @@ repos:
     hooks:
       - id: commitizen
       - id: commitizen-branch
+        args: [ --rev-range, origin/main..HEAD ]
         stages: [push]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli

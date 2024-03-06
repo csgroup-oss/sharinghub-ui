@@ -9,9 +9,6 @@ node_modules
 .env.local
 .env.*.local
 
-# lock files
-/yarn.lock
-/package-lock.json
 
 # Log files
 npm-debug.log*

@@ -1,0 +1,38 @@
+include:
+  - component: gitlab.si.c-s.fr/to-be-continuous/node/gitlab-ci-node@3.12.0
+    inputs:
+      image: 'registry.hub.docker.com/library/node:lts-alpine3.18'
+      manager: 'npm'
+      build-args: 'run build'
+      lint-enabled: true
+      audit-disabled : true
+      outdated-disabled : true
+
+  - component: gitlab.si.c-s.fr/to-be-continuous/docker/gitlab-ci-docker@5.8.1
+    inputs:
+      build-args: '--build-arg VERSION=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$CI_JOB_STARTED_AT'
+      trivy-security-level-threshold : 'HIGH,CRITICAL'
+      prod-publish-strategy: 'auto'
+      hadolint-args: '--failure-threshold warning'
+  - component: gitlab.si.c-s.fr/space_platforms/metis/tools/ci-precommit/gitlab-ci-precommit@3.0.0
+    inputs:
+      skip: 'vue-cli-service-lint'
+
+# your pipeline stages
+stages:
+  - build
+  - test
+  - package-build
+  - package-test
+  - infra
+  - deploy
+  - acceptance
+  - publish
+  - infra-prod
+  - production
+
+variables:
+  KUBERNETES_MEMORY_REQUEST: '2Gi'
+  KUBERNETES_MEMORY_LIMIT: '4Gi'
+  KUBERNETES_SERVICE_MEMORY_REQUEST: '2Gi'
+  KUBERNETES_SERVICE_MEMORY_LIMIT: '4Gi'
