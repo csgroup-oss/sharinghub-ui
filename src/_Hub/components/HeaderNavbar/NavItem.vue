@@ -1,5 +1,5 @@
 <template>
-  <div v-bind="$attrs" v-on="$listeners" :class="['flex align-items-center py-1 px-2', $props.isSimple ?'nav-item-simple' : 'nav-item']">
+  <div v-bind="$attrs" v-on="$listeners" :class="['flex align-items-center py-1 px-1', $props.isSimple ?'nav-item-simple' : 'nav-item']">
     <i v-if="$props.icon !== undefined" :class="$props.icon +' '+ 'mr-2' " />
     <text-view type="Title-2">
       <slot />

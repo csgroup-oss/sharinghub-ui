@@ -1,46 +1,43 @@
 <template>
-  <header :class="['nav-bar w-100 pb-2', ['sm', 'md'].includes(size) && 'fixed']">
-    <div class="container px-4 py-1 flex justify-content-between align-items-center">
-      <div class="flex align-items-center">
-        <text-view class="mr-4">
-          <router-link to="/" class="cursor">
-            <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
-          </router-link>
-        </text-view>
-        <div class="" v-if="['md','lg'].includes(size)">
-          <research-bar
-            :canSearch="canSearch"
-            :categories="routes"
-          />
-        </div>
-      </div>
+  <b-navbar :class="['w-100', ['sm', 'md'].includes(size) && 'fixed']" type="dark" variant="light">
+    <b-navbar-brand href="#">
+      <text-view class="mr">
+        <router-link to="/" class="cursor">
+          <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
+        </router-link>
+      </text-view>
+    </b-navbar-brand>
 
-      <div v-if="['lg'].includes(size)" class="flex justify-content-between align-items-center">
-        <template v-if="routes.length > 0">
-          <router-link v-for="item in routes" :key="item.route" :to="`/${item.route}`">
-            <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
-              <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico">
-              <b-icon v-else :icon="item.icon" />
-              <text-view type="header__b15"> {{ item.title }}</text-view>
-            </nav-item>
-          </router-link>
-        </template>
-        <div class="p-divider--vertical" />
-        <div class="flex align-items-center">
+    <!-- Search -->
+    <template v-if="['md','lg'].includes(size)">
+      <research-bar :canSearch="canSearch" :categories="routes" />
+    </template>
+
+    <b-collapse id="nav-collapse" is-nav>
+      <!-- Right aligned nav items -->
+      <b-navbar-nav class="ml-auto align-items-center">
+        <template v-if="['lg'].includes(size)">
+          <template v-if="routes.length > 0">
+            <router-link v-for="item in routes" :key="item.route" :to="`/${item.route}`">
+              <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
+                <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico">
+                <b-icon v-else :icon="item.icon" />
+                <text-view type="header__b15"> {{ item.title }}</text-view>
+              </nav-item>
+            </router-link>
+          </template>
+          <div class="p-divider--vertical" />
+
           <div v-for="link in externalLinks" :key="link.name">
-            <a v-if="link.url" :href="link.url" target="_blank">
+            <a v-if="link.url " :href="link.url" target="_blank">
               <nav-item class="mx-1">
                 <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
                 <text-view type="header__b15"> {{ link.name }}</text-view>
               </nav-item>
             </a>
-            <b-dropdown
-              v-if="link.dropdown" right size="sm" variant="link"
-              toggle-class="text-decoration-none"
-              no-caret
-            >
+            <b-dropdown v-if="link.dropdown" right size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
               <template #button-content>
-                <nav-item class="mx-1">
+                <nav-item style="padding:0 !important;" class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
                   <text-view type="header__b15"> {{ link.name }}</text-view>
                 </nav-item>
@@ -52,110 +49,104 @@
             </b-dropdown>
           </div>
           <Localisation />
-        </div>
-        <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
-          <template #button-content>
-            <b-avatar size="40" variant="info" :src="avatar_url" />
-          </template>
-          <b-dropdown-item>
-            <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
-          </b-dropdown-item>
-          <b-dropdown-divider />
-          <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
-        </b-dropdown>
-        <div v-else class="ml-3">
-          <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
-            {{ $t('fields.login') }}
-            <b-icon-box-arrow-in-right />
+          <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+            <template #button-content>
+              <b-avatar size="40" variant="info" :src="avatar_url" />
+            </template>
+            <b-dropdown-item>
+              <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
+          </b-dropdown>
+          <div v-else class="ml-3">
+            <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
+              {{ $t('fields.login') }}
+              <b-icon-box-arrow-in-right />
+            </b-button>
+          </div>
+        </template>
+
+        <div v-if="['md','sm'].includes(size)" class="flex align-items-center">
+          <b-dropdown right v-if="isAuthenticated" size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
+            <template #button-content>
+              <b-avatar size="30" variant="info" :src="avatar_url" />
+            </template>
+            <b-dropdown-item>
+              <text-view class="" type="">{{ auth?.user?.name }}</text-view>
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
+          </b-dropdown>
+          <b-button
+            variant="outline-dark" class="mx-3" size="sm"
+            v-b-toggle.sidebar-menu
+          >
+            <b-icon icon="justify" />
           </b-button>
         </div>
-      </div>
+      </b-navbar-nav>
+    </b-collapse>
 
+    <b-sidebar id="sidebar-menu" sidebar-class="border-right">
+      <div class="px-3 py-2 flex flex-column">
+        <text-view class="mr-4">
+          <router-link to="/" class="cursor">
+            <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
+          </router-link>
+        </text-view>
 
-      <div v-if="['md','sm'].includes(size)" class="flex align-items-center">
-        <b-dropdown right v-if="isAuthenticated" size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
-          <template #button-content>
-            <b-avatar size="30" variant="info" :src="avatar_url" />
-          </template>
-          <b-dropdown-item>
-            <text-view class="" type="">{{ auth?.user?.name }}</text-view>
-          </b-dropdown-item>
-          <b-dropdown-divider />
-          <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
-        </b-dropdown>
-        <b-button
-          variant="outline-dark" class="mx-3" size="sm"
-          v-b-toggle.sidebar-menu
-        >
-          <b-icon icon="justify" />
-        </b-button>
-      </div>
+        <div v-if="['sm'].includes(size)" class="my-2">
+          <research-bar variant="secondary" :canSearch="canSearch" :categories="routes" />
+        </div>
 
+        <template v-if="routes.length > 0">
+          <router-link v-for="item in routes" class="mx-1 mt-3" :key="item.route" :to="`/${item.route}`">
+            <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
+              <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico">
+              <b-icon v-else :icon="item.icon" />
+              <text-view type="header__b14"> {{ item.title }}</text-view>
+            </nav-item>
+          </router-link>
+        </template>
 
-      <b-sidebar id="sidebar-menu" sidebar-class="border-right">
-        <div class="px-3 py-2 flex flex-column">
-          <text-view class="mr-4">
-            <router-link to="/" class="cursor">
-              <h3><img width="40px" height="40px" :src="logo"> SharingHub</h3>
-            </router-link>
-          </text-view>
-
-          <div class="my-2">
-            <research-bar
-              variant="secondary"
-              :canSearch="canSearch"
-              :categories="routes"
-            />
-          </div>
-
-          <template v-if="routes.length > 0">
-            <router-link v-for="item in routes" class="mx-1 mt-3" :key="item.route" :to="`/${item.route}`">
-              <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
-                <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico">
-                <b-icon v-else :icon="item.icon" />
-                <text-view type="header__b14"> {{ item.title }}</text-view>
+        <div class="mx-1 mt-3">
+          <div v-for="link in externalLinks" :key="link.name">
+            <a v-if="link.url" :href="link.url" target="_blank">
+              <nav-item class="mx-1">
+                <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
+                <text-view type="header__b14"> {{ link.name }}</text-view>
               </nav-item>
-            </router-link>
-          </template>
-
-          <div class="mx-1 mt-3">
-            <div v-for="link in externalLinks" :key="link.name">
-              <a v-if="link.url" :href="link.url" target="_blank">
+            </a>
+            <b-dropdown
+              v-if="link.dropdown" left size="sm" variant="link"
+              toggle-class="text-decoration-none"
+              no-caret
+            >
+              <template #button-content>
                 <nav-item class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
                   <text-view type="header__b14"> {{ link.name }}</text-view>
                 </nav-item>
-              </a>
-              <b-dropdown
-                v-if="link.dropdown" left size="sm" variant="link"
-                toggle-class="text-decoration-none"
-                no-caret
-              >
-                <template #button-content>
-                  <nav-item class="mx-1">
-                    <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
-                    <text-view type="header__b14"> {{ link.name }}</text-view>
-                  </nav-item>
-                </template>
-                <b-dropdown-item v-for="sublink in link.dropdown" :href="sublink.url" :key="sublink.name">
-                  <img v-if="!!sublink.icon" width="20px" height="20px" :src="sublink.icon">
-                  {{ sublink.name }}
-                </b-dropdown-item>
-              </b-dropdown>
-            </div>
+              </template>
+              <b-dropdown-item v-for="sublink in link.dropdown" :href="sublink.url" :key="sublink.name">
+                <img v-if="!!sublink.icon" width="20px" height="20px" :src="sublink.icon">
+                {{ sublink.name }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
 
-            <Localisation class="mt-3" />
-            <div v-if="!isAuthenticated" class="mt-5">
-              <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
-                {{ $t('fields.login') }}
-                <b-icon-box-arrow-in-right />
-              </b-button>
-            </div>
+          <Localisation class="mt-3" />
+          <div v-if="!isAuthenticated" class="mt-5">
+            <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
+              {{ $t('fields.login') }}
+              <b-icon-box-arrow-in-right />
+            </b-button>
           </div>
         </div>
-      </b-sidebar>
-    </div>
-  </header>
+      </div>
+    </b-sidebar>
+  </b-navbar>
 </template>
 
 <script>
@@ -201,7 +192,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig']),
+    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage']),
     login() {
       const { path } = this.$route;
       const base_login =  path ? '/login?redirect='.concat(path.substring(1)) : '/login';
@@ -231,6 +222,13 @@ export default defineComponent({
           this.canSearch = !!data.user;
         }
       }
+    },
+    uiLanguage:{
+      immediate:true,
+      handler(){
+        const width = window.innerWidth;
+        this.updateNavbar({width});
+      }
     }
   },
   beforeMount() {
@@ -254,9 +252,16 @@ export default defineComponent({
       return this.$route.path.split('/')[4] === routeKey || routeKey === this.$route.params?.pathMatch;
     },
     updateNavbar({width}) {
-      if (width <= 800) {
+      let midbreak = this.uiLanguage === 'en' ? 1346 : 1404;
+      if(this.externalLinks.length < 2){
+        midbreak -=130;
+      }
+      if(this.isAuthenticated){
+        midbreak -=16;
+      }
+      if (width <= 771) {
         this.size = 'sm';
-      } else if (width <= 1584) {
+      } else if (width <= midbreak) {
         this.size = 'md';
       } else {
         this.size = 'lg';
@@ -271,10 +276,14 @@ export default defineComponent({
 @import "../../assets/colors";
 @import "../../theme/variables";
 
-.nav-bar {
+.navbar {
   border-bottom: rgba($secondary-color, 0.05) 2px solid;
+  background: transparent !important;
   padding-top: 8px !important;
 
+  .p-divider--vertical{
+   height: 33px !important;
+  }
   h3 {
     font-size: 1.5rem;
     padding-bottom: 0 !important;

@@ -1,7 +1,9 @@
 <template>
   <div class="research-bar">
-    <b-input-group size="md" class="">
+    <b-nav-form form-class="w-100 justify-content-between">
       <b-form-input
+        class="w-10"
+        size="md"
         :disabled="!canSearch"
         type="text"
         ref="input_search"
@@ -11,23 +13,18 @@
         @focus="handleOpenSearchResult"
         :placeholder="$t('fields.search_placeholder') "
       />
-      <b-input-group-prepend style="height: 33px" />
-      <b-input-group-prepend style="height: 33px">
-        <b-button v-if="is_loading" variant="outline-primary">
+      <div class="my-2 my-sm-0">
+        <b-button size="sm" v-if="is_loading" variant="outline-primary">
           <b-icon style="padding-bottom: 3px;" icon="circle-fill" animation="throb" />
         </b-button>
-        <b-button
-          v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research"
-          :variant="variant"
-        >
+        <b-button v-else :disabled="!canSearch" to="/search/" id="tooltip-target-advance-research" size="sm" :variant="variant">
           <b-icon style="padding-bottom: 3px;" icon="sliders" />
         </b-button>
-      </b-input-group-prepend>
-      <b-tooltip target="tooltip-target-advance-research" triggers="hover">
-        <text-view>{{ $t('fields.advanced_search') }}</text-view>
-      </b-tooltip>
-    </b-input-group>
-
+        <b-tooltip target="tooltip-target-advance-research" triggers="hover">
+          <text-view>{{ $t('fields.advanced_search') }}</text-view>
+        </b-tooltip>
+      </div>
+    </b-nav-form>
     <div v-if="open_search" ref="search_container" class="research-bar__results">
       <div v-if="!search_result_is_empty" class="flex flex-column mt-3">
         <div v-for="(result, idx) in search_results" :key="idx">
