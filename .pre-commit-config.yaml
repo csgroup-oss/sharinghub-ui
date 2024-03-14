@@ -48,5 +48,5 @@ repos:
         entry: npm run lint
         files: "^src"
         pass_filenames: false
-        types_or: [javascript]
+        types_or: [javascript, vue]
         language: node

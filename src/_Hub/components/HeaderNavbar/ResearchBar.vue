@@ -178,7 +178,7 @@ export default defineComponent({
     async handleSelectResult(event, url) {
       event.preventDefault();
       event.stopPropagation();
-      const external = `/stac/${this.toBrowserPath(url).split('/').splice(4).join('/')}`;
+      const external = `/api/${this.toBrowserPath(url).split('/').splice(4).join('/')}`;
       if (external !== this.$route.path) {
         this.$router.push({path: external});
       }
