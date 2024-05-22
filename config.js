@@ -5,6 +5,7 @@ module.exports = {
     allowedDomains: [],
     apiUrl: null,
     docsUrl: null,
+    mlflowUrl: null,
     detectLocaleFromBrowser: true,
     storeLocale: true,
     locale: "en",

@@ -1,39 +1,108 @@
 <template>
   <div class="share">
-    <b-button-group size="sm">
-      <template v-if="!action || action==='share' ">
+    <b-button-group
+      size="md"
+      class="mx-2
+      btn-group-code-generator sm:hidden
+      md:hidden
+      lg:inline-flex xl:inline-flex"
+    >
+      <template>
         <b-button
-          v-if="canUseJupyter"
-          @click="$event => openJupyterLink($event, jupyter_link)"
-          variant="outline-dark"
+          variant="outline-secondary"
           size="sm"
-          :disabled="!jupyter_link || !currentUser"
-          v-b-tooltip
-          :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
+          id="popover-stac-btn"
+          :title="$t('source.stac.hover')"
         >
-          <b-icon-terminal variant="warning" />
+          <img :src="stacLogo" width="35">
           <TextView class="button-label" type="Small-1">
-            <span class="button-label"> {{ $t("source.jupyter.open") }}</span>
+            <span class="button-label">STAC</span>
           </TextView>
         </b-button>
+        <b-popover
+          id="popover-stac" target="popover-stac-btn"
+          triggers="focus" placement="bottom"
+          container="stac-browser"
+        >
+          <STACCodeGenerator />
+        </b-popover>
+      </template>
+
+      <template>
         <b-button
           v-if="canUseDVC"
           id="popover-dvc-btn"
-          variant="outline-dark"
+          variant="outline-secondary"
           size="sm"
           :title="$t('source.dvc.hover')"
         >
-          <b-icon-info-circle />
           <TextView class="button-label" type="Small-1">
-            <span class="button-label"> {{ $t('source.dvc.label') }} </span>
+            <img width="30" :src="dvcLogo">
           </TextView>
         </b-button>
-        <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
-          <b-icon-share />
+        <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom">
+          <DVCCodeGenerator :dvc-url="dvcUrl()" :label="$t('source.dvc.description')" />
+        </b-popover>
+      </template>
+
+      <template v-if="canUseMlflow">
+        <b-button
+          id="popover-mlflow-btn"
+          variant="outline-secondary"
+          size="sm"
+          :title="$t('source.mlflow.hover')"
+        >
           <TextView class="button-label" type="Small-1">
-            <span class="button-label"> {{ $t('source.share.label') }}</span>
+            <img width="50" :src="mlflowLogo">
           </TextView>
         </b-button>
+        <b-popover id="popover-mlflow" target="popover-mlflow-btn" triggers="focus" placement="bottom">
+          <MLflowCodeGenerator :mlflow-url="mlflowUrl()" />
+        </b-popover>
+      </template>
+
+      <b-button
+        v-if="canUseJupyter"
+        @click="$event => openJupyterLink($event, jupyter_link)"
+        variant="outline-dark"
+        size="sm"
+        :disabled="!jupyter_link || !currentUser"
+        v-b-tooltip
+        :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
+      >
+        <img :src="jupyterLogo" width="17" alt="jupyter_logo">
+        <TextView class="button-label" type="Small-1">
+          <span class="button-label">&nbsp;{{ $t("source.jupyter.open") }}</span>
+        </TextView>
+      </b-button>
+    </b-button-group>
+
+    <b-button-group size="md">
+      <template>
+        <template>
+          <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
+            <b-icon-share />
+            <TextView class="button-label" type="Small-1">
+              <span class="button-label"> {{ $t('source.share.label') }}</span>
+            </TextView>
+          </b-button>
+          <b-popover
+            id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
+            container="stac-browser" :title="$t('source.share.title')"
+          >
+            <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
+            <hr>
+            <b-button class="twitter mr-1" :href="twitterUrl">
+              <b-icon-twitter />
+              {{ $t('source.share.twitter') }}
+            </b-button>
+            <b-button variant="dark" :href="mailTo">
+              <b-icon-envelope />
+              {{ $t('source.share.email') }}
+            </b-button>
+          </b-popover>
+        </template>
+
         <b-button
           :disabled="!can_rate" size="sm" @click="has_rated ? UnStarProject() :starProject()"
           variant="outline-primary"
@@ -41,69 +110,15 @@
           <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.8" aria-hidden="true" />
           <TextView type="Small-1" v-html="has_rated ? ' Unstar': ' Star'" />
         </b-button>
-        <b-button size="sm" disabled variant="outline-dark"> {{ rank_rate }}</b-button>
+        <b-button size="sm" disabled variant="outline-dark">
+          {{ rank_rate }}
+        </b-button>
       </template>
-
-
-      <b-dropdown
-        v-if="!action || action==='language' " size="sm" variant="outline-primary" right
-        :title="$t('source.language.switch')"
-      >
-        <template #button-content>
-          <b-icon-flag />
-          <span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
-        </template>
-        <b-dropdown-item
-          v-for="l of languages" :key="l.code" class="lang-item"
-          @click="switchLocale({locale: l.code, userSelected: true})"
-        >
-          <b-icon-check v-if="locale === l.code" />
-          <b-icon-blank v-else />
-          <span class="title">
-            {{ l.native }}
-            <template v-if="l.global && l.global !== l.native"> / {{ l.global }}</template>
-          </span>
-          <b-icon-exclamation-triangle
-            v-if="supportsLanguageExt && (!l.ui || !l.data)"
-            :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')"
-            class="ml-2"
-          />
-        </b-dropdown-item>
-      </b-dropdown>
     </b-button-group>
-
-    <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom" :title="$t('source.dvc.title')">
-      <Url id="dvcUrl" :url="dvcUrl()" :label="$t('source.dvc.description')" :open="false" />
-      <hr>
-      <b-button variant="primary" class="mr-1" href="https://dvc.org/doc" target="_blank">
-        <b-icon-book />
-        {{ $t('source.dvc.docs') }}
-      </b-button>
-      <b-button variant="secondary" :href="dvcDocsUrl" target="_blank">
-        <b-icon-lightbulb />
-        {{ $t('source.dvc.tutorial') }}
-      </b-button>
-    </b-popover>
-    <b-popover
-      id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
-      container="stac-browser" :title="$t('source.share.title')"
-    >
-      <Url id="browserUrl" :url="browserUrl()" :label="$t('source.share.sharePageWithOthers')" :open="false" />
-      <hr>
-      <b-button class="twitter mr-1" :href="twitterUrl">
-        <b-icon-twitter />
-        {{ $t('source.share.twitter') }}
-      </b-button>
-      <b-button variant="dark" :href="mailTo">
-        <b-icon-envelope />
-        {{ $t('source.share.email') }}
-      </b-button>
-    </b-popover>
   </div>
 </template>
 
 <script>
-import {BDropdown, BDropdownItem} from 'bootstrap-vue';
 import {mapActions, mapGetters, mapState} from 'vuex';
 
 import Url from './Url.vue';
@@ -112,8 +127,15 @@ import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from '@/_Hub/components/TextView.vue';
 import {CONNEXION_MODE, get, post} from '@/_Hub/tools/https';
-import {DOCS_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
+import {DOCS_URL, MLFLOW_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
 import STAC from '../models/stac';
+import STACLogo from '@/assets/img/STAC_logo.png';
+import DVCLogo from '@/assets/img/logo-dvc.svg';
+import MLFlowLogo from '@/assets/img/MLflow-Logo.svg';
+import JupyterLogo from '@/assets/img/Jupyter_logo.svg';
+import DVCCodeGenerator from '@/_Hub/components/CodeGenerator/DVCCodeGenerator.vue';
+import STACCodeGenerator from '@/_Hub/components/CodeGenerator/STACCodeGenerator.vue';
+import MLflowCodeGenerator from '@/_Hub/components/CodeGenerator/MLflowCodeGenerator.vue';
 
 
 const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.json';
@@ -121,9 +143,10 @@ const LANGUAGE_EXT = 'https://stac-extensions.github.io/language/v1.*/schema.jso
 export default {
   name: 'Source',
   components: {
+    MLflowCodeGenerator,
+    STACCodeGenerator,
+    DVCCodeGenerator,
     TextView,
-    BDropdown,
-    BDropdownItem,
     Url
   },
   props: {
@@ -139,10 +162,6 @@ export default {
       type: Object,
       default: null
     },
-    action: {
-      type: String,
-      default: null
-    },
     jupyter: {
       type: String,
       default: null
@@ -153,7 +172,12 @@ export default {
       can_rate: false,
       rank_rate: undefined,
       has_rated: false,
-      jupyter_link: undefined
+      jupyter_link: undefined,
+      stacLogo:STACLogo,
+      dvcLogo:DVCLogo,
+      mlflowLogo:MLFlowLogo,
+      jupyterLogo:JupyterLogo
+
     };
   },
   computed: {
@@ -274,8 +298,11 @@ export default {
       return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:jupyter') === 'enable' : false;
     },
     canUseDVC() {
-      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:store-s3') === 'enable' : false
-      && this.dvcUrl() != null;
+      return this.dvcUrl() !== null;
+    },
+    canUseMlflow() {
+      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:mlflow') === 'enable' : false
+        && this.mlflowUrl() != null;
     }
   },
   watch: {
@@ -342,6 +369,12 @@ export default {
       if (!projectID) {return null;}
       return STORE_DVC_URL + projectID;
     },
+    mlflowUrl() {
+      if (!this.data || !(this.data instanceof STAC)) {return null;}
+      const projectPath = this.data.getMetadata('sharinghub:path');
+      if (!projectPath) {return null;}
+      return MLFLOW_URL.concat(projectPath).concat('/tracking');
+    },
     starProject() {
       if (!this.data || !(this.data instanceof STAC)) {throw  new Error('STAC is not defined');}
       const projectID = this.data.getMetadata('sharinghub:id');
@@ -384,18 +417,18 @@ export default {
 </script>
 
 <style lang="scss">
-#popover-link, #popover-root, #popover-share, #popover-dvc {
-  width: 80%;
-  max-width: 800px;
-
+@import 'src/theme/variables';
+@import 'src/assets/mixins';
+#popover-link, #popover-root, #popover-share, #popover-dvc, #popover-stac, #popover-dvc, #popover-mlflow {
+  width: 50%;
+  max-width: 70%;
+  padding-top: 8px;
   .popover-body {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 80vh;
+    @include scrollbars(0.6em, map-get($theme-colors, 'primary'));
   }
-}
-#popover-dvc {
-  max-width: 300px;
 }
 
 #popover-link .stac-id .copy-button {
@@ -411,6 +444,29 @@ export default {
 
   > .title {
     flex: 1;
+  }
+}
+.btn-group{
+  .btn{
+    height: 38px !important;
+  }
+}
+.btn-group-code-generator{
+  .btn{
+    min-width: 65px;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+}
+@media screen and (max-width: 575px) {
+  .sm\:{
+    &hidden{
+      display: none !important;
+    }
+    &block{
+      display: block !important;
+    }
   }
 }
 </style>

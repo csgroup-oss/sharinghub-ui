@@ -302,6 +302,20 @@
       "docs": "Docs",
       "tutorial": "Tutoriel"
     },
+    "stac": {
+      "hover": "Aide STAC",
+      "title": "Informations STAC",
+      "docs_spec": "Documentation de STAC",
+      "docs_pystac": "Documentation de PySTAC ",
+      "tutorial": "Tutoriel"
+    },
+    "mlflow": {
+      "label": "MLFlow",
+      "hover": "Aide MLflow",
+      "docs": " Documentation de MLflow",
+      "title": "Informations MLflow",
+      "show_ui": "Aller sur MLflow Ui"
+    },
     "stacExtension": "Extension du STAC",
     "stacVersion": "Version STAC",
     "statistics": "Statistiques",

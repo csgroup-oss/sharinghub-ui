@@ -22,6 +22,26 @@
   }
 }
 
+@mixin h_scrollbars($size, $foreground-color, $background-color:white) {
+
+  ::-webkit-scrollbar {
+    width: $size;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 0.3rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0.3rem;
+    background-color: $foreground-color;
+  }
+
+  ::-webkit-scrollbar:vertical {
+    display: none;
+  }
+}
+
 @mixin fade_background($color) {
 
   background-color: rgba($color, 0.1);

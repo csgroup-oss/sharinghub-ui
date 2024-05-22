@@ -52,7 +52,6 @@ import {defineComponent} from 'vue';
 import TextView from '@/_Hub/components/TextView.vue';
 import {DateTime, Interval} from 'luxon';
 import {mapGetters, mapState} from 'vuex';
-import linuxIco from '@/assets/img/confused-linux.jpg';
 import Description from '@/components/Description.vue';
 
 export default defineComponent({
@@ -73,7 +72,6 @@ export default defineComponent({
   },
   data() {
     return {
-      owner: linuxIco,
       rankRate: 0
     };
   },

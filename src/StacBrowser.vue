@@ -35,9 +35,11 @@
           <TabSectionDeployment />
         </b-tab>
 
-        <b-tab class="pt-4">
+        <b-tab class="pt-4 xl:hidden lg:hidden md:inline sm:inline">
           <template #title>
-            <TextView type="header__b16">STAC API</TextView>
+            <TextView class="xl:hidden lg:hidden md:inline sm:inline" type="header__b16">
+              STAC API
+            </TextView>
           </template>
           <TabSectionApiStac v-if="data" :title="title" :stacUrl="url" :stac="data" />
         </b-tab>

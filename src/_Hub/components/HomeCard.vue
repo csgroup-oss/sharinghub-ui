@@ -75,7 +75,6 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../../theme/variables";
 
 .homeCard {
   display:flex;

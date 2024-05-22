@@ -28,9 +28,6 @@ import {
   Tooltip
 } from 'chart.js';
 import {mapState} from 'vuex';
-import Utils from '@/utils';
-import {PROXY_URL} from '@/_Hub/Endpoint';
-import {get} from '@/_Hub/tools/https';
 
 ChartJS.register(
   Title,
@@ -122,19 +119,7 @@ export default defineComponent({
     };
   },
   async mounted() {
-      const  projectId = Utils.getProjectID(this.url);
-      if(projectId){
-        const {fetches} = (await get(PROXY_URL.concat(`/projects/${projectId}/statistics`))).data;
-        if(fetches) {
-          this.loading = fetches.total === 0;
-          let chart_data = fetches.days.map(el => el.count);
-          let times = fetches.days.map(el => el.date);
-          this.chartData.labels = times;
-          this.chartData.datasets = [
-            {fill: true, data: chart_data }
-          ];
-        }
-      }
+
   }
 });
 </script>

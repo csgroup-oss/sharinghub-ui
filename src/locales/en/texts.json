@@ -295,6 +295,20 @@
       "enabled": "Open in Jupyter",
       "disabled": "Login to open in Jupyter"
     },
+    "stac": {
+      "hover": "STAC help",
+      "title": " STAC informations",
+      "docs_spec": "STAC documentation",
+      "docs_pystac": "PySTAC documentation",
+      "tutorial": "Tutoriel"
+    },
+    "mlflow": {
+      "label": "MLFlow",
+      "hover": "MLflow helps",
+      "docs": "MLflow documentation",
+      "title": "MLflow Informations",
+      "show_ui": "Go to MLflow Ui"
+    },
     "dvc": {
       "label": "DVC",
       "hover": "DVC help",

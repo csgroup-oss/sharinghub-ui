@@ -199,31 +199,6 @@ export default defineComponent({
 
 </script>
 
-<style lang="scss">
-#popover-link, #popover-root, #popover-share {
-  width: 80%;
-  max-width: 800px;
+<style scoped lang="scss">
 
-  .popover-body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 80vh;
-  }
-}
-
-#popover-link .stac-id .copy-button {
-  padding-top: 0.1rem;
-  padding-bottom: 0.1rem;
-  font-size: 0.7rem;
-}
-
-</style>
-<style lang="scss" scoped>
-.lang-item > .dropdown-item {
-  display: flex;
-
-  > .title {
-    flex: 1;
-  }
-}
 </style>

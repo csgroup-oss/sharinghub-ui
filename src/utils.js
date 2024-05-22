@@ -461,14 +461,6 @@ export default class Utils {
     return Utils.mergeDeep(target, ...sources);
   }
 
-  static getProjectID(stac_id = '') {
-    const reversed = stac_id.split('-').reverse();
-    if (reversed.length === 0) {
-      return undefined;
-    }
-    return !isNaN(parseInt(reversed[0])) ? parseInt(reversed[0]) : undefined;
-  }
-
   static browsifyUrl(url) {
     const urlObject = new URL(url);
     const url_to_resolve = urlObject.pathname.split('/').splice(1).join('/');
