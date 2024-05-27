@@ -1,0 +1,56 @@
+# SharingHub UI
+
+Copyright 2024 CS GROUP - France, <https://www.csgroup.eu/>
+
+This software is distributed under the Apache Software License (ASL) v2.0, see LICENSE
+file or <http://www.apache.org/licenses/LICENSE-2.0> for details.
+
+This software includes code from many other open source projects. See below for details
+about the license of each project.
+
+## The Apache 2.0 License
+
+The following components are provided under the Apache 2.0 License (<https://opensource.org/licenses/Apache-2.0>).
+See project link for details.
+
+- <https://github.com/stac-utils/stac-fields>
+- <https://github.com/stac-utils/stac-migrate>
+- <https://github.com/radiantearth/stac-browser>
+
+## The MIT License
+
+The following components are provided under the MIT License (<https://opensource.org/licenses/mit>).
+See project link for details.
+
+- <https://github.com/babel/babel>
+- <https://github.com/meteorlxy/vssue>
+- <https://github.com/vuejs/core>
+- <https://github.com/vuejs/vuex>
+- <https://github.com/vuejs/vue>
+- <https://github.com/vuejs/vue-router>
+- <https://github.com/axios/axios>
+- <https://github.com/bootstrap-vue/bootstrap-vue>
+- <https://github.com/cryptocoinjs/bs58>
+- <https://github.com/js-cookie/js-cookie>
+- <https://github.com/moment/luxon>
+- <https://github.com/markdown-it/markdown-it>
+- <https://github.com/bitinn/node-fetch>
+- <https://github.com/prettier/prettier>
+- <https://github.com/primefaces/primeflex>
+- <https://github.com/euvl/v-clipboard>
+- <https://github.com/apertureless/vue-chartjs>
+- <https://github.com/kazupon/vue-i18n>
+- <https://github.com/yargs/yargs>
+- <https://github.com/vue-leaflet/Vue2Leaflet>
+- <https://github.com/shentao/vue-multiselect>
+- <https://github.com/medialize/URI.js>
+- <https://github.com/zloirock/core-js>
+- <https://github.com/stiang/remove-markdown>
+- <https://github.com/DiCrEn/vue-read-more-smooth>
+
+## The ISC LICENSE
+
+The following components are provided under the PYTHON SOFTWARE FOUNDATION License (<https://opensource.org/license/isc-license-txt>).
+See project link for details.
+
+- <https://github.com/musement/iso-duration>

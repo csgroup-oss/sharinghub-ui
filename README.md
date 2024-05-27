@@ -62,3 +62,9 @@ Build the image:
 ```bash
 docker build . -t sharinghub-ui:latest --build-arg VERSION=$(git rev-parse --short HEAD)
 ```
+
+## Copyright and License
+
+Copyright 2024 `CS GROUP - France`
+
+**SharingHub UI**  is an open source software, distributed under the Apache License 2.0. See the [`LICENSE`](./LICENSE) file for more information.
