@@ -37,7 +37,7 @@ If you have an idea to improve the project, we would love to hear it! Please cre
    cd sharinhub-ui
    python3 -mvenv .venv
    source .venv/bin/activate
-   pip install -e .[dev]
+   pip install pre-commit
    pre-commit install --install-hooks
    git checkout -b (fix-or-feature)/your-topic-name
 

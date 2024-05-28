@@ -18,7 +18,8 @@
     "**/stac-migrate",
     "**/stac-layer",
     "config.js",
-    "*.config.js"
+    "*.config.js",
+    "vendors-release/"
   ],
   "rules": {
     "curly": [1, "all"],
