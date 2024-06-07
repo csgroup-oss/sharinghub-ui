@@ -78,7 +78,6 @@ import {mapState} from 'vuex';
 import TextView from '@/_Hub/components/TextView.vue';
 import {CONNEXION_MODE} from '@/_Hub/tools/https';
 import STAC from '@/models/stac';
-import {DOCS_URL, MLFLOW_URL} from '@/_Hub/Endpoint';
 import MlFlow_icon from '@/assets/img/MLflow_icon.svg';
 
 
@@ -102,7 +101,7 @@ export default defineComponent({
     };
   },
   computed:{
-    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage']),
+    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage', 'provideConfig']),
     defaultToken(){
       return '<your_access_token> or <your_personal_gitlab_token>';
     },
@@ -114,9 +113,6 @@ export default defineComponent({
       }
       return _token;
     },
-    dvcDocsUrl() {
-      return DOCS_URL.concat('tutorials/manage_dataset_with_dvc/');
-    },
     projectID(){
       if (!this.data || !(this.data instanceof STAC)) {return null;}
       return  this.data.getMetadata('sharinghub:id');
@@ -126,6 +122,7 @@ export default defineComponent({
 
     getMLFlowCodeTemplate(){
       const uiLanguage = this.uiLanguage;
+      const {mlflow} = this.provideConfig;
       return Object.entries(getMlflowCodeTemplate).map(([, val]) =>{
         let item = {
           language: val.language,
@@ -141,7 +138,7 @@ export default defineComponent({
               item['textWithCredentials'] = val.text({arg:this.token});
               return item;
               case 'mlflow_url mlflow_tracking_id':
-              item['text'] = val.text({arg:MLFLOW_URL,
+              item['text'] = val.text({arg: mlflow.url,
                 arg1:`${(this.experimentName || 'experiment')} (${this.projectID})`
               });
               item['hasInput'] = true;

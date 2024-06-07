@@ -109,7 +109,7 @@ export default defineComponent({
     };
   },
   computed:{
-    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage']),
+    ...mapState(['url', 'provideConfig', 'auth', 'data', 'uiLanguage']),
     defaultToken(){
       return '<your_access_token> or <your_personal_gitlab_token>';
     },
@@ -122,7 +122,10 @@ export default defineComponent({
       return _token;
     },
     dvcDocsUrl() {
-      return DOCS_URL.concat('tutorials/manage_dataset_with_dvc/');
+      const docs_url = this.provideConfig.docs.url || DOCS_URL;
+      return docs_url.endsWith('/') ?
+        docs_url.concat('tutorials/manage_dataset_with_dvc/')
+        : docs_url.concat('/tutorials/manage_dataset_with_dvc/');
     },
     gitProvider(){
       if (!this.data || !(this.data instanceof STAC)) {

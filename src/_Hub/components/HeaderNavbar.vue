@@ -153,7 +153,7 @@
 import {defineComponent} from 'vue';
 import TextView from '@/_Hub/components/TextView.vue';
 import NavItem from '@/_Hub/components/HeaderNavbar/NavItem.vue';
-import {DOCS_URL, LOGOUT_URL, PROXY_URL} from '@/_Hub/Endpoint';
+import {LOGOUT_URL, PROXY_URL} from '@/_Hub/Endpoint';
 import {mapState} from 'vuex';
 import {CONNEXION_MODE, get} from '@/_Hub/tools/https';
 import Localisation from '@/components/Localisation.vue';
@@ -186,7 +186,6 @@ export default defineComponent({
       avatar_url: undefined,
       canSearch: true,
       logo: logoImage,
-      docs_url: DOCS_URL,
       size: 'lg',
       research:undefined
     };

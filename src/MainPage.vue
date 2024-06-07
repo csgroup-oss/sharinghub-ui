@@ -105,11 +105,12 @@ export default defineComponent({
       headerRoutes: undefined,
       headerExternalLinks: undefined,
       alert_message: undefined,
-      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN
+      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN,
+      docs_url:  DOCS_URL
     };
   },
   computed: {
-    ...mapState(['auth', 'conformsTo', 'uiLanguage', 'provideConfig', 'pathPrefix']),
+    ...mapState(['auth', 'conformsTo', 'config', 'uiLanguage', 'provideConfig', 'pathPrefix']),
     login() {
       return LOGIN_URL;
     }
@@ -202,7 +203,9 @@ export default defineComponent({
   },
   methods: {
     docs(path) {
-      return DOCS_URL.concat(path);
+      return this.docs_url.endsWith('/') ?
+        this.docs_url.concat(`${path}`)
+        : this.docs_url.concat(`/${path}`);
     },
     async initWithUserCredentials() {
       this.isLoading = true;
@@ -242,6 +245,7 @@ export default defineComponent({
         const {data} = response;
         if (data) {
           await this.$store.commit('setProvideConfig', data);
+          this.docs_url = data.docs.url;
           return data;
         }
         return undefined;

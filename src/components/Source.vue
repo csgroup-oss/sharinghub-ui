@@ -127,7 +127,7 @@ import Utils from '../utils';
 import {getBest, prepareSupported} from '../locale-id';
 import TextView from '@/_Hub/components/TextView.vue';
 import {CONNEXION_MODE, get, post} from '@/_Hub/tools/https';
-import {DOCS_URL, MLFLOW_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
+import {PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
 import STAC from '../models/stac';
 import STACLogo from '@/assets/img/STAC_logo.png';
 import DVCLogo from '@/assets/img/logo-dvc.svg';
@@ -181,7 +181,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'data', 'auth', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
+    ...mapState(['conformsTo', 'dataLanguages', 'locale', 'data', 'auth', 'provideConfig', 'privateQueryParameters', 'supportedLocales', 'stacLint', 'stacProxyUrl', 'uiLanguage', 'valid']),
     ...mapGetters(['supportsExtension', 'root']),
     stacVersion() {
       return this.stac?.stac_version;
@@ -232,9 +232,6 @@ export default {
     },
     message() {
       return this.$t('source.share.message', {title: this.title, url: this.browserUrl()});
-    },
-    dvcDocsUrl() {
-      return DOCS_URL.concat('tutorials/manage_dataset_with_dvc/');
     },
     twitterUrl() {
       let text = encodeURIComponent(this.message);
@@ -373,7 +370,12 @@ export default {
       if (!this.data || !(this.data instanceof STAC)) {return null;}
       const projectPath = this.data.getMetadata('sharinghub:path');
       if (!projectPath) {return null;}
-      return MLFLOW_URL.concat(projectPath).concat('/tracking');
+      const {mlflow} = this.provideConfig;
+      if(!mlflow?.url){
+        return null;
+      }
+      return mlflow.url.endsWith('/') ?  mlflow.url.concat(projectPath).concat('/tracking') :
+        mlflow.url.concat(`/${projectPath}`).concat('/tracking');
     },
     starProject() {
       if (!this.data || !(this.data instanceof STAC)) {throw  new Error('STAC is not defined');}
