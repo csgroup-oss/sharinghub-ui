@@ -28,6 +28,14 @@
           </template>
           <div class="p-divider--vertical" />
 
+          <div v-if="docsUrl">
+            <a :href="docsUrl" target="_blank">
+              <nav-item class="mx-1">
+                <b-icon-journal-bookmark-fill />
+                <text-view type="header__b15"> Docs</text-view>
+              </nav-item>
+            </a>
+          </div>
           <div v-for="link in externalLinks" :key="link.name">
             <a v-if="link.url " :href="link.url" target="_blank">
               <nav-item class="mx-1">
@@ -109,6 +117,15 @@
             </nav-item>
           </router-link>
         </template>
+
+        <div v-if="docsUrl">
+          <a :href="docsUrl" target="_blank">
+            <nav-item class="mx-1">
+              <b-icon-journal-bookmark-fill />
+              <text-view type="header__b15"> Docs</text-view>
+            </nav-item>
+          </a>
+        </div>
 
         <div class="mx-1 mt-3">
           <div v-for="link in externalLinks" :key="link.name">
@@ -196,6 +213,13 @@ export default defineComponent({
       const { path } = this.$route;
       const base_login =  path ? '/login?redirect='.concat(path.substring(1)) : '/login';
       return base_login;
+    },
+    docsUrl(){
+      const {docs} = this.provideConfig;
+      if(! docs.url){
+        return null;
+      }
+      return docs.url;
     }
   },
   watch: {
