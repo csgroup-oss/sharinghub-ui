@@ -101,7 +101,7 @@ export default defineComponent({
     };
   },
   computed:{
-    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage', 'provideConfig']),
+    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage']),
     defaultToken(){
       return '<your_access_token> or <your_personal_gitlab_token>';
     },
@@ -122,7 +122,6 @@ export default defineComponent({
 
     getMLFlowCodeTemplate(){
       const uiLanguage = this.uiLanguage;
-      const {mlflow} = this.provideConfig;
       return Object.entries(getMlflowCodeTemplate).map(([, val]) =>{
         let item = {
           language: val.language,
@@ -138,8 +137,10 @@ export default defineComponent({
               item['textWithCredentials'] = val.text({arg:this.token});
               return item;
               case 'mlflow_url mlflow_tracking_id':
-              item['text'] = val.text({arg: mlflow.url,
-                arg1:`${(this.experimentName || 'experiment')} (${this.projectID})`
+              item['text'] =
+                val.text({
+                  arg: this.mlflowUrl,
+                  arg1:`${(this.experimentName || 'experiment')} (${this.projectID})`
               });
               item['hasInput'] = true;
               return  item;
