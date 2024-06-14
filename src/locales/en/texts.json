@@ -300,6 +300,7 @@
       "title": " STAC informations",
       "docs_spec": "STAC documentation",
       "docs_pystac": "PySTAC documentation",
+      "docs_eodag": "EODAG documentation",
       "tutorial": "Tutoriel"
     },
     "mlflow": {

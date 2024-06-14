@@ -66,7 +66,7 @@
           <div class="d-flex flex-column align-items-start">
             <b-button
               variant="info"
-              class="mr-1"
+              class="mr-1 my-1"
               size="sm"
               href="https://stacspec.org/"
               target="_blank"
@@ -76,13 +76,23 @@
             </b-button>
             <b-button
               variant="info"
-              class="mr-1 my-2"
+              class="mr-1 my-1"
               size="sm"
               href="https://pystac.readthedocs.io/en/stable/quickstart.html"
               target="_blank"
             >
               <b-icon-journal />
               {{ $t('source.stac.docs_pystac') }}
+            </b-button>
+            <b-button
+              variant="info"
+              class="mr-1 my-1"
+              size="sm"
+              href="https://eodag.readthedocs.io/en/stable/"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.stac.docs_eodag') }}
             </b-button>
           </div>
         </div>

@@ -306,7 +306,8 @@
       "hover": "Aide STAC",
       "title": "Informations STAC",
       "docs_spec": "Documentation de STAC",
-      "docs_pystac": "Documentation de PySTAC ",
+      "docs_pystac": "Documentation de PySTAC",
+      "docs_eodag": "Documentation d'EODAG",
       "tutorial": "Tutoriel"
     },
     "mlflow": {
