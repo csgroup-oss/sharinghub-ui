@@ -292,14 +292,26 @@ export default {
       if (this.auth?.mode === CONNEXION_MODE.DEFAULT_TOKEN) {
         return false;
       }
-      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:jupyter') === 'enable' : false;
+      if(this.stac){
+        const {jupyterlab} = this.provideConfig;
+        if(!jupyterlab.url){
+          return  null;
+        }
+        return this.stac?.getMetadata('sharinghub:jupyter') === 'enable';
+      }
+      return false;
     },
     canUseDVC() {
       return this.dvcUrl() !== null;
     },
     canUseMlflow() {
-      return (this.stac != undefined) ? this.stac?.getMetadata('sharinghub:mlflow') === 'enable' : false
-        && this.mlflowUrl() != null;
+      if(!this.mlflowUrl()){
+        return false;
+      }
+      if(this.stac){
+        return  this.stac?.getMetadata('sharinghub:mlflow') === 'enable';
+      }
+      return false;
     }
   },
   watch: {
@@ -361,19 +373,17 @@ export default {
       return window.location.toString();
     },
     dvcUrl() {
+      const {store} = this.provideConfig;
       if (!this.data || !(this.data instanceof STAC)) {return null;}
       const projectID = this.data.getMetadata('sharinghub:id');
-      if (!projectID) {return null;}
+      if (!projectID || !store) {return null;}
       return STORE_DVC_URL + projectID;
     },
     mlflowUrl() {
       if (!this.data || !(this.data instanceof STAC)) {return null;}
-      const projectPath = this.data.getMetadata('sharinghub:path');
-      if (!projectPath) {return null;}
       const {mlflow} = this.provideConfig;
-      if(!mlflow?.url){
-        return null;
-      }
+      const projectPath = this.data.getMetadata('sharinghub:path');
+      if (!projectPath || (!mlflow.url)) {return null;}
       return mlflow.url.endsWith('/') ?  mlflow.url.concat(projectPath).concat('/tracking') :
         mlflow.url.concat(`/${projectPath}`).concat('/tracking');
     },
