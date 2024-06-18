@@ -3,22 +3,27 @@
     <div class="col-md-12">
       <div v-if="!loading" class="float-right">
         <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
+        <div v-if="!!deployments" class="mt-4 justify-content-end lg:flex xl:flex md:hidden sm:hidden">
+          <deploy-actions v-bind="deployments" />
+        </div>
       </div>
 
       <div>
-        <text-view type="header__b20">
-          <template v-if="icon">
-            <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
-          </template>
-          <b-button
-            v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
-            pill
-            class="mr-2"
-          >
-            <b-icon-arrow-left />
-          </b-button>
+        <template v-if="icon">
+          <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
+        </template>
+        <b-button
+          v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
+          pill
+          class="mr-2"
+        >
+          <b-icon-arrow-left />
+        </b-button>
+        <text-view class="mr-4" type="header__b20">
           <span class="title">{{ title }}</span>
         </text-view>
+        <share-button-group />
+
         <text-view type="header__16" class="block pt-1 pb-3" v-if="url">
           <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
             <template #catalog>
@@ -34,6 +39,10 @@
         <div class="flex flex-wrap" v-if="!!data?.properties">
           <Keywords :keywords="keywords" />
         </div>
+
+        <div v-if="!!deployments" class="mt-4 justify-content-end lg:hidden xl:hidden md:flex sm:flex">
+          <deploy-actions v-bind="deployments" />
+        </div>
       </div>
     </div>
   </b-row>
@@ -47,11 +56,15 @@ import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from '@/components/Keywords.vue';
 import TextView from '@/_Hub/components/TextView.vue';
+import DeployActions from '@/_Hub/components/CodeGenerator/DeployActions.vue';
+import ShareButtonGroup from '@/components/ShareButtonGroup.vue';
 
 
 export default {
   name: 'StacHeader',
   components: {
+    ShareButtonGroup,
+    DeployActions,
     TextView,
     Keywords,
     StacLink,
@@ -60,7 +73,8 @@ export default {
   data() {
     return {
       jupyterLabUrl: undefined,
-      loading: true
+      loading: true,
+      deployments: null
     };
   },
   computed: {
@@ -101,15 +115,35 @@ export default {
     hasBack() {
       return !!window.history.state;
     },
-    keywords(){
-      return this.data?.getMetadata('keywords').length > 0  ? this.data?.getMetadata('keywords') : [];
+    keywords() {
+      return this.data?.getMetadata('keywords').length > 0 ? this.data?.getMetadata('keywords') : [];
+    }
+  },
+  watch: {
+    data: {
+      immediate: true,
+      handler(data) {
+        if (data instanceof STAC) {
+          if (data.getMetadata('sharinghub:spaces') !== 'enable'
+            || !this.canDeployAsStreamLit(data)) {
+            this.deployments = null;
+          } else {
+            this.deployments = {
+              streamlitUrl: this.getStreamLitUrl(data)
+            };
+          }
+
+        }
+
+      }
     }
   },
   async beforeMount() {
     this.jupyterLabUrl = this.provideConfig.jupyterlab?.url;
-     this.loading = false;
+    this.loading = false;
   },
-  methods: {}
+  methods: {
+  }
 };
 </script>
 
@@ -126,21 +160,32 @@ h1 {
   display: none !important;
 }
 
-.lg\:{
-  &block{
-    display: block !important;
-  }
-  &hidden{
-    display: none !important;
-  }
-}
 @media screen and (max-width: 575px) {
-  .sm\:{
-   &hidden{
-    display: none !important;
-   }
-    &block{
+  .sm\: {
+    &hidden {
+      display: none !important;
+    }
+
+    &block {
       display: block !important;
+    }
+
+    &flex {
+      display: flex !important;
+    }
+  }
+
+  .md\: {
+    &hidden {
+      display: none !important;
+    }
+
+    &block {
+      display: block !important;
+    }
+
+    &flex {
+      display: flex !important;
     }
   }
 }

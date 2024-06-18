@@ -318,6 +318,9 @@
       "docs": "Docs",
       "tutorial": "Tutorial"
     },
+    "deployment": {
+      "open": "Déployer"
+    },
     "stacExtension": "STAC Extension",
     "stacVersion": "STAC Version",
     "statistics": "Statistics",

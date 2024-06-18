@@ -27,14 +27,6 @@
           <TabSectionReview />
         </b-tab>
 
-
-        <b-tab v-if="isMlModelCompliant && canDeploy" class="pt-4">
-          <template #title>
-            <TextView type="header__b16">{{ $t('fields.model_deploy') }}</TextView>
-          </template>
-          <TabSectionDeployment />
-        </b-tab>
-
         <b-tab class="pt-4 xl:hidden lg:hidden md:inline sm:inline">
           <template #title>
             <TextView class="xl:hidden lg:hidden md:inline sm:inline" type="header__b16">
@@ -91,7 +83,6 @@ import {getBest, prepareSupported} from './locale-id';
 import TextView from '@/_Hub/components/TextView.vue';
 import TabSectionApiStac from '@/_Hub/views/sections/TabSectionApiStac.vue';
 import TabSectionReview from '@/_Hub/views/sections/TabSectionReview.vue';
-import TabSectionDeployment from '@/_Hub/views/sections/TabSectionDeployment.vue';
 import {CONNEXION_MODE} from '@/_Hub/tools/https';
 
 Vue.use(AlertPlugin);
@@ -142,7 +133,6 @@ export default {
   // router,
   // store,
   components: {
-    TabSectionDeployment,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
     ErrorAlert,
     StacHeader
@@ -175,12 +165,6 @@ export default {
       } else {
         return '';
       }
-    },
-    canDeploy() {
-      if (this.data instanceof STAC) {
-        return this.data.getMetadata('sharinghub:deployment') === 'enable';
-      }
-      return false;
     },
     isAuthenticated(){
       return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes(this.auth.mode);

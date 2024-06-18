@@ -317,6 +317,9 @@
       "title": "Informations MLflow",
       "show_ui": "Aller sur MLflow Ui"
     },
+    "deployment": {
+      "open": "Deploy"
+    },
     "stacExtension": "Extension du STAC",
     "stacVersion": "Version STAC",
     "statistics": "Statistiques",
