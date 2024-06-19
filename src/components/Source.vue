@@ -88,6 +88,23 @@
 
       <template>
         <b-button
+          variant="outline-dark"
+          size="sm"
+          :href="editRepositoryUrl"
+          target="_blank"
+          :disabled="!editRepositoryUrl"
+          v-b-tooltip
+          :title="$t('source.edit.hover')"
+        >
+          <b-icon-pencil-square />
+          <TextView class="button-label" type="Small-1">
+            <span class="button-label">&nbsp;{{ $t("source.edit.text") }}</span>
+          </TextView>
+        </b-button>
+      </template>
+
+      <template>
+        <b-button
           v-if="deployUrl"
           variant="outline-dark"
           size="sm"
@@ -108,10 +125,10 @@
 <script>
 import {mapActions, mapGetters, mapState} from 'vuex';
 
-import Utils from '../utils';
+import Utils, {ACCESS_LEVELS} from '../utils';
 import TextView from '@/_Hub/components/TextView.vue';
 import {CONNEXION_MODE, get} from '@/_Hub/tools/https';
-import {PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
+import {API_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
 import STAC from '../models/stac';
 import STACLogo from '@/assets/img/STAC_logo.png';
 import DVCLogo from '@/assets/img/logo-dvc.svg';
@@ -150,6 +167,7 @@ export default {
   },
   data() {
     return {
+      editRepositoryUrl :undefined,
       jupyterUrl: undefined,
       deployUrl : undefined,
       stacLogo: STACLogo,
@@ -226,6 +244,9 @@ export default {
 
           const appDeployerUrl = this.canDeployAsService(data);
           this.deployUrl = this.getDeployUrl(appDeployerUrl);
+          const projectPath = data.getMetadata('sharinghub:path');
+          const {access_level} = await this.getAccessLevel(projectPath);
+          this.editRepositoryUrl = this.getEditRepositoryUrl(access_level, projectPath );
         }
       }
     }
@@ -299,6 +320,29 @@ export default {
         }
       }
       return undefined;
+    },
+    async getAccessLevel(projectPath){
+      return get(API_URL.concat('check/').concat(projectPath).concat('?info=true'))
+        .then((response)=>{
+          if(response.data){
+            return response.data;
+          }
+        });
+    },
+    getEditRepositoryUrl(access_level, path){
+      const {gitlab} = this.provideConfig;
+      if( [ACCESS_LEVELS.ADMINISTRATOR, ACCESS_LEVELS.CONTRIBUTOR].includes(access_level)
+        && gitlab?.url
+        && this.currentUser
+      ){
+        const {url} = gitlab;
+        if( url.endsWith('/')){
+          return gitlab.url.concat('-/ide/project/').concat(path).concat('/edit/main/-/');
+        }else{
+          return gitlab.url.concat('/-/ide/project/').concat(path).concat('/edit/main/-/');
+        }
+      }
+     return undefined;
     }
   }
 };

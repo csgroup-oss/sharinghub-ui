@@ -55,6 +55,9 @@
     "true": "Oui"
   },
   "copy": "Copier",
+  "comments": {
+    "info_login": "pour laisser des commentaires"
+  },
   "default": "Défault",
   "defaultWithValue": "Défault ({value})",
   "deprecated": "Déprécié",
@@ -319,6 +322,10 @@
     },
     "deployment": {
       "open": "Deploy"
+    },
+    "edit": {
+      "text": "Editer",
+      "hover": "Edit dans GitLab"
     },
     "stacExtension": "Extension du STAC",
     "stacVersion": "Version STAC",

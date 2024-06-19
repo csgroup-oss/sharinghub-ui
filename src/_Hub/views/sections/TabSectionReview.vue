@@ -1,6 +1,13 @@
 <template>
   <div class="w-100">
     <Awaiter v-if="isLoading" :is-visible="isLoading" />
+
+    <text-view v-if="!currentUser" type="header__b16" class="text-primary ml-2">
+      <router-link :to="login">
+        {{ $t('fields.login') }}
+      </router-link>
+      {{ $t('comments.info_login') }}
+    </text-view>
     <Vssue :title="title" :options="options" v-if="!isLoading" />
   </div>
 </template>
@@ -16,6 +23,8 @@ import GitlabV4 from '../../../../vendors-release/lib/index';
 
 import {mapState} from 'vuex';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
+import {CONNEXION_MODE} from '@/_Hub/tools/https';
+import TextView from '@/_Hub/components/TextView.vue';
 
 
 Vue.use(Vssue);
@@ -36,11 +45,20 @@ const vsOptions = {
 export default defineComponent({
   name: 'TabSectionReview',
   components: {
+    TextView,
     Awaiter,
     'Vssue': VssueComponent
   },
   computed: {
-    ...mapState(['data', 'uiLanguage', 'auth'])
+    ...mapState(['data', 'uiLanguage', 'auth']),
+    currentUser() {
+      return !!this.auth.user && this.auth.mode !== CONNEXION_MODE.DEFAULT_TOKEN;
+    },
+    login() {
+      const { path } = this.$route;
+      const base_login =  path ? '/login?redirect='.concat(path.substring(1)) : '/login';
+      return base_login;
+    }
   },
   // eslint-disable-next-line vue/order-in-components
   data() {

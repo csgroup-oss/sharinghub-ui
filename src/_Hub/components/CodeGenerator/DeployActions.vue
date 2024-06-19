@@ -40,7 +40,7 @@ export default defineComponent({
 <style  lang="scss">
 .btn-group{
   .btn{
-    height: 36px !important;
+    //height: 36px !important;
   }
 }
 </style>

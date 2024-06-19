@@ -180,7 +180,7 @@ export default defineComponent( {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '../theme/variables';
 @import '../assets/mixins';
  #popover-share {

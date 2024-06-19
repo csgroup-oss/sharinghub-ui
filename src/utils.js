@@ -3,6 +3,13 @@ import removeMd from 'remove-markdown';
 import {stacPagination} from './rels';
 import {BASE_URL} from '@/_Hub/Endpoint';
 
+
+export const ACCESS_LEVELS ={
+  'READ_ONLY':1,
+  'CONTRIBUTOR':2,
+  'ADMINISTRATOR':3
+};
+
 export const STAC_EXTENSIONS = {
   'ml-model': 'https://stac-extensions.github.io/ml-model/v1.0.0/schema.json'
 };
