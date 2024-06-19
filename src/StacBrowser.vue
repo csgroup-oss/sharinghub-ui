@@ -20,7 +20,7 @@
           </TextView>
         </b-tab>
 
-        <b-tab v-if="isAuthenticated" class="pt-4">
+        <b-tab class="pt-4">
           <template #title>
             <TextView type="header__b16"> {{ $t('fields.reviews') }}</TextView>
           </template>
@@ -98,17 +98,7 @@ Vue.directive('b-toggle', VBToggle);
 // Used to detect when a catalog/item becomes visible so that further data can be loaded
 Vue.directive('b-visible', VBVisible);
 
-// Setup router
-//Vue.use(VueRouter);
-//const router = new VueRouter({
-//  mode: CONFIG.historyMode,
-//  base: CONFIG.pathPrefix,
-//  routes: getRoutes(CONFIG)
-//});
 
-// Setup store
-//Vue.use(Vuex);
-//const store = getStore(CONFIG, router);
 
 // Pass Config through from props to vuex
 let Props = {};

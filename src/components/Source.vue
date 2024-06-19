@@ -28,7 +28,7 @@
         </b-popover>
       </template>
 
-      <template>
+      <template v-if="canUseDVC">
         <b-button
           v-if="canUseDVC"
           id="popover-dvc-btn"
@@ -71,11 +71,11 @@
     >
       <template>
         <b-button
-          v-if="canUseJupyter"
+          v-if="canShowJupyter"
           @click="$event => openJupyterLink($event, jupyterUrl)"
           variant="outline-dark"
           size="sm"
-          :disabled="!jupyterUrl || !currentUser"
+          :disabled="!canUseJupyter"
           v-b-tooltip
           :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
         >
@@ -167,18 +167,18 @@ export default {
       return !!this.auth.user && this.auth.mode !== CONNEXION_MODE.DEFAULT_TOKEN;
     },
 
-    canUseJupyter() {
-      if (this.auth?.mode === CONNEXION_MODE.DEFAULT_TOKEN) {
-        return false;
-      }
+    canShowJupyter(){
       if (this.stac) {
         const {jupyterlab} = this.provideConfig;
-        if (!jupyterlab.url) {
-          return null;
+        if (jupyterlab.url
+          && this.stac?.getMetadata('sharinghub:jupyter') === 'enable') {
+          return true;
         }
-        return this.stac?.getMetadata('sharinghub:jupyter') === 'enable';
       }
       return false;
+    },
+    canUseJupyter() {
+      return this.currentUser;
     },
     canUseDVC() {
       return this.dvcUrl() !== null;
