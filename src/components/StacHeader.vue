@@ -3,9 +3,6 @@
     <div class="col-md-12">
       <div v-if="!loading" class="float-right">
         <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
-        <div v-if="!!deployments" class="mt-4 justify-content-end lg:flex xl:flex md:hidden sm:hidden">
-          <deploy-actions v-bind="deployments" />
-        </div>
       </div>
 
       <div>
@@ -39,10 +36,6 @@
         <div class="flex flex-wrap" v-if="!!data?.properties">
           <Keywords :keywords="keywords" />
         </div>
-
-        <div v-if="!!deployments" class="mt-4 justify-content-end lg:hidden xl:hidden md:flex sm:flex">
-          <deploy-actions v-bind="deployments" />
-        </div>
       </div>
     </div>
   </b-row>
@@ -56,7 +49,6 @@ import STAC from '../models/stac';
 import Utils from '../utils';
 import Keywords from '@/components/Keywords.vue';
 import TextView from '@/_Hub/components/TextView.vue';
-import DeployActions from '@/_Hub/components/CodeGenerator/DeployActions.vue';
 import ShareButtonGroup from '@/components/ShareButtonGroup.vue';
 
 
@@ -64,7 +56,6 @@ export default {
   name: 'StacHeader',
   components: {
     ShareButtonGroup,
-    DeployActions,
     TextView,
     Keywords,
     StacLink,
@@ -73,8 +64,7 @@ export default {
   data() {
     return {
       jupyterLabUrl: undefined,
-      loading: true,
-      deployments: null
+      loading: true
     };
   },
   computed: {
@@ -117,25 +107,6 @@ export default {
     },
     keywords() {
       return this.data?.getMetadata('keywords').length > 0 ? this.data?.getMetadata('keywords') : [];
-    }
-  },
-  watch: {
-    data: {
-      immediate: true,
-      handler(data) {
-        if (data instanceof STAC) {
-          if (data.getMetadata('sharinghub:spaces') !== 'enable'
-            || !this.canDeployAsStreamLit(data)) {
-            this.deployments = null;
-          } else {
-            this.deployments = {
-              streamlitUrl: this.getStreamLitUrl(data)
-            };
-          }
-
-        }
-
-      }
     }
   },
   async beforeMount() {

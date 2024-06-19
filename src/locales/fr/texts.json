@@ -325,7 +325,10 @@
     },
     "edit": {
       "text": "Editer",
-      "hover": "Edit dans GitLab"
+      "hover": {
+        "enable" : "Ouvrir dans le web IDE",
+        "disable" : "Connectez vous pour edite"
+      }
     },
     "stacExtension": "Extension du STAC",
     "stacVersion": "Version STAC",

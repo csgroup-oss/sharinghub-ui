@@ -3,8 +3,13 @@
     <b-button-group size="sm">
       <template>
         <template>
-          <b-button size="sm" variant="outline-primary" id="popover-share-btn" :title="$t('source.share.withOthers')">
-            <b-icon-share scale="0.7" />
+          <b-button
+            size="sm" variant="outline-primary"
+            v-b-tooltip
+            class="d-flex align-items-center"
+            id="popover-share-btn" :title="$t('source.share.withOthers')"
+          >
+            <b-icon-share scale="0.9" />
           </b-button>
           <b-popover
             id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
@@ -24,11 +29,14 @@
         </template>
 
         <b-button
-          :disabled="!can_rate" size="sm" @click="has_rated ? UnStarProject() :starProject()"
+          :disabled="!can_rate" size="sm"
+          @click="has_rated ? UnStarProject() :starProject()"
           variant="outline-primary"
+          v-b-tooltip
+          class="d-flex align-items-center btn-share"
           :title="has_rated ? ' Unstar': ' Star'"
         >
-          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.7" aria-hidden="true" />
+          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.9" aria-hidden="true" />
           {{ has_rated ? ' Unstar': ' Star' }}
         </b-button>
         <b-button size="sm" disabled variant="outline-dark">
@@ -183,6 +191,7 @@ export default defineComponent( {
 <style scoped lang="scss">
 @import '../theme/variables';
 @import '../assets/mixins';
+
  #popover-share {
   width: 50%;
   max-width: 70%;
@@ -202,6 +211,9 @@ export default defineComponent( {
 .btn-group{
   .btn{
     height: 30px !important;
+  }
+  .btn-share{
+    line-height: 3px !important;
   }
 }
 .btn-group-code-generator{

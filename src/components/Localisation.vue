@@ -1,11 +1,12 @@
 <template>
   <div class="share">
     <b-dropdown
+
       size="sm" variant="link" right toggle-class="text-decoration-none"
       :title="$t('source.language.switch')"
     >
       <template #button-content>
-        <b-icon-globe /> {{ uiLanguage }}
+        <b-icon-globe scale="0.9" /> {{ uiLanguage }}
       </template>
       <b-dropdown-item
         v-for="l of languages" :key="l.code" class="lang-item"

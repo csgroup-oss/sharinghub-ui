@@ -22,6 +22,21 @@
             <template v-else>{{ $t('source.validationNA') }}</template>
           </b-col>
         </b-row>
+
+        <b-row class="validation">
+          <b-col cols="4">
+            <b-button
+              variant="primary"
+              class="mr-1 my-1"
+              size="sm"
+              href="https://stacspec.org/"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.stac.docs_spec') }}
+            </b-button>
+          </b-col>
+        </b-row>
         <hr>
       </template>
       <Url id="stacUrl" :url="stacUrl" :label="$t('source.locatedAt')" />

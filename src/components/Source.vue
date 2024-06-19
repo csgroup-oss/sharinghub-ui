@@ -12,9 +12,10 @@
           variant="outline-secondary"
           size="sm"
           id="popover-stac-btn"
+          v-b-tooltip
           :title="$t('source.stac.hover')"
         >
-          <img :src="stacLogo" width="35">
+          <img :src="stacLogo" class="mr-1" width="25">
           <TextView class="button-label" type="Small-1">
             <span class="button-label">STAC</span>
           </TextView>
@@ -34,6 +35,7 @@
           id="popover-dvc-btn"
           variant="outline-secondary"
           size="sm"
+          v-b-tooltip
           :title="$t('source.dvc.hover')"
         >
           <TextView class="button-label" type="Small-1">
@@ -50,9 +52,10 @@
           id="popover-mlflow-btn"
           variant="outline-secondary"
           size="sm"
+          v-b-tooltip
           :title="$t('source.mlflow.hover')"
         >
-          <TextView class="button-label" type="Small-1">
+          <TextView class="button-label pb-1" type="Small-1">
             <img width="50" :src="mlflowLogo">
           </TextView>
         </b-button>
@@ -75,30 +78,13 @@
           @click="$event => openJupyterLink($event, jupyterUrl)"
           variant="outline-dark"
           size="sm"
-          :disabled="!canUseJupyter"
           v-b-tooltip
+          :disabled="!canUseJupyter"
           :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
         >
           <img :src="jupyterLogo" width="17" alt="jupyter_logo">
           <TextView class="button-label" type="Small-1">
             <span class="button-label">&nbsp;{{ $t("source.jupyter.open") }}</span>
-          </TextView>
-        </b-button>
-      </template>
-
-      <template>
-        <b-button
-          variant="outline-dark"
-          size="sm"
-          :href="editRepositoryUrl"
-          target="_blank"
-          :disabled="!editRepositoryUrl"
-          v-b-tooltip
-          :title="$t('source.edit.hover')"
-        >
-          <b-icon-pencil-square />
-          <TextView class="button-label" type="Small-1">
-            <span class="button-label">&nbsp;{{ $t("source.edit.text") }}</span>
           </TextView>
         </b-button>
       </template>
@@ -115,6 +101,23 @@
           <b-icon-collection-play />
           <TextView class="button-label" type="Small-1">
             <span class="button-label">&nbsp;{{ $t("source.deployment.open") }}</span>
+          </TextView>
+        </b-button>
+      </template>
+
+      <template>
+        <b-button
+          variant="outline-dark"
+          size="sm"
+          :href="editRepositoryUrl"
+          target="_blank"
+          :disabled="!editRepositoryUrl"
+          v-b-tooltip
+          :title="!!editRepositoryUrl? $t('source.edit.hover.enable') : $t('source.edit.hover.disable') "
+        >
+          <b-icon-pencil-square />
+          <TextView class="button-label" type="Small-1">
+            <span class="button-label">&nbsp;{{ $t("source.edit.text") }}</span>
           </TextView>
         </b-button>
       </template>
@@ -245,8 +248,9 @@ export default {
           const appDeployerUrl = this.canDeployAsService(data);
           this.deployUrl = this.getDeployUrl(appDeployerUrl);
           const projectPath = data.getMetadata('sharinghub:path');
+          const defaultBranch = data.getMetadata('sharinghub:default-branch');
           const {access_level} = await this.getAccessLevel(projectPath);
-          this.editRepositoryUrl = this.getEditRepositoryUrl(access_level, projectPath );
+          this.editRepositoryUrl = this.getEditRepositoryUrl(access_level, projectPath, defaultBranch);
         }
       }
     }
@@ -329,17 +333,20 @@ export default {
           }
         });
     },
-    getEditRepositoryUrl(access_level, path){
+    getEditRepositoryUrl(access_level, path, branch){
       const {gitlab} = this.provideConfig;
+
       if( [ACCESS_LEVELS.ADMINISTRATOR, ACCESS_LEVELS.CONTRIBUTOR].includes(access_level)
         && gitlab?.url
         && this.currentUser
+        && branch
+        && path
       ){
         const {url} = gitlab;
         if( url.endsWith('/')){
-          return gitlab.url.concat('-/ide/project/').concat(path).concat('/edit/main/-/');
+          return gitlab.url.concat(`-/ide/project/${path}/edit/${branch}/-/`);
         }else{
-          return gitlab.url.concat('/-/ide/project/').concat(path).concat('/edit/main/-/');
+          return gitlab.url.concat(`/-/ide/project/${path}/edit/${branch}/-/`);
         }
       }
      return undefined;

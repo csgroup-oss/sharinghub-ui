@@ -7,7 +7,20 @@
             PySTAC - download assets
           </text-view>
         </template>
-        <div>
+        <div class="d-flex flex-column">
+          <div>
+            <b-button
+              variant="primary"
+              class="mr-5 my-1 float-right"
+              size="sm"
+              href="https://pystac.readthedocs.io/en/stable/quickstart.html"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.stac.docs_pystac') }}
+            </b-button>
+          </div>
+
           <div v-for="(item, idx) in getCodeTemplate()" :key="idx">
             <div class="d-flex align-items-center w-9">
               <text-view type="header__b14" v-if="item.header">
@@ -29,7 +42,19 @@
             EODAG - download assets
           </text-view>
         </template>
-        <div>
+        <div class="d-flex flex-column">
+          <div>
+            <b-button
+              variant="primary"
+              class="mr-5 my-1 float-right"
+              size="sm"
+              href="https://eodag.readthedocs.io/en/stable/"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.stac.docs_eodag') }}
+            </b-button>
+          </div>
           <div v-for="(item, idx) in getEodagCodeTemplate()" :key="idx">
             <div class="d-flex align-items-center w-9">
               <text-view type="header__b14" v-if="item.header">
@@ -53,48 +78,6 @@
         </template>
         <div>
           <TabSectionApiStac v-if="data" :title="title" :stacUrl="url" :stac="data" />
-        </div>
-      </b-tab>
-
-      <b-tab class="pt-4">
-        <template #title>
-          <text-view type="header__b14" class="tab-active">
-            {{ $t('additionalResources') }}
-          </text-view>
-        </template>
-        <div class="mb-3">
-          <div class="d-flex flex-column align-items-start">
-            <b-button
-              variant="info"
-              class="mr-1 my-1"
-              size="sm"
-              href="https://stacspec.org/"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.stac.docs_spec') }}
-            </b-button>
-            <b-button
-              variant="info"
-              class="mr-1 my-1"
-              size="sm"
-              href="https://pystac.readthedocs.io/en/stable/quickstart.html"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.stac.docs_pystac') }}
-            </b-button>
-            <b-button
-              variant="info"
-              class="mr-1 my-1"
-              size="sm"
-              href="https://eodag.readthedocs.io/en/stable/"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.stac.docs_eodag') }}
-            </b-button>
-          </div>
         </div>
       </b-tab>
     </b-tabs>

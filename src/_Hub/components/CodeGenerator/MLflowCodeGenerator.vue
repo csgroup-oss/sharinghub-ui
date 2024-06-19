@@ -10,13 +10,25 @@
           </text-view>
         </template>
         <div class="d-flex flex-column">
-          <div>
+          <div class="mb-3">
             <b-button
               :href="mlflowUrl" target="_blank"
-              class="float-right right-0 mb-3" variant="outline-primary" size="sm"
+              class="float-right mr-5"
+              variant="outline-primary" size="sm"
             >
               <img width="15" :src="MLflow_icon">
               {{ $t('source.mlflow.show_ui') }}
+            </b-button>
+
+            <b-button
+              variant="primary"
+              class="mr-1 float-right"
+              size="sm"
+              href="https://mlflow.org/docs/latest/getting-started/index.html"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.mlflow.docs') }}
             </b-button>
           </div>
 
@@ -39,28 +51,6 @@
               :code-with-credentials="item.textWithCredentials"
               :code="item.text"
             />
-          </div>
-        </div>
-      </b-tab>
-
-      <b-tab class="pt-4">
-        <template #title>
-          <text-view type="header__b14" class="tab-active">
-            {{ $t('additionalResources') }}
-          </text-view>
-        </template>
-        <div class="mb-3">
-          <div class="d-flex flex-column align-items-start">
-            <b-button
-              variant="info"
-              class="mr-1 my-2"
-              size="sm"
-              href="https://mlflow.org/docs/latest/getting-started/index.html"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.mlflow.docs') }}
-            </b-button>
           </div>
         </div>
       </b-tab>

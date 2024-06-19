@@ -7,7 +7,30 @@
             DVC - Init
           </text-view>
         </template>
-        <div>
+        <div class="d-flex flex-column">
+          <div class="mb-3">
+            <b-button
+              variant="primary"
+              class="mr-5 float-right"
+              size="sm"
+              href="https://dvc.org/doc"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.dvc.docs') }}
+            </b-button>
+            <b-button
+              variant="primary"
+              class="mr-4 float-right"
+              size="sm"
+              :href="dvcDocsUrl"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.dvc.tutorial') }}
+            </b-button>
+          </div>
+
           <div v-for="(item, idx) in getUpCodeTemplate()" :key="idx">
             <text-view type="header__b14" v-if="item.header">
               {{ item.header }}
@@ -27,7 +50,31 @@
             DVC -  Pull
           </text-view>
         </template>
-        <div>
+        <div class="flex-column d-flex">
+          <div class="mb-3">
+            <b-button
+              variant="primary"
+              class="mr-5 float-right"
+              size="sm"
+              href="https://dvc.org/doc"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.dvc.docs') }}
+            </b-button>
+            <b-button
+              variant="primary"
+              class="mr-4 float-right"
+              size="sm"
+              :href="dvcDocsUrl"
+              target="_blank"
+            >
+              <b-icon-journal />
+              {{ $t('source.dvc.tutorial') }}
+            </b-button>
+          </div>
+
+
           <div v-for="(item, idx) in getPullCodeTemplate()" :key="idx">
             <text-view type="header__b14" v-if="item.header">
               {{ item.header }}
@@ -37,38 +84,6 @@
               :code-with-credentials="item.textWithCredentials"
               :code="item.text"
             />
-          </div>
-        </div>
-      </b-tab>
-
-      <b-tab class="pt-4">
-        <template #title>
-          <text-view type="header__b14" class="tab-active">
-            {{ $t('additionalResources') }}
-          </text-view>
-        </template>
-        <div class="mb-3">
-          <div class="d-flex flex-column align-items-start">
-            <b-button
-              variant="info"
-              class="mr-1"
-              size="sm"
-              href="https://dvc.org/doc"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.dvc.docs') }}
-            </b-button>
-            <b-button
-              variant="info"
-              class="mr-1 my-2"
-              size="sm"
-              :href="dvcDocsUrl"
-              target="_blank"
-            >
-              <b-icon-journal />
-              {{ $t('source.dvc.tutorial') }}
-            </b-button>
           </div>
         </div>
       </b-tab>
@@ -135,7 +150,7 @@ export default defineComponent({
       return  providers.find(pr => pr.roles.includes('host'));
     },
     alreadySetup(){
-      return this.data?.getMetadata('sharinghub:store-s3') === 'enable';
+      return this.data?.getMetadata('sharinghub:dvc-init') === 'enable';
     }
   },
   methods:{
