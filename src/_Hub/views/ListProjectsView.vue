@@ -123,7 +123,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage']),
+    ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage', 'provideConfig']),
     isAuthenticated(){
       return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
     }
@@ -149,18 +149,22 @@ export default defineComponent({
     }
   },
   async beforeMount() {
+
     this.getTopics();
     const { starred } = this.$route.query;
     this.only_starred_project = !!starred;
   },
   methods: {
     async getTopics() {
-      return get(PROXY_URL.concat('tags'))
+      const {default_tags} = this.provideConfig;
+      if(default_tags){
+        this.tags = default_tags;
+      }
+       get(PROXY_URL.concat('tags'))
         .then((response) => {
           if (response.data) {
             this.tags = response.data;
           }
-          return response.data;
         })
         .catch(() => {});
     },

@@ -24,7 +24,7 @@
           </div>
         </div>
       </b-tab>
-      <b-tab :active="isPreSelect">
+      <b-tab v-if="topics_from_gitlab.length !== 0" :active="isPreSelect">
         <template #title>
           {{ $t('fields.tags.others') }} <b-badge v-if="number_others_tag_selected !== 0" variant="light">
             {{
@@ -44,7 +44,7 @@
           </b-row>
 
           <b-button
-            v-if="pagination <= tags.topics_from_gitlab.length" size="sm" pill
+            v-if="show_more" size="sm" pill
             @click="$event => isTruncated = !isTruncated" variant="light" class="mt-5"
           >
             {{ isTruncated ? $t('read.less') : $t('read.more') }}
@@ -126,7 +126,7 @@
             </b-row>
 
             <b-button
-              v-if="pagination <= tags.topics_from_gitlab.length" size="sm" pill
+              v-if=" show_more" size="sm" pill
               @click="$event => isTruncated = !isTruncated" variant="light" class="mt-5"
             >
               {{ isTruncated ? $t('read.less') : $t('read.more') }}
@@ -196,9 +196,16 @@ export default defineComponent({
   },
   computed: {
     ...mapState(['auth']),
-    tags_from_gitlab() {
-      return this.isTruncated ? this.tags.topics_from_gitlab : this.tags.topics_from_gitlab.slice(0, this.pagination);
+    topics_from_gitlab(){
+      return this.tags?.topics_from_gitlab || [];
     },
+    tags_from_gitlab() {
+      if(this.topics_from_gitlab){
+        return this.isTruncated ? this.topics_from_gitlab : this.topics_from_gitlab.slice(0, this.pagination);
+      }
+      return [];
+    },
+
     filtered_section_tags() {
       const routeName = this.$route.name;
       if (routeName === 'DynamicListSTAC') {
@@ -219,11 +226,18 @@ export default defineComponent({
     },
     number_filters(){
       return this.number_commontag_selected + this.number_others_tag_selected;
+    },
+    show_more(){
+      if(this.topics_from_gitlab){
+        return  this.pagination <= this.topics_from_gitlab.length;
+      }
+      return false;
     }
-
   },
   beforeMount() {
-    this.isPreSelect = this.tags.topics_from_gitlab.some(el => this.filteredTags.includes(el)) || this.filtered_section_tags.length === 0;
+    if(this.tags?.topics_from_gitlab){
+      this.isPreSelect = this.tags?.topics_from_gitlab?.some(el => this.filteredTags.includes(el)) || this.filtered_section_tags.length === 0;
+    }
   }
 });
 </script>
