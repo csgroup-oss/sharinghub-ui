@@ -2,24 +2,26 @@
   <b-row>
     <div class="col-md-12">
       <div v-if="!loading" class="float-right">
-        <Source :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
+        <Source :is-mobile="false" :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
       </div>
 
       <div>
-        <template v-if="icon">
-          <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
-        </template>
-        <b-button
-          v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
-          pill
-          class="mr-2"
-        >
-          <b-icon-arrow-left />
-        </b-button>
-        <text-view class="mr-4" type="header__b20">
-          <span class="title">{{ title }}</span>
-        </text-view>
-        <share-button-group />
+        <div class="sm:flex-column md:flex-row lg:flex-row xl:flex-row align-items-center">
+          <template v-if="icon">
+            <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
+          </template>
+          <b-button
+            v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
+            pill
+            class="mr-2"
+          >
+            <b-icon-arrow-left />
+          </b-button>
+          <text-view class="mr-4" type="header__b20">
+            <span class="title">{{ title }}</span>
+          </text-view>
+          <share-button-group />
+        </div>
 
         <text-view type="header__16" class="block pt-1 pb-3" v-if="url">
           <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
@@ -36,6 +38,10 @@
         <div class="flex flex-wrap" v-if="!!data?.properties">
           <Keywords :keywords="keywords" />
         </div>
+      </div>
+
+      <div>
+        <Source :is-mobile="true" :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
       </div>
     </div>
   </b-row>

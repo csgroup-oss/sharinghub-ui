@@ -358,7 +358,7 @@ footer {
 }
 @media screen and (min-width:979px ) and (max-width:1581px){
   .body-content{
-    margin-top:4.6rem;
+    margin-top:2rem;
   }
 }
 </style>

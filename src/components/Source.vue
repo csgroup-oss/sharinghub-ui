@@ -1,127 +1,154 @@
 <template>
   <div class="share">
-    <b-button-group
-      size="md"
-      class="mx-2
+    <template v-if="!isMobile">
+      <b-button-group
+        size="md"
+        class="mx-2
       btn-group-code-generator sm:hidden
       md:hidden
       lg:inline-flex xl:inline-flex"
-    >
-      <template>
-        <b-button
-          variant="outline-secondary"
-          size="sm"
-          id="popover-stac-btn"
-          v-b-tooltip
-          :title="$t('source.stac.hover')"
-        >
-          <img :src="stacLogo" class="mr-1" width="25">
-          <TextView class="button-label" type="Small-1">
-            <span class="button-label">STAC</span>
-          </TextView>
-        </b-button>
-        <b-popover
-          id="popover-stac" target="popover-stac-btn"
-          triggers="focus" placement="bottom"
-          container="stac-browser"
-        >
-          <STACCodeGenerator />
-        </b-popover>
-      </template>
+      >
+        <template>
+          <b-button
+            variant="outline-secondary"
+            size="sm"
+            id="popover-stac-btn"
+            v-b-tooltip
+            :title="$t('source.stac.hover')"
+          >
+            <img :src="stacLogo" class="mr-1" width="25">
+            <TextView class="button-label" type="Small-1">
+              <span class="button-label">STAC</span>
+            </TextView>
+          </b-button>
+          <b-popover
+            id="popover-stac" target="popover-stac-btn"
+            triggers="focus" placement="bottom"
+            container="stac-browser"
+          >
+            <STACCodeGenerator />
+          </b-popover>
+        </template>
 
-      <template v-if="canUseDVC">
-        <b-button
-          v-if="canUseDVC"
-          id="popover-dvc-btn"
-          variant="outline-secondary"
-          size="sm"
-          v-b-tooltip
-          :title="$t('source.dvc.hover')"
-        >
-          <TextView class="button-label" type="Small-1">
-            <img width="30" :src="dvcLogo">
-          </TextView>
-        </b-button>
-        <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom">
-          <DVCCodeGenerator :dvc-url="dvcUrl()" :label="$t('source.dvc.description')" />
-        </b-popover>
-      </template>
+        <template v-if="canUseDVC">
+          <b-button
+            v-if="canUseDVC"
+            id="popover-dvc-btn"
+            variant="outline-secondary"
+            size="sm"
+            v-b-tooltip
+            :title="$t('source.dvc.hover')"
+          >
+            <TextView class="button-label" type="Small-1">
+              <img width="30" :src="dvcLogo">
+            </TextView>
+          </b-button>
+          <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom">
+            <DVCCodeGenerator :dvc-url="dvcUrl()" :label="$t('source.dvc.description')" />
+          </b-popover>
+        </template>
 
-      <template v-if="canUseMlflow">
-        <b-button
-          id="popover-mlflow-btn"
-          variant="outline-secondary"
-          size="sm"
-          v-b-tooltip
-          :title="$t('source.mlflow.hover')"
-        >
-          <TextView class="button-label pb-1" type="Small-1">
-            <img width="50" :src="mlflowLogo">
-          </TextView>
-        </b-button>
-        <b-popover id="popover-mlflow" target="popover-mlflow-btn" triggers="focus" placement="bottom">
-          <MLflowCodeGenerator :mlflow-url="mlflowUrl()" />
-        </b-popover>
-      </template>
-    </b-button-group>
+        <template v-if="canUseMlflow">
+          <b-button
+            id="popover-mlflow-btn"
+            variant="outline-secondary"
+            size="sm"
+            v-b-tooltip
+            :title="$t('source.mlflow.hover')"
+          >
+            <TextView class="button-label pb-1" type="Small-1">
+              <img width="50" :src="mlflowLogo">
+            </TextView>
+          </b-button>
+          <b-popover id="popover-mlflow" target="popover-mlflow-btn" triggers="focus" placement="bottom">
+            <MLflowCodeGenerator :mlflow-url="mlflowUrl()" />
+          </b-popover>
+        </template>
+      </b-button-group>
 
-    <b-button-group
-      size="md"
-      class="mx-2
+      <b-button-group
+        size="md"
+        class="mx-2
       btn-group-code-generator sm:hidden
       md:hidden
       lg:inline-flex xl:inline-flex"
-    >
-      <template>
-        <b-button
-          v-if="canShowJupyter"
-          @click="$event => openJupyterLink($event, jupyterUrl)"
-          variant="outline-dark"
-          size="sm"
-          v-b-tooltip
-          :disabled="!canUseJupyter"
-          :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
-        >
-          <img :src="jupyterLogo" width="17" alt="jupyter_logo">
-          <TextView class="button-label" type="Small-1">
-            <span class="button-label">&nbsp;{{ $t("source.jupyter.open") }}</span>
-          </TextView>
-        </b-button>
-      </template>
+      >
+        <template>
+          <b-button
+            v-if="canShowJupyter"
+            @click="$event => openJupyterLink($event, jupyterUrl)"
+            variant="outline-dark"
+            size="sm"
+            v-b-tooltip
+            :disabled="!canUseJupyter"
+            :title="(!!currentUser) ? $t('source.jupyter.enabled') : $t('source.jupyter.disabled')"
+          >
+            <img :src="jupyterLogo" width="17" alt="jupyter_logo">
+            <TextView class="button-label" type="Small-1">
+              <span class="button-label">&nbsp;{{ $t("source.jupyter.open") }}</span>
+            </TextView>
+          </b-button>
+        </template>
 
-      <template>
-        <b-button
-          v-if="deployUrl"
-          variant="outline-dark"
-          size="sm"
-          :href="deployUrl"
-          target="_blank"
-          v-b-tooltip
-        >
-          <b-icon-collection-play />
-          <TextView class="button-label" type="Small-1">
-            <span class="button-label">&nbsp;{{ $t("source.deployment.open") }}</span>
-          </TextView>
-        </b-button>
-      </template>
+        <template>
+          <b-button
+            v-if="deployUrl"
+            variant="outline-dark"
+            size="sm"
+            :href="deployUrl"
+            target="_blank"
+            v-b-tooltip
+          >
+            <b-icon-collection-play />
+            <TextView class="button-label" type="Small-1">
+              <span class="button-label">&nbsp;{{ $t("source.deployment.open") }}</span>
+            </TextView>
+          </b-button>
+        </template>
 
-      <template>
-        <b-button
-          variant="outline-dark"
-          size="sm"
-          :href="editRepositoryUrl"
-          target="_blank"
-          :disabled="!editRepositoryUrl"
-          v-b-tooltip
-          :title="!!editRepositoryUrl? $t('source.edit.hover.enable') : $t('source.edit.hover.disable') "
-        >
-          <b-icon-pencil-square />
-          <TextView class="button-label" type="Small-1">
-            <span class="button-label">&nbsp;{{ $t("source.edit.text") }}</span>
-          </TextView>
-        </b-button>
-      </template>
-    </b-button-group>
+        <template>
+          <b-button
+            variant="outline-dark"
+            size="sm"
+            :href="editRepositoryUrl"
+            target="_blank"
+            :disabled="!editRepositoryUrl"
+            v-b-tooltip
+            :title="!!editRepositoryUrl? $t('source.edit.hover.enable') : $t('source.edit.hover.disable') "
+          >
+            <b-icon-pencil-square />
+            <TextView class="button-label" type="Small-1">
+              <span class="button-label">&nbsp;{{ $t("source.edit.text") }}</span>
+            </TextView>
+          </b-button>
+        </template>
+      </b-button-group>
+    </template>
+
+    <template v-else>
+      <b-button-group
+        size="md"
+        class=" mt-3
+        btn-group-code-generator sm:block md:block lg:hidden xl:hidden w-auto"
+      >
+        <template>
+          <b-button
+            class="w-fit"
+            v-if="deployUrl"
+            variant="outline-dark"
+            size="sm"
+            :href="deployUrl"
+            target="_blank"
+            v-b-tooltip
+          >
+            <b-icon-collection-play />
+            <TextView class="" type="Small-1">
+              <span class="">&nbsp;{{ $t("source.deployment.open") }}</span>
+            </TextView>
+          </b-button>
+        </template>
+      </b-button-group>
+    </template>
   </div>
 </template>
 
@@ -151,6 +178,11 @@ export default {
     TextView
   },
   props: {
+    isMobile:{
+      type: Boolean,
+      required: true,
+      default:false
+    },
     title: {
       type: String,
       required: true

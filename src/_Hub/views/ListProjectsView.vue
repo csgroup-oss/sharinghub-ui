@@ -66,7 +66,7 @@
         </template>
 
         <template v-else>
-          <b-overlay :show="over_loading" rounded="sm">
+          <b-overlay :show="over_loading" rounded="sm" class="pr-2">
             <b-row v-if="dataList.length !== 0" class="flex flex-wrap align-items-center">
               <item-card
                 v-for="(dataset, idx) in dataList"

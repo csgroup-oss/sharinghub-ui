@@ -1,6 +1,6 @@
 <template>
-  <div class="d-inline-flex">
-    <b-button-group size="sm">
+  <div class="d-inline-flex sm:mt-2 md:mt-0 xl:mt-0 lg:mt-0">
+    <b-button-group size="sm" class="sm:text">
       <template>
         <template>
           <b-button
@@ -9,7 +9,7 @@
             class="d-flex align-items-center"
             id="popover-share-btn" :title="$t('source.share.withOthers')"
           >
-            <b-icon-share scale="0.9" />
+            <b-icon-share scale="0.7" />
           </b-button>
           <b-popover
             id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
@@ -36,7 +36,7 @@
           class="d-flex align-items-center btn-share"
           :title="has_rated ? ' Unstar': ' Star'"
         >
-          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.9" aria-hidden="true" />
+          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.7" aria-hidden="true" />
           {{ has_rated ? ' Unstar': ' Star' }}
         </b-button>
         <b-button size="sm" disabled variant="outline-dark">
@@ -229,6 +229,11 @@ export default defineComponent( {
     &hidden{
       display: none !important;
     }
+    &mt-{
+    &2{
+      margin-top: 1rem;
+    }
+  }
     &block{
       display: block !important;
     }

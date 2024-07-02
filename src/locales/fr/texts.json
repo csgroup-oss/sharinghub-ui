@@ -314,7 +314,7 @@
       "tutorial": "Tutoriel"
     },
     "mlflow": {
-      "label": "MLFlow",
+      "label": "MLflow",
       "hover": "Aide MLflow",
       "docs": " Documentation de MLflow",
       "title": "Informations MLflow",
@@ -327,7 +327,7 @@
       "text": "Editer",
       "hover": {
         "enable" : "Ouvrir dans le web IDE",
-        "disable" : "Connectez vous pour edite"
+        "disable" : "Connectez-vous pour éditer"
       }
     },
     "stacExtension": "Extension du STAC",

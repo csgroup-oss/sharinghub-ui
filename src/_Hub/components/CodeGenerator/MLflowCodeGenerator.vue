@@ -6,7 +6,7 @@
       <b-tab class="pt-4">
         <template #title>
           <text-view type="header__b14" class="tab-active">
-            MLFlow Tracking
+            MLflow Tracking
           </text-view>
         </template>
         <div class="d-flex flex-column">

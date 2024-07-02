@@ -12,7 +12,7 @@
           </div>
           <div v-if="!!stac.properties.keywords" class="flex align-items-center flex-wrap items-card__content__tag ">
             <b-badge
-              v-for="tag,idx in stac.properties.keywords.slice(0,6)"
+              v-for="(tag,idx) in stac.properties.keywords.slice(0,6)"
               variant="primary"
               :key="idx"
               @click="$event =>handleFilterByTag($event, tag)"

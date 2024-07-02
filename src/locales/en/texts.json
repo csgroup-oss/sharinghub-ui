@@ -307,7 +307,7 @@
       "tutorial": "Tutoriel"
     },
     "mlflow": {
-      "label": "MLFlow",
+      "label": "MLflow",
       "hover": "MLflow helps",
       "docs": "MLflow documentation",
       "title": "MLflow Informations",
