@@ -1,5 +1,5 @@
 <template>
-  <b-col ref="card" class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mt-2 p-0 ">
+  <div ref="card" class="mt-2 sm:col-12 md:col-6 md-2:col-3 lg:col-4 xl:col-3 p-0">
     <div @click="seeModel($event)" v-if="!!stac" class="flex flex-column p-3 ">
       <div class="items-card">
         <div :class="['items-card__title flex flex-column', !getPreview() && 'no-preview']">
@@ -44,7 +44,7 @@
         </div>
       </div>
     </div>
-  </b-col>
+  </div>
 </template>
 
 <script>
@@ -257,12 +257,20 @@ img {
 }
 
 @media screen and (max-width: 575px) {
-  .col{
-    &-sm-12{
+  .sm\:col{
+    &-12{
     width: 100% !important;
       min-width: 300px;
       height: fit-content;
     }
+  }
+}
+
+@media screen and (min-width: 1003px) and (max-width: 1350px) {
+  .md-2\:col-3 {
+    flex: 0 0 auto;
+    padding: 0.5rem;
+    width: 33%;
   }
 }
 </style>

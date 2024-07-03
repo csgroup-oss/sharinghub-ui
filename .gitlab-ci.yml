@@ -8,7 +8,7 @@ include:
       audit-disabled : true
       outdated-disabled : true
 
-  - component: gitlab.si.c-s.fr/to-be-continuous/docker/gitlab-ci-docker@5.8.1
+  - component: gitlab.si.c-s.fr/to-be-continuous/docker/gitlab-ci-docker@5.10.3
     inputs:
       build-args: '--build-arg VERSION=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$CI_JOB_STARTED_AT'
       trivy-security-level-threshold : 'HIGH,CRITICAL'

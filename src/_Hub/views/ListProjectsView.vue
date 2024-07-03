@@ -66,7 +66,7 @@
         </template>
 
         <template v-else>
-          <b-overlay :show="over_loading" rounded="sm" class="pr-2">
+          <b-overlay :show="over_loading" rounded="sm" class="pr-3">
             <b-row v-if="dataList.length !== 0" class="flex flex-wrap align-items-center">
               <item-card
                 v-for="(dataset, idx) in dataList"
@@ -369,5 +369,10 @@ export default defineComponent({
       }
     }
   }
+}
+@media screen and (min-width: 980px) and (max-width: 1217px){
+ .container{
+   margin-top: 3rem !important;
+ }
 }
 </style>
