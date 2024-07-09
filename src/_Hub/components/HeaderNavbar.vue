@@ -68,7 +68,11 @@
             <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
           <div v-else class="ml-3">
-            <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
+            <b-button v-if="has_provider" size="sm" :href="login" variant="dark">
+              {{ $t('fields.login') }}
+              <b-icon-box-arrow-in-right />
+            </b-button>
+            <b-button v-else size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
               {{ $t('fields.login') }}
               <b-icon-box-arrow-in-right />
             </b-button>
@@ -155,7 +159,7 @@
 
           <Localisation class="mt-3" />
           <div v-if="!isAuthenticated" class="mt-5">
-            <b-button size="sm" :to="$route.name === 'Login' ? '?': login" variant="dark">
+            <b-button size="sm" :href="$route.name === 'Login' ? '?': login" variant="dark">
               {{ $t('fields.login') }}
               <b-icon-box-arrow-in-right />
             </b-button>
@@ -170,9 +174,9 @@
 import {defineComponent} from 'vue';
 import TextView from '@/_Hub/components/TextView.vue';
 import NavItem from '@/_Hub/components/HeaderNavbar/NavItem.vue';
-import {LOGOUT_URL, PROXY_URL} from '@/_Hub/Endpoint';
+import {LOGIN_URL, LOGOUT_URL, PROXY_URL} from '@/_Hub/Endpoint';
 import {mapState} from 'vuex';
-import {CONNEXION_MODE, get} from '@/_Hub/tools/https';
+import {CONNEXION_MODE, get, PROVIDERS} from '@/_Hub/tools/https';
 import Localisation from '@/components/Localisation.vue';
 import logoImage from '@/assets/img/logo.png';
 import ResearchBar from '@/_Hub/components/HeaderNavbar/ResearchBar.vue';
@@ -204,15 +208,24 @@ export default defineComponent({
       canSearch: true,
       logo: logoImage,
       size: 'lg',
-      research:undefined
+      research:undefined,
+      login_url: LOGIN_URL,
+      has_provider: false
     };
   },
   computed: {
-    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage']),
+    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage', 'pathPrefix']),
     login() {
       const { path } = this.$route;
-      const base_login =  path ? '/login?redirect='.concat(path.substring(1)) : '/login';
-      return base_login;
+      const {auth} = this.provideConfig;
+      const redirect =path.substring(1);
+      const base_login = '/login';
+      if (auth && auth === PROVIDERS.OAUTH ){
+        return redirect
+          ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
+          : this.login_url;
+      }
+      return  base_login;
     },
     docsUrl(){
       const {docs} = this.provideConfig;
@@ -220,6 +233,13 @@ export default defineComponent({
         return null;
       }
       return docs.url;
+    },
+    connexion_url() {
+      const { redirect } = this.$route.query;
+      const url = redirect
+        ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
+        : this.login_url;
+      return url;
     }
   },
   watch: {
@@ -255,6 +275,8 @@ export default defineComponent({
     }
   },
   beforeMount() {
+    const {auth} = this.provideConfig;
+    this.has_provider = (auth && auth === PROVIDERS.OAUTH);
     this.updateNavbar({width: window.innerWidth});
     window.onresize = (ev) => {
       const {innerWidth: width} = ev.currentTarget;

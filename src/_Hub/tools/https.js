@@ -68,6 +68,11 @@ export const CONNEXION_MODE =  {
   'DEFAULT_TOKEN' : 'DEFAULT_TOKEN'
 };
 
+export const PROVIDERS =  {
+  'PRIVATE_TOKEN' : 'token',
+  'OAUTH' : 'oauth2'
+};
+
 
 export function setAlertLastDate(date){
   if(!date) {throw new Error('token is undefined');}

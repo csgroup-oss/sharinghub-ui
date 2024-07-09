@@ -1,8 +1,20 @@
 <template>
-  <div class="container md:w-6 lg:w-6 sm:w-6 pt-5">
+  <div class="container md:w-12 lg:w-6 xl:w-6 sm:w-6 pt-5">
     <div class="flex flex-column">
       <h2 class="mb-6 sm:align-self-center md:align-self-center lg:align-self-start xl:align-self-start">Log in</h2>
       <div class="flex justify-content-between lg:flex-row md:flex-row xl:flex-row sm:flex-column-reverse">
+        <div class="p-as-center col-sm-12 col-md-4 col-lg-5 col-xl-4">
+          <b-button :href="connexion_url" block variant="primary">
+            GitLab OAuth2
+          </b-button>
+        </div>
+
+        <div class="col-sm-12 col-md-1 col-lg-1 col-xl-1 sm:my-3">
+          <div class="p-divider--vertical sm:hidden md:block lg:block" />
+          <div class="p-divider--horizontal sm:block md:hidden lg:hidden" />
+        </div>
+
+
         <div class="col-sm-12 col-md-6 col-lg-12 col-xl-6">
           <b-form @submit="go">
             <b-form-group
@@ -25,15 +37,6 @@
               }}
             </b-button>
           </b-form>
-        </div>
-        <div class="col-sm-12 col-md-1 col-lg-1 col-xl-1 sm:my-3">
-          <div class="p-divider--vertical sm:hidden lg:block" />
-          <div class="p-divider--horizontal sm:block lg:hidden" />
-        </div>
-        <div class="p-as-center col-sm-12 col-md-4 col-lg-4 col-xl-4">
-          <b-button :href="connexion_url" block variant="primary">
-            GitLab Oauth2
-          </b-button>
         </div>
       </div>
     </div>
@@ -103,10 +106,10 @@ export default defineComponent({
 
 .lg\:{
    &hidden{
-     display: none !important;
+     display: none;
    }
   &block{
-    display: block !important;
+    display: block;
   }
 }
 @media screen and (max-width: 575px) {
@@ -119,10 +122,10 @@ export default defineComponent({
         margin: 1rem auto;
       }
       &hidden{
-       display: none !important;
+       display: none ;
       }
       &block{
-        display: block !important;
+        display: block;
       }
       &align-self-center{
         align-self: center ;
