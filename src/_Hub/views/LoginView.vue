@@ -3,19 +3,22 @@
     <div class="flex flex-column">
       <h2 class="mb-6 sm:align-self-center md:align-self-center lg:align-self-start xl:align-self-start">Log in</h2>
       <div class="flex justify-content-between lg:flex-row md:flex-row xl:flex-row sm:flex-column-reverse">
-        <div class="p-as-center col-sm-12 col-md-4 col-lg-5 col-xl-4">
-          <b-button :href="connexion_url" block variant="primary">
-            GitLab OAuth2
-          </b-button>
-        </div>
+        <template v-if="has_provider">
+          <div class="p-as-center col-sm-12 col-md-4 col-lg-5 col-xl-4">
+            <b-button :href="connexion_url" block variant="primary">
+              GitLab OAuth2
+            </b-button>
+          </div>
 
-        <div class="col-sm-12 col-md-1 col-lg-1 col-xl-1 sm:my-3">
-          <div class="p-divider--vertical sm:hidden md:block lg:block" />
-          <div class="p-divider--horizontal sm:block md:hidden lg:hidden" />
-        </div>
+          <div class="col-sm-12 col-md-1 col-lg-1 col-xl-1 sm:my-3">
+            <div class="p-divider--vertical sm:hidden md:block lg:block" />
+            <div class="p-divider--horizontal sm:block md:hidden lg:hidden" />
+          </div>
+        </template>
 
 
-        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-6">
+
+        <div :class="has_provider ? 'col-sm-12 col-md-6 col-lg-12 col-xl-6': 'col-sm-12 col-md-12 col-lg-12 col-xl-12' ">
           <b-form @submit="go">
             <b-form-group
               id="select-token"
@@ -45,7 +48,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { CONNEXION_MODE, get, setLocalToken } from '@/_Hub/tools/https';
+import {CONNEXION_MODE, get, PROVIDERS, setLocalToken} from '@/_Hub/tools/https';
 import { PROXY_URL, LOGIN_URL } from '@/_Hub/Endpoint';
 import { mapState } from 'vuex';
 
@@ -58,14 +61,19 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['pathPrefix']),
+    ...mapState(['pathPrefix', 'provideConfig']),
     connexion_url() {
       const { redirect } = this.$route.query;
       const url = redirect
         ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
         : this.login_url;
       return url;
+    },
+    has_provider() {
+      const {auth} = this.provideConfig;
+      return (auth && auth === PROVIDERS.OAUTH);
     }
+
   },
   methods: {
     go(e) {
