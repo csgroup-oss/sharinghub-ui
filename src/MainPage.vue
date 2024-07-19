@@ -356,9 +356,9 @@ footer {
     margin-top:6.5rem;
   }
 }
-@media screen and (min-width:979px ) and (max-width:1581px){
+@media screen and (min-width:979px ) and (max-width:1274px){
   .body-content{
-    margin-top:2rem;
+    margin-top:5rem;
   }
 }
 </style>

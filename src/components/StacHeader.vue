@@ -1,6 +1,6 @@
 <template>
-  <b-row>
-    <div class="col-md-12">
+  <b-row class="stac-header">
+    <div class="col-md-12 stac-header">
       <div v-if="!loading" class="float-right">
         <Source :is-mobile="false" :jupyter="jupyterLabUrl" action="share" :title="title" :stacUrl="url" :stac="data" />
       </div>
