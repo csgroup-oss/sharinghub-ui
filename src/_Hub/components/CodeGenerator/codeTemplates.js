@@ -19,33 +19,33 @@ export const getPySTACCodeTemplate = {
       `
     },
     text: ({arg, arg1}) => {
-      return `import requests
-from pystac import Item, StacIO
+      return `import time
 from pathlib import Path
 
-stac_io = StacIO.default()
-stac_io.headers = {"X-Gitlab-Token": "${arg}"}
-STAC_APIURL = "${arg1}"
+import requests
+from pystac import Item, StacIO
 
-# Get current item with and download his assets
-item : Item = Item.from_file(STAC_APIURL, stac_io=stac_io)
-download_path : Path = Path.cwd() / item.properties["title"]
-download_path.mkdir(parents=True, exist_ok=True)
+AUTH_HEADERS = {"X-Gitlab-Token": "${arg}"}
+
+stac_io = StacIO.default()
+stac_io.headers = AUTH_HEADERS
+STAC_API_URL = "${arg1}"
+
+# Get STAC item and download his assets
+
+item = Item.from_file(STAC_API_URL, stac_io=stac_io)
+timestamp = int(time.time())
+download_path = Path.cwd() / f"{Path(item.id).name}-{timestamp}"
 
 for name, asset in item.get_assets().items():
+    file_path = download_path / Path(name)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    response = requests.get(asset.href)
+    response = requests.get(asset.href, headers=AUTH_HEADERS)
     response.raise_for_status()
-    composite_name = name.split('/')
 
-    new_path = download_path
-    for folder in composite_name[:-1]:
-        new_path /= folder
-        new_path.mkdir(parents=True, exist_ok=True)
-
-    asset_filename = download_path / name
-    with open(asset_filename, 'wb+') as fs_writer:
-        fs_writer.write(response.content)`;
+    with file_path.open("wb") as f:
+        f.write(response.content)`;
     },
     arg: 'credentials stac_url'
   }
@@ -78,6 +78,7 @@ dag.update_providers_config("""
     sharinghub:
         search:
             type: StacSearch
+            need_auth: true
             api_endpoint: ${arg}
         products:
             GENERIC_PRODUCT_TYPE:
