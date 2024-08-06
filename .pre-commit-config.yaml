@@ -1,7 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 default_stages: [commit]
-default_install_hook_types: [pre-commit, commit-msg]
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
 default_language_version:
   python: python3
 
@@ -29,14 +29,22 @@ repos:
     rev: v3.16.0
     hooks:
       - id: commitizen
+      - id: commitizen-branch
+        stages: [push]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.39.0
     hooks:
-    - id: markdownlint-fix
-      args: [--fix, --disable=MD013, --disable=MD029 ]
-    - id: markdownlint
-      args: [ --disable=MD013,--disable=MD029 ]
+      - id: markdownlint-fix
+        args: [--disable=MD013, --disable=MD029]
+      - id: markdownlint
+        args: [--disable=MD013, --disable=MD029]
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        args: ["--failure-threshold=warning", "--ignore=DL3008"]
 
   - repo: local
     hooks:
