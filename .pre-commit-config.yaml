@@ -33,10 +33,16 @@ repos:
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.39.0
     hooks:
-    - id: markdownlint-fix
-      args: [--fix, --disable=MD013, --disable=MD029 ]
-    - id: markdownlint
-      args: [ --disable=MD013,--disable=MD029 ]
+      - id: markdownlint-fix
+        args: [--disable=MD013, --disable=MD029]
+      - id: markdownlint
+        args: [--disable=MD013, --disable=MD029]
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        args: ["--failure-threshold=warning", "--ignore=DL3008"]
 
   - repo: local
     hooks:
