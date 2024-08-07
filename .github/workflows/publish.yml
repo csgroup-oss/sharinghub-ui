@@ -4,21 +4,18 @@ on:
   workflow_run:
     workflows: [Test]
     types: [completed]
-    branches: [main]
 
 env:
   IMAGE_NAME: ${{ github.event.repository.name }}
+  IMAGE_TAG: ${{ github.event.workflow_run.head_branch == 'main' && 'latest' || github.event.workflow_run.head_branch }}
 
 jobs:
   docker-build-and-push:
     name: Build and push docker image
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login with registry
@@ -34,7 +31,7 @@ jobs:
           images: ${{ vars.IMAGE_REPOSITORY }}/${{ env.IMAGE_NAME }}
           tags: |
             # set latest tag
-            type=raw,value=latest
+            type=raw,value=${{ env.IMAGE_TAG }}
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
