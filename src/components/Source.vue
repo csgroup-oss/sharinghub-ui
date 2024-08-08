@@ -313,8 +313,8 @@ export default {
       if (!projectPath || (!mlflow.url)) {
         return null;
       }
-      return mlflow.url.endsWith('/') ? mlflow.url.concat(projectPath).concat('/tracking') :
-        mlflow.url.concat(`/${projectPath}`).concat('/tracking');
+      return mlflow.url.endsWith('/') ? mlflow.url.concat(projectPath).concat('/tracking/') :
+        mlflow.url.concat(`/${projectPath}`).concat('/tracking/');
     },
     openJupyterLink(ev, url) {
       window.open(url, '_blank');
