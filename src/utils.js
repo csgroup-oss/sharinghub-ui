@@ -494,4 +494,11 @@ export default class Utils {
     return url.endsWith('.ipynb');
   }
 
+  static removeUrlSuffix(url) {
+    if(typeof url !== 'string') {
+      return url;
+    }
+    return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  }
+
 }

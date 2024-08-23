@@ -73,6 +73,11 @@ export const PROVIDERS =  {
   'OAUTH' : 'oauth2'
 };
 
+export const MLFLOW_PROVIDER = {
+  'MLFLOW_SHARINGHUB' : 'mlflow-sharinghub',
+  'MLFLOW_GITLAB' : 'gitlab',
+  'MLFLOW' : 'mlflow'
+};
 
 export function setAlertLastDate(date){
   if(!date) {throw new Error('date is undefined');}
