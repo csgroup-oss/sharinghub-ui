@@ -1,8 +1,8 @@
 <template>
   <div class="share">
     <b-dropdown
-
-      size="sm" variant="link" right toggle-class="text-decoration-none"
+      size="sm" variant="link" right :dropright="right"
+      toggle-class="text-decoration-none"
       :title="$t('source.language.switch')"
     >
       <template #button-content>
@@ -42,6 +42,12 @@ export default {
   components: {
     BDropdown,
     BDropdownItem
+  },
+  props:{
+    right:{
+      type: Boolean,
+      required: false
+    }
   },
   computed: {
     ...mapState(['dataLanguages', 'locale', 'data', 'supportedLocales', 'uiLanguage']),
@@ -97,7 +103,6 @@ export default {
           }
         }
       }
-
       return languages.sort((a, b) => a.global.localeCompare(b.global, this.uiLanguage));
     }
   },

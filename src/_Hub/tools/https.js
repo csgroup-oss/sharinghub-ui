@@ -75,8 +75,8 @@ export const PROVIDERS =  {
 
 
 export function setAlertLastDate(date){
-  if(!date) {throw new Error('token is undefined');}
-  window.localStorage.clear();
+  if(!date) {throw new Error('date is undefined');}
+  window.localStorage.removeItem('alert_last_date');
   window.localStorage.setItem('alert_last_date', date);
 }
 
