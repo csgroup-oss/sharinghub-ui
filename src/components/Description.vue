@@ -55,13 +55,13 @@ export default {
     font-family: $font-family-sans-serif;
   }
   h1 {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
   }
   h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
   }
   h4 {
     font-size: 1rem;
