@@ -11,17 +11,34 @@
       </div>
 
       <div class="col-xl-9 col-md-9 col-lg-9 col-sm-12">
-        <div class="flex sm:flex-column lg:flex-row align-items-center justify-content-between">
-          <div>
-            <text-view class="pl-3" type="header__b20">
-              {{ title }}
-            </text-view>
-            <text-view type="header__16" class="text-secondary ml-2" v-if="get_data_matched() !== 0">
-              {{ get_data_matched() }}
-            </text-view>
+        <div class="flex sm:flex-column lg:flex-row sm:align-content-center xl:align-items-center lg:align-items-center justify-content-between">
+          <div class="sm:w-full lg:w-fit xl:w-fit flex sm:flex-column lg:flex-row sm:align-items-center lg:align-items-end">
+            <div class="text-center">
+              <text-view class="pl-3" type="header__b20">
+                {{ title }}
+              </text-view>
+              <text-view type="header__16" class="text-secondary font-bold text-xl ml-2" v-if="get_data_matched() !== 0">
+                {{ get_data_matched() }}
+              </text-view>
+            </div>
+
+            <div class="sm:w-full md:w-fit lg:w-fit xl:w-fit sm:my-2 md:my-2 lg:my-0 xl:my-0">
+              <b-button
+                v-if="isAuthenticated && createProjectLink"
+                class="btn-wizard flex sm:w-full  sm:ml-0 md:ml-0 lg:ml-4 xl:ml-4"
+                :href="createProjectLink"
+                variant="primary"
+                v-b-tooltip.hover :title="$t('actions.newProject')"
+                size="small"
+                block
+              >
+                <span class="sm:block md:block lg:hidden xl:hidden mr-2">{{ $t('actions.newProject') }}</span>
+                <b-icon icon="plus-lg" />
+              </b-button>
+            </div>
           </div>
 
-          <div class="flex align-items-center col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:mt-3">
+          <div class="flex align-items-center col-sm-12 col-md-12 col-lg-6 col-xl-6 sm:mt-3 md:mt-3 lg:mt-0 xl:mt-0">
             <b-input-group size="sm" class="">
               <b-form-input
                 type="text" v-model="term_filter" autocomplete="false" @update="handleFilterByTerms"
@@ -126,6 +143,18 @@ export default defineComponent({
     ...mapState(['data', 'auth', 'entriesRoute', 'uiLanguage', 'provideConfig']),
     isAuthenticated(){
       return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
+    },
+    createProjectLink() {
+      const category = this.$route.params?.pathMatch;
+      const {wizard} = this.provideConfig;
+      const {url} = wizard;
+      if (!url) {
+        return null;
+      }
+      if (category){
+        return `${url}${url.endsWith('/') ? '' : '/'}#/?category=${category}&redirect_url=${window.location.origin}`;
+      }
+      return `${url}${url.endsWith('/') ? '' : '/'}#/?redirect_url=${window.location.origin}`;
     }
   },
   watch: {
@@ -356,6 +385,14 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  .btn-wizard{
+    display: inline-flex;
+    padding: 0.35rem 0.1rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
 }
 
 @media screen and (max-width: 575px) {
@@ -367,6 +404,21 @@ export default defineComponent({
       &mt-3{
         margin-top: 1rem;
       }
+      &my-2{
+        margin: 0.6rem 0px;
+      }
+    }
+    .btn-wizard{
+      font-size: 15px !important;
+    }
+  }
+}
+
+@media screen and (min-width: 575px) and  (max-width: 985px) {
+  .section {
+    .btn-wizard{
+      font-size: 15px !important;
+      padding: 0.35rem 0.5rem;
     }
   }
 }

@@ -43,7 +43,10 @@
                 <text-view type="header__b15"> {{ link.name }}</text-view>
               </nav-item>
             </a>
-            <b-dropdown v-if="link.dropdown" right size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
+            <b-dropdown
+              v-if="link.dropdown" right size="sm" variant="link"
+              toggle-class="text-decoration-none" no-caret
+            >
               <template #button-content>
                 <nav-item style="padding:0 !important;" class="mx-1">
                   <img v-if="!!link.icon" width="20px" height="20px" :src="link.icon">
@@ -57,14 +60,27 @@
             </b-dropdown>
           </div>
           <Localisation />
-          <b-dropdown right v-if="isAuthenticated" size="lg" variant="link" toggle-class="text-decoration-none" no-caret>
+          <b-dropdown
+            right v-if="isAuthenticated" size="lg" variant="link"
+            toggle-class="text-decoration-none" no-caret
+          >
             <template #button-content>
               <b-avatar size="40" variant="info" :src="avatar_url" />
             </template>
             <b-dropdown-item>
-              <text-view type="Small-1">{{ auth?.user?.name }}</text-view>
+              <span class="">{{ auth?.user?.name }}</span>
             </b-dropdown-item>
             <b-dropdown-divider />
+            <b-dropdown-group v-if="createProjectLink" class="font-semibold" header="Wizard">
+              <b-dropdown-item
+                :href="createProjectLink"
+                class="w-full flex align-items-center p-0"
+              >
+                <span class="">{{ $t('actions.newProject') }}</span>
+                <b-icon scale="0.7" icon="plus-lg" class="ml-2" />
+              </b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider v-if="createProjectLink" />
             <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
           <div v-else class="ml-3">
@@ -80,7 +96,10 @@
         </template>
 
         <div v-if="['md','sm'].includes(size)" class="flex align-items-center">
-          <b-dropdown right v-if="isAuthenticated" size="sm" variant="link" toggle-class="text-decoration-none" no-caret>
+          <b-dropdown
+            right v-if="isAuthenticated" size="sm" variant="link"
+            toggle-class="text-decoration-none" no-caret
+          >
             <template #button-content>
               <b-avatar size="30" variant="info" :src="avatar_url" />
             </template>
@@ -88,6 +107,16 @@
               <text-view class="" type="">{{ auth?.user?.name }}</text-view>
             </b-dropdown-item>
             <b-dropdown-divider />
+            <b-dropdown-group v-if="createProjectLink" class="font-semibold" header="Wizard">
+              <b-dropdown-item
+                :href="createProjectLink"
+                class="w-full flex align-items-center p-0"
+              >
+                <span class="">{{ $t('actions.newProject') }}</span>
+                <b-icon scale="0.7" icon="plus-lg" class="ml-2" />
+              </b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider v-if="createProjectLink" />
             <b-dropdown-item @click="logout" href="#"> {{ $t('fields.Logout') }}</b-dropdown-item>
           </b-dropdown>
           <b-button
@@ -114,7 +143,10 @@
 
         <template v-if="routes.length > 0">
           <router-link v-for="item in routes" class="mx-1 mt-3" :key="item.route" :to="`/${item.route}`">
-            <nav-item :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']">
+            <nav-item
+              is-mobile :category="item.route"
+              :class="['mx-1 flex align-items-center', isActiveRoute(item.route) && 'active']"
+            >
               <img v-if="!!item.ico" width="20px" height="20px" :src="item.ico">
               <b-icon v-else :icon="item.icon" />
               <text-view type="header__b14"> {{ item.title }}</text-view>
@@ -122,16 +154,16 @@
           </router-link>
         </template>
 
-        <div v-if="docsUrl">
+        <div v-if="docsUrl" class="mt-3">
           <a :href="docsUrl" target="_blank">
             <nav-item class="mx-1">
-              <b-icon-journal-bookmark-fill />
+              <b-icon-journal-bookmark-fill class="ml-2" />
               <text-view type="header__b15"> Docs</text-view>
             </nav-item>
           </a>
         </div>
 
-        <div class="mx-1 mt-3">
+        <div class="mx-1 mt-1">
           <div v-for="link in externalLinks" :key="link.name">
             <a v-if="link.url" :href="link.url" target="_blank">
               <nav-item class="mx-1">
@@ -140,7 +172,7 @@
               </nav-item>
             </a>
             <b-dropdown
-              v-if="link.dropdown" left size="sm" variant="link"
+              v-if="link.dropdown" right size="sm" variant="link"
               toggle-class="text-decoration-none"
               no-caret
             >
@@ -157,7 +189,7 @@
             </b-dropdown>
           </div>
 
-          <Localisation class="mt-3" />
+          <Localisation :right="true" class="mt-3" />
           <div v-if="!isAuthenticated" class="mt-5">
             <b-button size="sm" :href="$route.name === 'Login' ? '?': login" variant="dark">
               {{ $t('fields.login') }}
@@ -180,6 +212,7 @@ import {CONNEXION_MODE, get, PROVIDERS} from '@/_Hub/tools/https';
 import Localisation from '@/components/Localisation.vue';
 import logoImage from '@/assets/img/logo.png';
 import ResearchBar from '@/_Hub/components/HeaderNavbar/ResearchBar.vue';
+import Cookies from 'js-cookie';
 
 
 export default defineComponent({
@@ -208,7 +241,7 @@ export default defineComponent({
       canSearch: true,
       logo: logoImage,
       size: 'lg',
-      research:undefined,
+      research: undefined,
       login_url: LOGIN_URL,
       has_provider: false
     };
@@ -216,30 +249,38 @@ export default defineComponent({
   computed: {
     ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage', 'pathPrefix']),
     login() {
-      const { path } = this.$route;
+      const {path} = this.$route;
       const {auth} = this.provideConfig;
-      const redirect =path.substring(1);
+      const redirect = path.substring(1);
       const base_login = '/login';
-      if (auth && auth === PROVIDERS.OAUTH ){
+      if (auth && auth === PROVIDERS.OAUTH) {
         return redirect
           ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
           : this.login_url;
       }
-      return  base_login;
+      return base_login;
     },
-    docsUrl(){
+    docsUrl() {
       const {docs} = this.provideConfig;
-      if(! docs.url){
+      if (!docs.url) {
         return null;
       }
       return docs.url;
     },
     connexion_url() {
-      const { redirect } = this.$route.query;
+      const {redirect} = this.$route.query;
       const url = redirect
         ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
         : this.login_url;
       return url;
+    },
+    createProjectLink() {
+      const {wizard} = this.provideConfig;
+      const {url} = wizard;
+      if (!url) {
+        return null;
+      }
+      return `${url}${url.endsWith('/') ? '' : '/'}#/create-project?redirect_url=${window.location.origin}`;
     }
   },
   watch: {
@@ -266,9 +307,11 @@ export default defineComponent({
         }
       }
     },
-    uiLanguage:{
-      immediate:true,
-      handler(){
+    uiLanguage: {
+      immediate: true,
+      handler() {
+
+        Cookies.set('sharinghub_lang', this.uiLanguage);
         const width = window.innerWidth;
         this.updateNavbar({width});
       }
@@ -297,14 +340,15 @@ export default defineComponent({
       return this.$route.path.split('/')[4] === routeKey || routeKey === this.$route.params?.pathMatch;
     },
     updateNavbar({width}) {
+      let smbreak = this.uiLanguage === 'en' ? 1360 : 1456;
       let midbreak = this.uiLanguage === 'en' ? 1346 : 1404;
-      if(this.externalLinks.length < 2){
-        midbreak -=130;
+      if (this.externalLinks.length < 2) {
+        midbreak -= 130;
       }
-      if(this.isAuthenticated){
-        midbreak -=16;
+      if (this.isAuthenticated) {
+        midbreak -= 16;
       }
-      if (width <= 771) {
+      if (width <= smbreak) {
         this.size = 'sm';
       } else if (width <= midbreak) {
         this.size = 'md';
@@ -326,9 +370,10 @@ export default defineComponent({
   background: transparent !important;
   padding-top: 8px !important;
 
-  .p-divider--vertical{
-   height: 33px !important;
+  .p-divider--vertical {
+    height: 33px !important;
   }
+
   h3 {
     font-size: 1.5rem;
     padding-bottom: 0 !important;
@@ -350,14 +395,20 @@ export default defineComponent({
     }
   }
 
+  .btn-wizard {
+    padding: 5px !important;
+    font-size: 14px;
+  }
+
   .active {
     border-bottom: solid map-get($theme-colors, 'primary') 2px;
     border-radius: 0 !important;
     background-color: rgba(map-get($theme-colors, 'primary'), 0.3);
   }
 }
-.fixed{
-  z-index:1 ! important;
+
+.fixed {
+  z-index: 1 ! important;
   background: white !important;
   position: fixed;
 }

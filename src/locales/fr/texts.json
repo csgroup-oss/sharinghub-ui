@@ -1,6 +1,7 @@
 {
   "actions": {
-    "openIn": "Ouvrir dans {service}"
+    "openIn": "Ouvrir dans {service}",
+    "newProject" : "Nouveau projet"
   },
   "additionalActions": "Actions supplémentaires",
   "additionalResources": "Ressources supplémentaires",
