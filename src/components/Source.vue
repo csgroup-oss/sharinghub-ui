@@ -392,11 +392,10 @@ export default {
         && path
       ){
         const {url} = gitlab;
-        if( url.endsWith('/')){
-          return gitlab.url.concat(`-/ide/project/${path}/edit/${branch}/-/`);
-        }else{
-          return gitlab.url.concat(`/-/ide/project/${path}/edit/${branch}/-/`);
+        if(!url){
+          return url;
         }
+        return Utils.removeUrlSuffix(url).concat(`/-/ide/project/${path}/edit/${branch}/-/`);
       }
      return undefined;
     }

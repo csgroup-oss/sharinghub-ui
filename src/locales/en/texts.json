@@ -292,7 +292,12 @@
       "sharePageWithOthers": "Share the URL of this page anywhere you like:",
       "title": "Share",
       "twitter": "Twitter",
-      "withOthers": "Share this page with others"
+      "withOthers": "Share this page with others",
+      "access_level": {
+        "owner" : "Owner",
+        "read_only" : "Read only",
+        "contributor" : "Contributor"
+      }
     },
     "jupyter": {
       "open": "Open",
