@@ -222,8 +222,9 @@ export const getMlflowCodeTemplate = {
       en : `Credentials setup:`,
       fr : `Configuration d'authentification:`
     },
-    text: ({arg}) => {
-      return `export MLFLOW_TRACKING_TOKEN=${arg}`;
+    text: ({arg, arg1}) => {
+      return `export MLFLOW_TRACKING_TOKEN=${arg}
+export LOGNAME=${arg1}`;
     },
     arg: 'credentials'
   },

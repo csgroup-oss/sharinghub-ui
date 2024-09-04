@@ -9,7 +9,7 @@
             class="d-flex align-items-center"
             id="popover-share-btn" :title="$t('source.share.withOthers')"
           >
-            <b-icon-share scale="0.7" />
+            <b-icon-share-fill scale="0.7" />
           </b-button>
           <b-popover
             id="popover-share" target="popover-share-btn" triggers="focus" placement="bottom"
@@ -33,14 +33,11 @@
           @click="has_rated ? UnStarProject() :starProject()"
           variant="outline-primary"
           v-b-tooltip
-          class="d-flex align-items-center btn-share"
+          class="flex align-items-center btn-share"
           :title="has_rated ? ' Unstar': ' Star'"
         >
-          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.7" aria-hidden="true" />
-          {{ has_rated ? ' Unstar': ' Star' }}
-        </b-button>
-        <b-button size="sm" disabled variant="outline-dark">
-          {{ rank_rate }}
+          <b-icon :icon="has_rated ? 'star-fill' :'star'" scale="0.8" class="mr-1" aria-hidden="true" />
+          <span class="mt-0 mt-1" style="font-size: 16px">{{ rank_rate }}</span>
         </b-button>
       </template>
     </b-button-group>

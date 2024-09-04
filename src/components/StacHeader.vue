@@ -6,14 +6,13 @@
       </div>
 
       <div>
-        <div class="sm:flex-column md:flex-row lg:flex-row xl:flex-row align-items-center">
+        <div class="sm:flex-column md:flex-row lg:flex lg:flex-row xl:flex xl:flex-row align-items-center">
           <template v-if="icon">
             <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
           </template>
           <b-button
             v-if="hasBack" size="sm" @click="$event => $router.back()" variant="outline-primary"
-            pill
-            class="mr-2"
+            pill class="mr-2"
           >
             <b-icon-arrow-left />
           </b-button>
@@ -23,12 +22,26 @@
           <share-button-group />
         </div>
 
-        <text-view type="header__16" class="block pt-1 pb-3" v-if="url">
+        <text-view type="header__16" class="block pt-1 pb-3 mt-2" v-if="url">
           <i18n v-if="containerLink" tag="span" path="in" class="in mr-3">
             <template #catalog>
               <small>
                 <StacLink :data="containerLink" />
               </small>
+              <b-badge v-if="!!userAccessLevel" pill variant="secondary" class="ml-2">
+                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.READ_ONLY">
+                  <b-icon scale="0.9" icon="eye-fill" />
+                  <span> {{ $t("source.share.access_level.read_only") }}</span>
+                </template>
+                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.ADMINISTRATOR">
+                  <b-icon scale="0.9" icon="people-fill" />
+                  <span> {{ $t("source.share.access_level.owner") }}</span>
+                </template>
+                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.CONTRIBUTOR">
+                  <b-icon scale="0.9" icon="pen-fill" />
+                  <span> {{ $t("source.share.access_level.contributor") }}</span>
+                </template>
+              </b-badge>
             </template>
           </i18n>
         </text-view>
@@ -52,10 +65,12 @@ import {mapGetters, mapState} from 'vuex';
 import Source from './Source.vue';
 import StacLink from './StacLink.vue';
 import STAC from '../models/stac';
-import Utils from '../utils';
+import Utils, {ACCESS_LEVELS} from '../utils';
 import Keywords from '@/components/Keywords.vue';
 import TextView from '@/_Hub/components/TextView.vue';
 import ShareButtonGroup from '@/components/ShareButtonGroup.vue';
+import {get} from '@/_Hub/tools/https';
+import {API_URL} from '@/_Hub/Endpoint';
 
 
 export default {
@@ -70,10 +85,14 @@ export default {
   data() {
     return {
       jupyterLabUrl: undefined,
-      loading: true
+      loading: true,
+      userAccessLevel: undefined
     };
   },
   computed: {
+    ACCESS_LEVELS() {
+      return ACCESS_LEVELS;
+    },
     ...mapState(['allowSelectCatalog', 'authConfig', 'authData', 'catalogUrl', 'data', 'url', 'title', 'provideConfig']),
     ...mapGetters(['canSearch', 'root', 'parentLink', 'collectionLink', 'toBrowserPath']),
 
@@ -115,11 +134,32 @@ export default {
       return this.data?.getMetadata('keywords').length > 0 ? this.data?.getMetadata('keywords') : [];
     }
   },
+  watch:{
+    data:{
+      immediate:true,
+      async handler(data){
+         if(!data){
+           return;
+         }
+        const projectPath = data.getMetadata('sharinghub:path');
+        this.userAccessLevel = await  this.getAccessLevel(projectPath);
+      }
+    }
+  },
   async beforeMount() {
     this.jupyterLabUrl = this.provideConfig.jupyterlab?.url;
     this.loading = false;
   },
   methods: {
+    async getAccessLevel(projectPath){
+      return get(API_URL.concat('check/').concat(projectPath).concat('?info=true'))
+        .then((response)=>{
+          if(response.data){
+            return response.data;
+          }
+        });
+    }
+
   }
 };
 </script>

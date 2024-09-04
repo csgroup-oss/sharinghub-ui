@@ -61,7 +61,7 @@
             </TextView>
           </b-button>
           <b-popover id="popover-mlflow" target="popover-mlflow-btn" triggers="focus" placement="bottom">
-            <MLflowCodeGenerator :mlflow-url="mlflowUrl()" />
+            <MLflowCodeGenerator :mlflow-type="mlflowType" :mlflow-url="mlflowUrl()" />
           </b-popover>
         </template>
       </b-button-group>
@@ -157,7 +157,7 @@ import {mapActions, mapGetters, mapState} from 'vuex';
 
 import Utils, {ACCESS_LEVELS} from '../utils';
 import TextView from '@/_Hub/components/TextView.vue';
-import {CONNEXION_MODE, get} from '@/_Hub/tools/https';
+import {CONNEXION_MODE, get, MLFLOW_PROVIDER} from '@/_Hub/tools/https';
 import {API_URL, PROXY_URL, STORE_DVC_URL} from '@/_Hub/Endpoint';
 import STAC from '../models/stac';
 import STACLogo from '@/assets/img/STAC_logo.png';
@@ -244,6 +244,10 @@ export default {
         return this.stac?.getMetadata('sharinghub:mlflow') === 'enable';
       }
       return false;
+    },
+    mlflowType(){
+      const {mlflow} = this.provideConfig;
+      return mlflow?.type || null;
     }
   },
   watch: {
@@ -308,13 +312,26 @@ export default {
       if (!this.data || !(this.data instanceof STAC)) {
         return null;
       }
-      const {mlflow} = this.provideConfig;
       const projectPath = this.data.getMetadata('sharinghub:path');
-      if (!projectPath || (!mlflow.url)) {
+      if (!projectPath) {
         return null;
       }
-      return mlflow.url.endsWith('/') ? mlflow.url.concat(projectPath).concat('/tracking/') :
-        mlflow.url.concat(`/${projectPath}`).concat('/tracking/');
+      const {mlflow, gitlab} = this.provideConfig;
+      if(!mlflow.url){
+        return null;
+      }
+      if([MLFLOW_PROVIDER.MLFLOW_SHARINGHUB].includes(mlflow.type)){
+        return Utils.removeUrlSuffix(mlflow.url).concat(`/${projectPath}`).concat('/tracking/');
+      }
+      else if([MLFLOW_PROVIDER.MLFLOW].includes(mlflow.type)){
+        return mlflow.url;
+      }
+      else {
+          if(!gitlab){
+            return null;
+          }
+          return `${Utils.removeUrlSuffix(gitlab.url)}/${projectPath}/-/ml/experiments`;
+      }
     },
     openJupyterLink(ev, url) {
       window.open(url, '_blank');
@@ -375,11 +392,10 @@ export default {
         && path
       ){
         const {url} = gitlab;
-        if( url.endsWith('/')){
-          return gitlab.url.concat(`-/ide/project/${path}/edit/${branch}/-/`);
-        }else{
-          return gitlab.url.concat(`/-/ide/project/${path}/edit/${branch}/-/`);
+        if(!url){
+          return url;
         }
+        return Utils.removeUrlSuffix(url).concat(`/-/ide/project/${path}/edit/${branch}/-/`);
       }
      return undefined;
     }

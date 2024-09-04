@@ -66,9 +66,10 @@ import {
 import CodeGenerator from '@/_Hub/components/CodeGenerator/CodeGenerator.vue';
 import {mapState} from 'vuex';
 import TextView from '@/_Hub/components/TextView.vue';
-import {CONNEXION_MODE} from '@/_Hub/tools/https';
+import {CONNEXION_MODE, MLFLOW_PROVIDER} from '@/_Hub/tools/https';
 import STAC from '@/models/stac';
 import MlFlow_icon from '@/assets/img/MLflow_icon.svg';
+import Utils from '@/utils';
 
 
 
@@ -82,6 +83,10 @@ export default defineComponent({
     mlflowUrl :{
       type :String,
       required:true
+    },
+    mlflowType:{
+      type: String,
+      required : true
     }
   },
   data(){
@@ -91,7 +96,7 @@ export default defineComponent({
     };
   },
   computed:{
-    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage']),
+    ...mapState(['url', 'config', 'auth', 'data', 'uiLanguage', 'provideConfig']),
     defaultToken(){
       return '<your_access_token> or <your_personal_gitlab_token>';
     },
@@ -106,12 +111,30 @@ export default defineComponent({
     projectID(){
       if (!this.data || !(this.data instanceof STAC)) {return null;}
       return  this.data.getMetadata('sharinghub:id');
+    },
+    username(){
+      const {mode, user} = this.auth;
+      if([CONNEXION_MODE.CONNECTED, CONNEXION_MODE.PRIVATE_TOKEN].includes(mode)){
+       return user.email || user.username;
+      }
+      return '<username>';
     }
   },
   methods:{
 
     getMLFlowCodeTemplate(){
       const uiLanguage = this.uiLanguage;
+      let mlflowTrackingUrl = this.mlflowUrl;
+      let experiment = `${(this.experimentName || 'experiment')}`;
+      if(MLFLOW_PROVIDER.MLFLOW_SHARINGHUB === this.mlflowType){
+        experiment = `${experiment} (${this.projectID})`;
+      }
+      if(MLFLOW_PROVIDER.MLFLOW_GITLAB === this.mlflowType){
+        const {gitlab} = this.provideConfig;
+        mlflowTrackingUrl =  Utils.removeUrlSuffix(gitlab.url)
+          .concat('/api/v4/projects/')
+          .concat(this.projectID).concat('/ml/mlflow');
+      }
       return Object.entries(getMlflowCodeTemplate).map(([, val]) =>{
         let item = {
           language: val.language,
@@ -120,17 +143,17 @@ export default defineComponent({
         if(val.arg){
           switch (val.arg){
             case 'mlflow_tracking_url':
-              item['text'] = val.text({arg:this.mlflowUrl});
+              item['text'] = val.text({arg:mlflowTrackingUrl});
               return  item;
             case 'credentials':
-              item['text'] = val.text({arg:this.defaultToken});
-              item['textWithCredentials'] = val.text({arg:this.token});
+              item['text'] = val.text({arg:this.defaultToken, arg1:'<username>'});
+              item['textWithCredentials'] = val.text({arg:this.token, arg1:`"${this.username}"`});
               return item;
               case 'mlflow_url mlflow_tracking_id':
               item['text'] =
                 val.text({
-                  arg: this.mlflowUrl,
-                  arg1:`${(this.experimentName || 'experiment')} (${this.projectID})`
+                  arg: mlflowTrackingUrl,
+                  arg1:experiment
               });
               item['hasInput'] = true;
               return  item;
