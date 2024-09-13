@@ -199,7 +199,10 @@ export default defineComponent({
     if (this.showAlert(alert_info, connexion_mode)) {
       this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
     }
-
+    window.onresize = (ev) => {
+      const {innerWidth: width} = ev.currentTarget;
+      this.$store.commit('setWindowWidthSize', width);
+    };
   },
   methods: {
     docs(path) {

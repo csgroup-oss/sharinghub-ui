@@ -8,7 +8,7 @@
       <StacHeader @enableSidebar="sidebar = true" />
     </header>
 
-    <div class="w-100 pt-5 ">
+    <div class="w-100 pt-3">
       <b-tabs class="pb-3">
         <b-tab class="pt-4">
           <template #title>
@@ -18,6 +18,13 @@
             <!-- Content (Item / Catalog) -->
             <router-view />
           </TextView>
+        </b-tab>
+
+        <b-tab v-if="!isMobile && !!mlflowTrackingUri" class="pt-0 w-full h-full">
+          <template #title>
+            <TextView type="header__b16"> {{ $t('fields.model_experiments') }}</TextView>
+          </template>
+          <MLflowIframeView />
         </b-tab>
 
         <b-tab class="pt-4">
@@ -84,6 +91,7 @@ import TextView from '@/_Hub/components/TextView.vue';
 import TabSectionApiStac from '@/_Hub/views/sections/TabSectionApiStac.vue';
 import TabSectionReview from '@/_Hub/views/sections/TabSectionReview.vue';
 import {CONNEXION_MODE} from '@/_Hub/tools/https';
+import MLflowIframeView from '@/_Hub/views/MLflowIframeView.vue';
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonGroupPlugin);
@@ -97,7 +105,6 @@ Vue.use(SpinnerPlugin);
 Vue.directive('b-toggle', VBToggle);
 // Used to detect when a catalog/item becomes visible so that further data can be loaded
 Vue.directive('b-visible', VBVisible);
-
 
 
 // Pass Config through from props to vuex
@@ -123,6 +130,7 @@ export default {
   // router,
   // store,
   components: {
+    MLflowIframeView,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
     ErrorAlert,
     StacHeader
@@ -135,12 +143,14 @@ export default {
       isMlModelCompliant: false,
       sidebar: false,
       error: null,
-      onDataLoaded: null
+      onDataLoaded: null,
+      isMobile: false,
+      mlflowTrackingUri:undefined
     };
   },
   computed: {
     ...mapState(['allowSelectCatalog', 'data', 'dataLanguage', 'auth', 'description', 'doAuth',
-      'globalError', 'stateQueryParameters', 'title', 'uiLanguage', 'url', 'conformsTo']),
+      'globalError', 'stateQueryParameters', 'title', 'uiLanguage', 'url', 'conformsTo', 'windowWidthSize']),
     ...mapState({
       catalogUrlFromVueX: 'catalogUrl',
       detectLocaleFromBrowserFromVueX: 'detectLocaleFromBrowser',
@@ -156,8 +166,8 @@ export default {
         return '';
       }
     },
-    isAuthenticated(){
-      return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes(this.auth.mode);
+    isAuthenticated() {
+      return [CONNEXION_MODE.PRIVATE_TOKEN, CONNEXION_MODE.CONNECTED].includes(this.auth.mode);
     }
   },
   watch: {
@@ -285,13 +295,17 @@ export default {
         }
       }
     },
-    data(data) {
-      this.isMlModelCompliant = data?.stac_extensions ? Utils.isMlModelCompliant(data.stac_extensions) : false;
-      if (!this.onDataLoaded) {
-        return;
-      }
-      if (data instanceof STAC) {
-        this.onDataLoaded();
+    data: {
+      immediate: true,
+      handler(data){
+        this.mlflowTrackingUri = this.getMlflowTrackingUri();
+        this.isMlModelCompliant = data?.stac_extensions ? Utils.isMlModelCompliant(data.stac_extensions) : false;
+        if (!this.onDataLoaded) {
+          return;
+        }
+        if (data instanceof STAC) {
+          this.onDataLoaded();
+        }
       }
     },
     $route: {
@@ -304,6 +318,12 @@ export default {
           throw new Error('error on stacFeatureItem');
         }
         await this.$store.dispatch('load', {url: stacFeatureItem, loadApi: true, show: true});
+      }
+    },
+    windowWidthSize:{
+      immediate:true,
+      handler(width){
+        this.isMobile = this.mobileSize({width});
       }
     }
   },
@@ -337,7 +357,7 @@ export default {
     this.$root.$on('error', this.showError);
     setInterval(() => this.$store.dispatch('loadBackground', 3), 200);
   },
-  beforeDestroy(){
+  beforeDestroy() {
     document.title = this.catalogTitle;
   },
 
@@ -431,6 +451,18 @@ export default {
     },
     hideError() {
       this.$store.commit('showGlobalError', null);
+    },
+    mobileSize({width}) {
+      return width < 750;
+    },
+    getMlflowTrackingUri(){
+      if(!this.isAuthenticated){
+        return undefined;
+      }
+      if(this.data instanceof STAC){
+        const link = this.data.getLinkWithRel('mlflow:tracking-uri', false);
+        return link?.href;
+      }
     }
   }
 };

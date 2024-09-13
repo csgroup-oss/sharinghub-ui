@@ -9,6 +9,7 @@
       "update_hours": "mis à jour il y a {0} heure(s)",
       "update_less_hour": "mis à jour il y  a moins d'une heure"
     },
+    "model_experiments" : "MLflow",
     "search_placeholder": "recherchez mots clés, models ...",
     "asset_card": "Détails",
     "reviews": "Commentaires",
