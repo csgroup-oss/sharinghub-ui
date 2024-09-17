@@ -294,16 +294,20 @@ export default defineComponent({
               if (response.data) {
                 this.avatar_url = response.data.avatar_url;
               }
+            }).catch(() =>{
+               this.logout();
             });
           }
-          this.isAuthenticated = !!data.user;
         }
         if (data.mode === CONNEXION_MODE.CONNECTED) {
           this.canSearch = true;
+          this.isAuthenticated = !!data.user;
         } else if (data.mode === CONNEXION_MODE.PRIVATE_TOKEN) {
           this.canSearch = true;
+          this.isAuthenticated = !!data.user;
         } else {
           this.canSearch = !!data.user;
+          this.isAuthenticated = false;
         }
       }
     },
