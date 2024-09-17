@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full mlflow_iframe_view-component">
-    <iframe class="w-full" :src="mlflow_uri" />
+    <iframe id="mlflowIframe" class="w-full" :src="mlflow_uri" />
   </div>
 </template>
 
@@ -8,7 +8,6 @@
 import {mapState} from 'vuex';
 import {CONNEXION_MODE} from '@/_Hub/tools/https';
 import STAC from '@/models/stac';
-
 export default {
   name: 'MLflowIframeView',
   components: {},
@@ -36,15 +35,15 @@ export default {
         this.isAuthenticated = [CONNEXION_MODE.PRIVATE_TOKEN, CONNEXION_MODE.CONNECTED].includes(this.auth.mode);
       }
     }
-  },
-  methods: {}
+  }
 };
 </script>
 
 <style scoped lang="scss">
 .mlflow_iframe_view-component {
   iframe {
-    min-height: 80rem;
+    min-height: 50rem;
+    height: 100%;
   }
 }
 </style>

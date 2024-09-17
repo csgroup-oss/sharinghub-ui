@@ -34,9 +34,9 @@
           <TabSectionReview />
         </b-tab>
 
-        <b-tab class="pt-4 xl:hidden lg:hidden md:inline sm:inline">
+        <b-tab v-if="isMobile" class="pt-4">
           <template #title>
-            <TextView class="xl:hidden lg:hidden md:inline sm:inline" type="header__b16">
+            <TextView class="" type="header__b16">
               STAC API
             </TextView>
           </template>
