@@ -5,7 +5,7 @@
         <section class="intro">
           <DeprecationNotice v-if="data.properties.deprecated" :data="data" />
           <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
-          <Description v-if="data.properties.description" :description="data.properties.description" />
+          <Description v-if="description" :description="description" />
         </section>
         <CollectionLink v-if="collectionLink & false" :link="collectionLink" />
         <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
@@ -40,6 +40,9 @@ import ShowAssetMixin from '../components/ShowAssetMixin';
 import {BTab, BTabs} from 'bootstrap-vue';
 import {addSchemaToDocument, createItemSchema} from '../schema-org';
 import STAC from '@/models/stac';
+import {get} from '@/_Hub/tools/https';
+import {PROXY_URL} from '@/_Hub/Endpoint';
+import {ACCESS_LEVELS} from '@/utils';
 
 export default {
   name: 'Item',
@@ -71,15 +74,16 @@ export default {
         'proj:geometry',
         // Special handling for the warning of the anonymized-location extension
         'anon:warning'
-      ]
+      ],
+      description: undefined
     };
   },
   computed: {
-    ...mapState(['data', 'url']),
+    ...mapState(['data', 'url', 'uiLanguage']),
     ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink']),
     canViewMap() {
       if (this.data instanceof STAC) {
-        return this.data.getMetadata('sharinghub:map-viewer') === 'enable' && !!this.data.bbox ;
+        return this.data.getMetadata('sharinghub:map-viewer') === 'enable' && !!this.data.bbox;
       }
       return false;
     }
@@ -87,12 +91,53 @@ export default {
   watch: {
     data: {
       immediate: true,
-      handler(data) {
+      async handler(data) {
         try {
           let schema = createItemSchema(data, [this.collectionLink, this.parentLink], this.$store);
           addSchemaToDocument(document, schema);
         } catch (error) {
           console.error(error);
+        }
+        await this.updateDescription();
+      }
+    },
+    uiLanguage: {
+      immediate: true,
+      async handler() {
+        await this.updateDescription();
+      }
+    }
+  },
+  methods: {
+    async getProjectOwner(projectPath) {
+      return get(PROXY_URL.concat('projects/').concat(projectPath))
+        .then((response) => {
+          if (response.data) {
+            const {owner: {name, web_url}} = response.data;
+            if (name) {
+              const link = `<a href="${web_url}">${name}</a>`;
+              return this.$t('source.share.access_level.guest_helper', [link]);
+            }
+          }
+        });
+
+    },
+    async updateDescription() {
+      if (!(this.data instanceof STAC)) {
+        return;
+      }
+      const description = this.data.getMetadata('description');
+      this.description = description;
+      const projectID = this.data.getMetadata('sharinghub:id');
+      const userAccessLevel = this.data.getMetadata('sharinghub:access-level');
+      if (userAccessLevel === ACCESS_LEVELS.GUEST) {
+        const helper_message = await this.getProjectOwner(projectID);
+        if (helper_message) {
+          if(description){
+            this.description = `${description}<br/><br/><hr/>${helper_message}<br/><br/>`;
+          }else {
+            this.description = helper_message;
+          }
         }
       }
     }

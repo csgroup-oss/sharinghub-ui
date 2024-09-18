@@ -293,9 +293,13 @@
       "twitter": "Twitter",
       "withOthers": "Partagez cette page",
       "access_level": {
+        "public" : "Public",
         "owner" : "Admin",
         "read_only" : "Lecture seule",
-        "contributor" : "Collaborateur"
+        "contributor" : "Collaborateur",
+        "guest" : "Accès restreint",
+        "guest_helper": "Vous n'avez pas les droits d'accès suffisants pour visualiser tous le contenu de ce projet. Pour obtenir les autorisations nécessaires, veuillez contacter {0}."
+
       }
     },
     "jupyter": {

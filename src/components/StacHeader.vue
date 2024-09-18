@@ -28,18 +28,26 @@
               <small>
                 <StacLink :data="containerLink" />
               </small>
-              <b-badge v-if="!!userAccessLevel" pill variant="secondary" class="ml-2">
-                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.READ_ONLY">
+              <b-badge pill variant="secondary" class="ml-2">
+                <template v-if="userAccessLevel === ACCESS_LEVELS.NO_ACCESS">
+                  <b-icon scale="0.9" icon="globe" />
+                  <span> {{ $t("source.share.access_level.public") }}</span>
+                </template>
+                <template v-if="userAccessLevel === ACCESS_LEVELS.READ_ONLY">
                   <b-icon scale="0.9" icon="eye-fill" />
                   <span> {{ $t("source.share.access_level.read_only") }}</span>
                 </template>
-                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.ADMINISTRATOR">
+                <template v-if="userAccessLevel === ACCESS_LEVELS.ADMINISTRATOR">
                   <b-icon scale="0.9" icon="people-fill" />
                   <span> {{ $t("source.share.access_level.owner") }}</span>
                 </template>
-                <template v-if="userAccessLevel?.access_level === ACCESS_LEVELS.CONTRIBUTOR">
+                <template v-if="userAccessLevel === ACCESS_LEVELS.CONTRIBUTOR">
                   <b-icon scale="0.9" icon="pen-fill" />
                   <span> {{ $t("source.share.access_level.contributor") }}</span>
+                </template>
+                <template v-if="userAccessLevel === ACCESS_LEVELS.GUEST">
+                  <b-icon scale="0.9" icon="shield-fill-x" />
+                  <span> {{ $t("source.share.access_level.guest") }}</span>
                 </template>
               </b-badge>
             </template>
@@ -69,9 +77,6 @@ import Utils, {ACCESS_LEVELS} from '../utils';
 import Keywords from '@/components/Keywords.vue';
 import TextView from '@/_Hub/components/TextView.vue';
 import ShareButtonGroup from '@/components/ShareButtonGroup.vue';
-import {get} from '@/_Hub/tools/https';
-import {API_URL} from '@/_Hub/Endpoint';
-
 
 export default {
   name: 'StacHeader',
@@ -138,28 +143,16 @@ export default {
     data:{
       immediate:true,
       async handler(data){
-         if(!data){
+         if(!(data instanceof STAC)){
            return;
          }
-        const projectPath = data.getMetadata('sharinghub:path');
-        this.userAccessLevel = await  this.getAccessLevel(projectPath);
+        this.userAccessLevel = data.getMetadata('sharinghub:access-level');
       }
     }
   },
   async beforeMount() {
     this.jupyterLabUrl = this.provideConfig.jupyterlab?.url;
     this.loading = false;
-  },
-  methods: {
-    async getAccessLevel(projectPath){
-      return get(API_URL.concat('check/').concat(projectPath).concat('?info=true'))
-        .then((response)=>{
-          if(response.data){
-            return response.data;
-          }
-        });
-    }
-
   }
 };
 </script>

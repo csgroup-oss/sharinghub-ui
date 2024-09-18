@@ -5,9 +5,11 @@ import {BASE_URL} from '@/_Hub/Endpoint';
 
 
 export const ACCESS_LEVELS ={
-  'READ_ONLY':1,
-  'CONTRIBUTOR':2,
-  'ADMINISTRATOR':3
+  'NO_ACCESS':0,
+  'GUEST':1,
+  'READ_ONLY':2,
+  'CONTRIBUTOR':3,
+  'ADMINISTRATOR':4
 };
 
 export const STAC_EXTENSIONS = {
