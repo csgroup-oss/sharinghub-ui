@@ -9,6 +9,7 @@
       "update_hours": "update about {0} hour(s) ago",
       "update_less_hour": "updated less than an hour ago"
     },
+    "model_experiments" : "MLflow",
     "search_placeholder": "search keyword, models ...",
     "asset_card": "Details",
     "reviews": "Reviews",

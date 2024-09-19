@@ -247,7 +247,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage', 'pathPrefix']),
+    ...mapState(['auth', 'catalogUrl', 'title', 'data', 'url', 'provideConfig', 'uiLanguage', 'pathPrefix', 'windowWidthSize']),
     login() {
       const {path} = this.$route;
       const {auth} = this.provideConfig;
@@ -294,16 +294,20 @@ export default defineComponent({
               if (response.data) {
                 this.avatar_url = response.data.avatar_url;
               }
+            }).catch(() =>{
+               this.logout();
             });
           }
-          this.isAuthenticated = !!data.user;
         }
         if (data.mode === CONNEXION_MODE.CONNECTED) {
           this.canSearch = true;
+          this.isAuthenticated = !!data.user;
         } else if (data.mode === CONNEXION_MODE.PRIVATE_TOKEN) {
           this.canSearch = true;
+          this.isAuthenticated = !!data.user;
         } else {
           this.canSearch = !!data.user;
+          this.isAuthenticated = false;
         }
       }
     },
@@ -315,16 +319,18 @@ export default defineComponent({
         const width = window.innerWidth;
         this.updateNavbar({width});
       }
+    },
+    windowWidthSize:{
+      immediate:true,
+      handler(width){
+        this.updateNavbar({width});
+      }
     }
   },
   beforeMount() {
     const {auth} = this.provideConfig;
     this.has_provider = (auth && auth === PROVIDERS.OAUTH);
     this.updateNavbar({width: window.innerWidth});
-    window.onresize = (ev) => {
-      const {innerWidth: width} = ev.currentTarget;
-      this.updateNavbar({width});
-    };
   },
   methods: {
     async logout() {

@@ -91,7 +91,7 @@
                 :stac="dataset"
               />
             </b-row>
-            <h3 class="mt-6" v-else>
+            <h3 class="ml-3 mt-6" v-else>
               {{ $t("fields.no_data_found", [":("]) }}
             </h3>
             <b-row v-if="!!next_link" class="flex flex-wrap justify-content-center mt-3">
@@ -112,7 +112,7 @@ import TextView from '@/_Hub/components/TextView.vue';
 import { mapState } from 'vuex';
 import ItemCard from '@/_Hub/components/ItemCard.vue';
 import { get, CONNEXION_MODE } from '@/_Hub/tools/https';
-import { PROXY_URL, STAC_SEARCH } from '@/_Hub/Endpoint';
+import {LOGOUT_URL, PROXY_URL, STAC_SEARCH} from '@/_Hub/Endpoint';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
 import _ from 'lodash';
 import TagFilterComponent from '@/_Hub/components/TagFilterComponent.vue';
@@ -236,6 +236,13 @@ export default defineComponent({
           }
         })
         .catch(() => {
+          get(LOGOUT_URL).then((response) => {
+            if (response) {
+              const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
+              this.$store.commit('setUserInfo', auth);
+              this.loading =false;
+            }
+          });
           if (this.$route.name !== 'Login') {
             this.$router.push({
               path: '/login',

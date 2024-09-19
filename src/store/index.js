@@ -70,7 +70,8 @@ function getStore(config, router) {
         mode : CONNEXION_MODE.DEFAULT_TOKEN
       },
       entriesRoute: {},
-      provideConfig: null
+      provideConfig: null,
+      windowWidthSize: window.innerWidth
     }),
     getters: {
       loading: state => !state.url || !state.data || state.database[state.url] instanceof Loading,
@@ -623,6 +624,9 @@ function getStore(config, router) {
       },
       setProvideConfig(state, payload) {
          state.provideConfig = payload;
+      },
+      setWindowWidthSize(state, payload) {
+        state.windowWidthSize= payload;
       }
 
 

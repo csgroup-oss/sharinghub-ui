@@ -77,7 +77,7 @@ import {
   removeLocalToken,
   setAlertLastDate
 } from '@/_Hub/tools/https';
-import {CONFIG_URL, DOCS_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
+import {CONFIG_URL, DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
 import {mapState} from 'vuex';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
 import I18N from '@radiantearth/stac-fields/I18N';
@@ -199,7 +199,10 @@ export default defineComponent({
     if (this.showAlert(alert_info, connexion_mode)) {
       this.alert_message = this.buildAlertInfo(alert_info, this.uiLanguage);
     }
-
+    window.onresize = (ev) => {
+      const {innerWidth: width} = ev.currentTarget;
+      this.$store.commit('setWindowWidthSize', width);
+    };
   },
   methods: {
     docs(path) {
@@ -232,8 +235,9 @@ export default defineComponent({
           }
           return undefined;
         })
-        .catch(() => {
+        .catch(async () => {
           this.isLoading = false;
+          await this.logout();
           if (!['Login', 'Home'].includes(this.$route.name)) {
             this.$router.push('/login');
           }
@@ -324,9 +328,16 @@ export default defineComponent({
     closeAlert() {
       this.alert_message = undefined;
       setAlertLastDate(DateTime.now().toISO());
+    },
+
+    async logout() {
+      get(LOGOUT_URL).then((response) => {
+        if (response) {
+          const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
+          this.$store.commit('setUserInfo', auth);
+        }
+      });
     }
-
-
   }
 });
 
