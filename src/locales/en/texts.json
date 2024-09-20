@@ -294,9 +294,13 @@
       "twitter": "Twitter",
       "withOthers": "Share this page with others",
       "access_level": {
+        "public" : "Public",
         "owner" : "Owner",
         "read_only" : "Read only",
-        "contributor" : "Contributor"
+        "contributor" : "Contributor",
+        "guest" : "Guest",
+        "guest_helper": "You do not have sufficient access rights to view all content of this project. To obtain the necessary authorisations, please contact {0}."
+
       }
     },
     "jupyter": {
