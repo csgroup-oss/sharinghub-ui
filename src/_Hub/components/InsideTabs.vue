@@ -2,7 +2,7 @@
   <div class="w-full flex-column inside-tabs">
     <div v-if="tabs.length !==0" class="w-full flex">
       <div
-        v-for="(tab, idx) in tabs" :class="['mr-4 pr-3 header-btn', index=== idx && 'active']"
+        v-for="(tab, idx) in tabs" :class="['mr-4 px-3 pt-2 header-btn', index=== idx && 'active']"
         @click="selectTab(idx)"
         :key="tab.title"
       >
@@ -53,7 +53,6 @@ export default defineComponent({
   .active{
     border-bottom: solid 4px map-get($theme-colors, 'primary');
     background-color:rgba( map-get($theme-colors, 'primary'), 0.05);
-    padding: 0 2px 2px 1px;
     transition: background-color 0.2s linear;
   }
 }

@@ -53,7 +53,7 @@ import {addSchemaToDocument, createItemSchema} from '../schema-org';
 import STAC from '@/models/stac';
 import {get} from '@/_Hub/tools/https';
 import {PROXY_URL} from '@/_Hub/Endpoint';
-import {ACCESS_LEVELS, CATEGORIES} from '@/utils';
+import {ACCESS_LEVELS} from '@/utils';
 import InsideTabs from '@/_Hub/components/InsideTabs.vue';
 import InsideTab from '@/_Hub/components/InsideTab.vue';
 import Contributors from '@/_Hub/components/Contributors.vue';
@@ -103,15 +103,6 @@ export default {
         return this.data.getMetadata('sharinghub:map-viewer') === 'enable' && !!this.data.bbox;
       }
       return false;
-    },
-    relatedDataset() {
-      let links = [];
-      if (this.data instanceof STAC) {
-        links = this.data.getLinksWithRels(['derived_from']);
-        const dataset_links = links?.filter(link => link['category'] === CATEGORIES.DATASET);
-        return dataset_links;
-      }
-      return links;
     }
   },
   watch: {
