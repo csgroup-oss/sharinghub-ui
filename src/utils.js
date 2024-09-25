@@ -12,6 +12,14 @@ export const ACCESS_LEVELS ={
   'ADMINISTRATOR':4
 };
 
+export const CATEGORIES ={
+  'DATASET':'dataset',
+  'MODELS': 'ai-model',
+  'processor': 'processor',
+  'ADMINISTRATOR':3
+};
+
+
 export const STAC_EXTENSIONS = {
   'ml-model': 'https://stac-extensions.github.io/ml-model/v1.0.0/schema.json'
 };

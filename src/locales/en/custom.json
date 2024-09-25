@@ -42,7 +42,13 @@
     },
     "search": {
       "collection_mandatory": "Please select one collection to submit search."
-    }
+    },
+    "metadata": {
+      "title": "Metadata",
+      "general" : "General",
+      "links": "Links"
+    },
+    "contributors": "Contributors"
 
   }
 }

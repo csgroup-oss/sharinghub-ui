@@ -7,27 +7,38 @@
           <AnonymizedNotice v-if="data.properties['anon:warning']" :warning="data.properties['anon:warning']" />
           <Description v-if="description" :description="description" />
         </section>
-        <CollectionLink v-if="collectionLink & false" :link="collectionLink" />
-        <Links v-if="additionalLinks.length > 0" :title="$t('additionalResources')" :links="additionalLinks" />
       </b-col>
 
       <b-col cols="5" class="left">
-        <section v-if="canViewMap" class="mb-4">
-          <b-card no-body class="maps-preview">
-            <b-tabs v-model="tab" ref="tabs" card pills vertical end>
-              <b-tab :title="$t('map')" no-body>
-                <Map :stac="data" :stacLayerData="selectedAsset" @dataChanged="dataChanged" scrollWheelZoom />
-              </b-tab>
-              <b-tab v-if="thumbnails.length > 0" :title="$t('thumbnails')" no-body>
-                <Thumbnails :thumbnails="thumbnails" />
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </section>
-        <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
+        <inside-tabs>
+          <inside-tab :title="$t('fields.metadata.general')">
+            <section v-if="canViewMap" class="mb-4">
+              <b-card no-body class="maps-preview">
+                <b-tabs v-model="tab" ref="tabs" card pills vertical end>
+                  <b-tab :title="$t('map')" no-body>
+                    <Map :stac="data" :stacLayerData="selectedAsset" @dataChanged="dataChanged" scrollWheelZoom />
+                  </b-tab>
+                  <b-tab v-if="thumbnails.length > 0" :title="$t('thumbnails')" no-body>
+                    <Thumbnails :thumbnails="thumbnails" />
+                  </b-tab>
+                </b-tabs>
+              </b-card>
+            </section>
+            <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
 
-        <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
-        <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
+            <Contributors />
+          </inside-tab>
+
+          <inside-tab :title="$t('fields.metadata.links')">
+            <CollectionLink v-if="collectionLink & false" :link="collectionLink" />
+            <Links v-if="additionalLinks.length > 0" :links="additionalLinks" />
+          </inside-tab>
+
+          <inside-tab :title="$t('fields.metadata.title')">
+            <Providers v-if="data.properties.providers" :providers="data.properties.providers" />
+            <Metadata :data="data" type="Item" :ignoreFields="ignoredMetadataFields" />
+          </inside-tab>
+        </inside-tabs>
       </b-col>
     </b-row>
   </div>
@@ -42,11 +53,17 @@ import {addSchemaToDocument, createItemSchema} from '../schema-org';
 import STAC from '@/models/stac';
 import {get} from '@/_Hub/tools/https';
 import {PROXY_URL} from '@/_Hub/Endpoint';
-import {ACCESS_LEVELS} from '@/utils';
+import {ACCESS_LEVELS, CATEGORIES} from '@/utils';
+import InsideTabs from '@/_Hub/components/InsideTabs.vue';
+import InsideTab from '@/_Hub/components/InsideTab.vue';
+import Contributors from '@/_Hub/components/Contributors.vue';
 
 export default {
   name: 'Item',
   components: {
+    Contributors,
+    InsideTab,
+    InsideTabs,
     AnonymizedNotice: () => import('../components/AnonymizedNotice.vue'),
     Assets: () => import('../components/Assets.vue'),
     BTabs,
@@ -86,6 +103,15 @@ export default {
         return this.data.getMetadata('sharinghub:map-viewer') === 'enable' && !!this.data.bbox;
       }
       return false;
+    },
+    relatedDataset() {
+      let links = [];
+      if (this.data instanceof STAC) {
+        links = this.data.getLinksWithRels(['derived_from']);
+        const dataset_links = links?.filter(link => link['category'] === CATEGORIES.DATASET);
+        return dataset_links;
+      }
+      return links;
     }
   },
   watch: {
@@ -133,9 +159,9 @@ export default {
       if (userAccessLevel === ACCESS_LEVELS.GUEST) {
         const helper_message = await this.getProjectOwner(projectID);
         if (helper_message) {
-          if(description){
+          if (description) {
             this.description = `${description}<br/><br/><hr/>${helper_message}<br/><br/>`;
-          }else {
+          } else {
             this.description = helper_message;
           }
         }
