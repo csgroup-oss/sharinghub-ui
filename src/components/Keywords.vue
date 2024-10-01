@@ -1,32 +1,31 @@
 <template>
   <div>
-    <div class="keywords d-flex flex-wrap">
+    <div class="keywords d-flex flex-wrap align-items-center">
       <b-badge
         v-for="(keyword, index) in keywords" :key="keyword" @click="filterByTags(keyword)"
         :variant="getRandomColor(index)" class="mr-1 mb-1 px-2 py-2 cursor"
       >
         <b-icon
-          v-if="!!getIcon(keyword)" font-scale="1.25"
+          v-if="!!getIcon(keyword)" font-scale="1"
           :icon="getIcon(keyword)"
         />
         {{ keyword }}
       </b-badge>
       <b-badge
-        v-if="!!license" variant="secondary" target="_blank"
+        v-if="!!license" variant="primary" target="_blank"
         :href="get_license_link || extractHref(license.formatted)" class="mr-1 mb-1 px-2 py-2"
       >
-        <b-icon font-scale="1.25" icon="bank2" />
+        <b-icon font-scale="1" icon="bank2" />
         License : {{ license.value }}
       </b-badge>
       <b-badge
-        v-if="!!doi" variant="light" target="_blank"
+        v-if="!!doi" variant="primary" target="_blank"
         :href="extractHref(doi.formatted)" class="mr-1 mb-1 px-2 py-2"
       >
-        <b-icon font-scale="1.25" icon="bank2" />
+        <b-icon font-scale="1" icon="bank2" />
         DOI : {{ doi.value }}
       </b-badge>
     </div>
-    <div class="keywords d-flex flex-wrap" />
   </div>
 </template>
 
@@ -78,11 +77,10 @@ export default {
       }
     }
 
-
   },
   methods: {
     getRandomColor(index) {
-      const colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'];
+      const colors = ['primary'];
       return colors[index % colors.length];
     },
     getIcon(keyword = null) {

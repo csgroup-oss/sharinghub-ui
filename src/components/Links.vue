@@ -60,7 +60,7 @@ export default {
       return Object.values(groups).sort((g1, g2) => g1.label.localeCompare(g2.label, this.uiLanguage));
     },
     hasGroups() {
-      return this.groups.some(group => group.rel.length > 0 && group.links.length >= 2);
+      return this.groups.some(group => group.rel.length > 0 && group.links.length >= 1);
     }
   },
   methods: {

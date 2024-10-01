@@ -9,7 +9,7 @@
       "update_hours": "mis à jour il y a {0} heure(s)",
       "update_less_hour": "mis à jour il y  a moins d'une heure"
     },
-    "model_experiments" : "MLflow",
+    "model_experiments": "MLflow",
     "search_placeholder": "recherchez mots clés, models ...",
     "asset_card": "Détails",
     "reviews": "Commentaires",
@@ -23,12 +23,12 @@
     "results": "Résultats",
     "keyword_search": "Résultat de recherche \"{0}\"",
     "advanced_search": "Recherche avancée",
-    "tags":{
+    "tags": {
       "common_tag": "Étiquettes courantes",
       "others": "Autres",
       "reset": "Réinitialiser",
       "starred_project": "Montrer les projets votés",
-      "add_filter" : "Ajouter des filtres"
+      "add_filter": "Ajouter des filtres"
     },
     "i_understand": "J'ai compris",
     "see_more": "Voir {0} résultats \"{1}\"  pour \"{2}\"  ",
@@ -42,6 +42,12 @@
     },
     "search": {
       "collection_mandatory": "Veuillez sélectionner une collection pour soumettre votre recherche."
-    }
+    },
+    "metadata": {
+      "title": "Métadonnées",
+      "general": "Général",
+      "links": "Liens"
+    },
+    "contributors": "Contributeurs"
   }
 }
