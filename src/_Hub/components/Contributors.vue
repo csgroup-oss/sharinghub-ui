@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex-column align-items-start">
+  <div v-if="contributors.length !==0" class="w-full flex-column align-items-start">
     <h2>{{ $t('fields.contributors') }}</h2>
 
     <div class="my-3 mx-1 flex flex-wrap align-items-center">

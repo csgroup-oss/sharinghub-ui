@@ -7,6 +7,7 @@
       <a target="_blank" v-if="userInfo" :href="userInfo.web_url">
         <b-avatar
           ref="avatarRef"
+          alt=""
           variant="primary"
           size="3rem"
           v-b-tooltip.hover.bottom :title="userInfo.name"
@@ -68,10 +69,10 @@ export default defineComponent({
 
     async loadError() {
       const ref = this.$refs.avatarRef.$el;
-      get(`${PROXY_URL}/avatar?email=${this.userDetail.email}`)
+      get(`${PROXY_URL}users/avatar?email=${this.userDetail.email}`)
            .then((resp) =>{
              if(resp.data){
-               const {avatar_url} = resp.data;
+               const avatar_url = resp.data;
                ref.innerHTML = `<span class="b-avatar-img"><img src="${avatar_url}"></span>`;
              }
            });
