@@ -362,14 +362,9 @@ footer {
   margin-top:5.5rem;
   }
 }
-@media screen and (min-width:576px ) and  (max-width:978px ) {
+@media screen and (min-width:576px ) and  (max-width:620px ) {
   .body-content{
-    margin-top:6.5rem;
-  }
-}
-@media screen and (min-width:979px ) and (max-width:1420px){
-  .body-content{
-    margin-top:4.5rem;
+    margin-top:5.5rem;
   }
 }
 </style>
