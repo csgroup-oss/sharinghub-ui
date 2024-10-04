@@ -47,11 +47,6 @@
             </b-input-group>
 
             <b-form-select :disabled="only_starred_project" @change="handleSort" v-model="options.selected" class="ml-3" size="sm">
-              <b-form-select-option :value="null">
-                {{
-                  $t("fields.sort.sort_by")
-                }}
-              </b-form-select-option>
               <b-form-select-option value="+properties.title">
                 {{
                   $t("fields.sort.title")
@@ -117,6 +112,7 @@ import Awaiter from '@/_Hub/components/Awaiter.vue';
 import _ from 'lodash';
 import TagFilterComponent from '@/_Hub/components/TagFilterComponent.vue';
 
+const DEFAULT_SORT = '-properties.updated';
 export default defineComponent({
   name: 'ListProjectsView',
   components: { TagFilterComponent, Awaiter, ItemCard, TextView },
@@ -133,7 +129,7 @@ export default defineComponent({
       term_filter: null,
       nameSearchTimeout: null,
       options: {
-        selected: null
+        selected: DEFAULT_SORT
       },
       data_context : undefined,
       only_starred_project: false
@@ -197,13 +193,17 @@ export default defineComponent({
         })
         .catch(() => {});
     },
-    async fetchCollectionsItems(url = STAC_SEARCH) {
+    async fetchCollectionsItems(url = STAC_SEARCH, defaultSort=DEFAULT_SORT) {
       this.loading = true;
       this.data_context = undefined;
       let { q, topics, sortby, starred } = this.$route.query;
       let route = this.$route.params.pathMatch;
       const topic = this.entriesRoute.find((el) => el.route === route);
       this.title = topic.title || ' ';
+
+      if(!sortby){
+        sortby = defaultSort;
+      }
 
       let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=30`);
 
@@ -347,7 +347,7 @@ export default defineComponent({
     },
     handleResetQuery({ q, sortby }) {
       this.term_filter = q ? q : null;
-      this.options.selected = sortby ? sortby : null;
+      this.options.selected = sortby ? sortby : DEFAULT_SORT;
     },
     handleResetTags() {
       const { q, sortby, topics } = this.$route.query;

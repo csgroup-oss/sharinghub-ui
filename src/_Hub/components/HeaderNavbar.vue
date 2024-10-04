@@ -1,5 +1,5 @@
 <template>
-  <b-navbar :class="['w-100', ['sm', 'md'].includes(size) && 'fixed']" type="dark" variant="light">
+  <b-navbar :class="['w-100', ['sm'].includes(size) && 'fixed']" type="dark" variant="light">
     <b-navbar-brand href="#">
       <text-view class="mr">
         <router-link to="/" class="cursor">
@@ -95,7 +95,7 @@
           </div>
         </template>
 
-        <div v-if="['md','sm'].includes(size)" class="flex align-items-center">
+        <div v-if="['md','sm'].includes(size)" class="">
           <b-dropdown
             right v-if="isAuthenticated" size="sm" variant="link"
             toggle-class="text-decoration-none" no-caret
@@ -346,13 +346,13 @@ export default defineComponent({
       return this.$route.path.split('/')[4] === routeKey || routeKey === this.$route.params?.pathMatch;
     },
     updateNavbar({width}) {
-      let smbreak = this.uiLanguage === 'en' ? 1360 : 1456;
-      let midbreak = this.uiLanguage === 'en' ? 1346 : 1404;
-      if (this.externalLinks.length < 2) {
-        midbreak -= 130;
+      let smbreak =  615;
+      let midbreak = this.uiLanguage === 'en' ? 1300 : 1380;
+      if (this.externalLinks.length > 0) {
+        midbreak +=  this.uiLanguage === 'en' ? 65 : 70;
       }
-      if (this.isAuthenticated) {
-        midbreak -= 16;
+      if (!this.isAuthenticated) {
+         midbreak += this.uiLanguage === 'en' ? 0 : 32;
       }
       if (width <= smbreak) {
         this.size = 'sm';
