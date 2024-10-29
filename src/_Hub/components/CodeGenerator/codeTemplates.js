@@ -59,7 +59,7 @@ export const getEODAGCodeTemplate = {
       fr : `Installation de dépendances requises:`
     },
     text: () => {
-      return `pip install git+https://github.com/CS-SI/eodag-cube.git@develop`;
+      return `pip install eodag`;
     }
   },
 
@@ -70,38 +70,35 @@ export const getEODAGCodeTemplate = {
       fr : `Example de cas d'utilisation pystac pour télécharger les assets  de ce projet en tant que Item pystac:
       `
     },
-    text: ({arg, arg1, arg2, arg3, arg4 }) => {
-      return `from eodag import EODataAccessGateway
+    text: ({arg, arg1, arg2, arg3 }) => {
+      return `from pathlib import Path
+
+from eodag import EODataAccessGateway, setup_logging
+
+# We configure logging to output minimum information
+setup_logging(verbose=2)
 
 dag = EODataAccessGateway()
-dag.update_providers_config("""
-    sharinghub:
-        search:
-            type: StacSearch
-            need_auth: true
-            api_endpoint: ${arg}
-        products:
-            GENERIC_PRODUCT_TYPE:
-                productType: '{productType}'
-        download:
-            type: HTTPDownload
-            base_uri: ${arg1}
-            flatten_top_dirs: False
-        auth:
-            type: HTTPHeaderAuth
-            headers:
-                X-Gitlab-Token: "{token}"
-            credentials:
-                token: ${arg2}
-""")
-dag.set_preferred_provider("sharinghub")
-dag.fetch_product_types_list("sharinghub")
-search_results, total_count = dag.search(
-    provider="sharinghub",
-    productType="${arg3}",
-    id="${arg4}",
+dag.add_provider(
+    "sharinghub",
+    "${arg}",
+     auth={
+         "type": "HTTPHeaderAuth",
+         "credentials": {
+             "X-Gitlab-Token": "${arg1}"
+        },
+     },
 )
-product_paths = dag.download_all(search_results)
+
+assets_workspace = Path.cwd() / ("assets")
+Path.mkdir(assets_workspace, exist_ok=True)
+
+search_results = dag.search(
+    provider="sharinghub",
+    productType="${arg2}",
+    id="${arg3}",
+)
+product_paths = dag.download_all(search_results, output_dir=assets_workspace)
 print(product_paths)`;
     },
     arg: 'stac_search base_uri credentials'

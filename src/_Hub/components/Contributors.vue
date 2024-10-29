@@ -3,7 +3,7 @@
     <h2>{{ $t('fields.contributors') }}</h2>
 
     <div class="my-3 mx-1 flex flex-wrap align-items-center">
-      <contributor class="mx-1" v-for="(ct, idx) in contributors" :user-detail="ct" :key="idx" />
+      <contributor class="mx-1 mb-1" v-for="(ct, idx) in contributors" :user-detail="ct" :key="idx" />
     </div>
   </div>
 </template>
