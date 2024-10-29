@@ -165,17 +165,15 @@ export default defineComponent({
             case 'stac_search base_uri credentials':
               item['text'] = val.text({
                 arg:STAC_SEARCH,
-                arg1:window.origin,
-                arg2:this.defaultToken,
-                arg3: collection.route,
-                arg4:  this.data.id
+                arg1:this.defaultToken,
+                arg2: collection.route,
+                arg3:  this.data.id
               });
               item['textWithCredentials'] = val.text({
                 arg:STAC_SEARCH,
-                arg1:window.origin,
-                arg2:this.token,
-                arg3: collection.route,
-                arg4: this.data.id
+                arg1:this.token,
+                arg2: collection.route,
+                arg3: this.data.id
               });
               return item;
             default:
