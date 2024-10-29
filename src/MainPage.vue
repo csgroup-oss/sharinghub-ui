@@ -4,7 +4,7 @@
       <header-navbar
         v-if="!!headerRoutes"
         :routes="headerRoutes"
-        :external-links="headerExternalLinks"
+        :external-links="headerExternalLinks?.filter(el => !el.footer)"
       />
 
       <div class="body-content w-100 h-100">
@@ -53,8 +53,8 @@
           </b-button-group>
 
           <b-button-group size="sm" class="right p-flex-sm-column p-flex-md-row p-flex-lg-row ">
-            <b-button size="sm" variant="link" :href="docs('legal/privacy')">
-              {{ $t("fields.privacy") }}
+            <b-button v-for="(link, idx) in headerExternalLinks?.filter(el => el.footer)" :key="idx" size="sm" variant="link" :href="link.url">
+              {{ link.name }}
             </b-button>
           </b-button-group>
         </div>
@@ -77,7 +77,7 @@ import {
   removeLocalToken,
   setAlertLastDate
 } from '@/_Hub/tools/https';
-import {CONFIG_URL, DOCS_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
+import {CONFIG_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
 import {mapState} from 'vuex';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
 import I18N from '@radiantearth/stac-fields/I18N';
@@ -105,8 +105,7 @@ export default defineComponent({
       headerRoutes: undefined,
       headerExternalLinks: undefined,
       alert_message: undefined,
-      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN,
-      docs_url:  DOCS_URL
+      connexion_mode: CONNEXION_MODE.DEFAULT_TOKEN
     };
   },
   computed: {
@@ -205,11 +204,6 @@ export default defineComponent({
     };
   },
   methods: {
-    docs(path) {
-      return this.docs_url.endsWith('/') ?
-        this.docs_url.concat(`${path}`)
-        : this.docs_url.concat(`/${path}`);
-    },
     async initWithUserCredentials() {
       this.isLoading = true;
       return get(PROXY_URL.concat('user'))
@@ -249,7 +243,6 @@ export default defineComponent({
         const {data} = response;
         if (data) {
           await this.$store.commit('setProvideConfig', data);
-          this.docs_url = data.docs.url;
           return data;
         }
         return undefined;
