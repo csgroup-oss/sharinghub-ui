@@ -1,6 +1,8 @@
 import config from '@/config';
 
-export const BASE_URL  = window.location.origin.concat('/');
+const {origin, pathname} = window.location;
+
+export const BASE_URL  =  pathname ? origin.concat(pathname) : origin.concat('/');
 export const API_URL = config.apiUrl != null ? config.apiUrl: BASE_URL.concat('api/');
 export const DOCS_URL  =  BASE_URL.concat('docs/');
 

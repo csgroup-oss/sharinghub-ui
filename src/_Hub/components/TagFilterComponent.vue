@@ -208,9 +208,9 @@ export default defineComponent({
 
     filtered_section_tags() {
       const routeName = this.$route.name;
-      if (routeName === 'DynamicListSTAC') {
-        const { pathMatch } = this.$route.params;
-        return this.tags.sections.filter(el => el.enabled_for.includes(pathMatch));
+      if (routeName.includes('DynamicListSTAC')) {
+        const { category } = this.$route.meta;
+        return this.tags.sections.filter(el => el.enabled_for.includes(category));
       } else {
         return this.tags.sections;
       }

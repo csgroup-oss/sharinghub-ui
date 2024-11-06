@@ -239,6 +239,9 @@ export default defineComponent({
     },
 
     async getConfig() {
+      if(this.provideConfig) {
+        return this.provideConfig;
+      }
       return get(CONFIG_URL).then(async (response) => {
         const {data} = response;
         if (data) {

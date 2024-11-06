@@ -141,7 +141,7 @@ export default defineComponent({
       return [CONNEXION_MODE.PRIVATE_TOKEN,  CONNEXION_MODE.CONNECTED].includes( this.auth.mode);
     },
     createProjectLink() {
-      const category = this.$route.params?.pathMatch;
+      const category = this.$route.meta?.category;
       const {wizard} = this.provideConfig;
       const {url} = wizard;
       if (!url) {
@@ -197,15 +197,16 @@ export default defineComponent({
       this.loading = true;
       this.data_context = undefined;
       let { q, topics, sortby, starred } = this.$route.query;
-      let route = this.$route.params.pathMatch;
-      const topic = this.entriesRoute.find((el) => el.route === route);
-      this.title = topic.title || ' ';
+      let category = this.$route.meta?.category;
+
+      const topic = this.entriesRoute.find((el) => el.route === category);
+      this.title = topic?.title || ' ';
 
       if(!sortby){
         sortby = defaultSort;
       }
 
-      let searchUrl = url.concat(`?mode=preview&collections=${route}&limit=30`);
+      let searchUrl = url.concat(`?mode=preview&collections=${category}&limit=30`);
 
       if (q) {
         searchUrl = this.addQueryToUrl(searchUrl, q);
@@ -246,7 +247,7 @@ export default defineComponent({
           if (this.$route.name !== 'Login') {
             this.$router.push({
               path: '/login',
-              query: { redirect: this.$route.params?.pathMatch }
+              query: { redirect: this.$route.meta?.category }
             });
           }
         });
