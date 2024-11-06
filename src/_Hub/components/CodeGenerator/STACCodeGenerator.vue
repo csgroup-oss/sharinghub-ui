@@ -94,6 +94,7 @@ import {CONNEXION_MODE} from '@/_Hub/tools/https';
 import 'highlight.js/lib/languages/python';
 import TabSectionApiStac from '@/_Hub/views/sections/TabSectionApiStac.vue';
 import {STAC_SEARCH} from '@/_Hub/Endpoint';
+import Utils from '@/utils';
 
 
 
@@ -112,7 +113,7 @@ export default defineComponent({
     };
   },
   computed:{
-    ...mapState(['url', 'config', 'auth', 'data', 'title', 'uiLanguage', 'entriesRoute']),
+    ...mapState(['url', 'config', 'auth', 'data', 'title', 'uiLanguage']),
     defaultToken(){
       return '<your_access_token> or <your_personal_gitlab_token>';
     },
@@ -150,8 +151,8 @@ export default defineComponent({
 
     getEodagCodeTemplate(){
       const uiLanguage = this.uiLanguage || 'en';
-      const entry = this.$route.path.split('/')[4];
-      const collection = this.entriesRoute.find(el => el.route ===  entry);
+      const entry = Utils.extractCollection(this.$route.path)?.split('/')[1];
+      const collection = this.data.collection;
       if(!collection){
         throw Error(`Collection ${entry} not found`);
       }
@@ -166,13 +167,13 @@ export default defineComponent({
               item['text'] = val.text({
                 arg:STAC_SEARCH,
                 arg1:this.defaultToken,
-                arg2: collection.route,
+                arg2: collection,
                 arg3:  this.data.id
               });
               item['textWithCredentials'] = val.text({
                 arg:STAC_SEARCH,
                 arg1:this.token,
-                arg2: collection.route,
+                arg2: collection,
                 arg3: this.data.id
               });
               return item;

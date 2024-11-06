@@ -70,7 +70,7 @@ function getStore(config, router) {
         mode : CONNEXION_MODE.DEFAULT_TOKEN
       },
       entriesRoute: {},
-      provideConfig: null,
+      provideConfig: config.provideConfig || null,
       windowWidthSize: window.innerWidth
     }),
     getters: {

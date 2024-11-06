@@ -70,6 +70,7 @@ import {get} from '@/_Hub/tools/https';
 import {STAC_SEARCH} from '@/_Hub/Endpoint';
 import {mapGetters, mapState} from 'vuex';
 import _ from 'lodash';
+import Utils from '@/utils';
 
 export default defineComponent({
   name: 'ResearchBar',
@@ -178,8 +179,8 @@ export default defineComponent({
     async handleSelectResult(event, url) {
       event.preventDefault();
       event.stopPropagation();
-      const external = `/api/${this.toBrowserPath(url).split('/').splice(4).join('/')}`;
-      if (external !== this.$route.path) {
+      const external = Utils.toBrowserUrl(url);
+      if (url !== this.$route.path) {
         this.$router.push({path: external});
       }
     },

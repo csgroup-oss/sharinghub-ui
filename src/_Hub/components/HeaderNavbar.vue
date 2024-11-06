@@ -213,6 +213,7 @@ import Localisation from '@/components/Localisation.vue';
 import logoImage from '@/assets/img/logo.png';
 import ResearchBar from '@/_Hub/components/HeaderNavbar/ResearchBar.vue';
 import Cookies from 'js-cookie';
+import Utils from '@/utils';
 
 
 export default defineComponent({
@@ -343,7 +344,12 @@ export default defineComponent({
       });
     },
     isActiveRoute(routeKey) {
-      return this.$route.path.split('/')[4] === routeKey || routeKey === this.$route.params?.pathMatch;
+      const category = this.$route.meta?.category;
+      const matchedCollection = Utils.extractCollection(this.$route.path);
+      if(matchedCollection?.split('/').length > 1) {
+        return matchedCollection.split('/')[1] === routeKey;
+      }
+      return  routeKey === category;
     },
     updateNavbar({width}) {
       let smbreak =  615;

@@ -1,5 +1,5 @@
 <template>
-  <div ref="card" class="mt-2 sm:col-12 md:col-6 md-2:col-3 lg:col-4 xl:col-3 p-0">
+  <div :data-url="getUrl" ref="card" class="mt-2 sm:col-12 md:col-6 md-2:col-3 lg:col-4 xl:col-3 p-0">
     <div @click="seeModel($event)" v-if="!!stac" class="flex flex-column p-3 ">
       <div class="items-card">
         <div :class="['items-card__title flex flex-column', !getPreview() && 'no-preview']">
@@ -53,6 +53,7 @@ import TextView from '@/_Hub/components/TextView.vue';
 import {DateTime, Interval} from 'luxon';
 import {mapGetters, mapState} from 'vuex';
 import Description from '@/components/Description.vue';
+import Utils from '@/utils';
 
 export default defineComponent({
   name: 'ItemCard',
@@ -86,9 +87,9 @@ export default defineComponent({
       const hours = interval.length('hours');
       const days = interval.length('days');
       if (hours <= 24) {
-          if(hours < 1){
-            return `${this.$t('fields.date.update_less_hour', [Math.round(hours)])}`;
-          }
+        if (hours < 1) {
+          return `${this.$t('fields.date.update_less_hour', [Math.round(hours)])}`;
+        }
         return `${this.$t('fields.date.update_hours', [Math.round(hours)])}`;
       } else if (days <= 30) {
         return `${this.$t('fields.date.update_days', [Math.round(days)])}`;
@@ -107,7 +108,8 @@ export default defineComponent({
       return r.substr(0, 120).concat(' ...');
     },
     getUrl() {
-      return this.toBrowserPath(this.stac.links.find(el => el.rel === 'self').href);
+      const stringUrl = this.toBrowserPath(this.stac.links.find(el => el.rel === 'self').href);
+      return Utils.toBrowserUrl(stringUrl);
     },
     starsProject() {
       return this.stac.properties['sharinghub:stars'];
@@ -118,7 +120,7 @@ export default defineComponent({
   methods: {
     seeModel(event) {
       event.preventDefault();
-      this.$router.push({path: `/${this.getUrl.split('/').splice(3).join('/')}`});
+      this.$router.push({path: this.getUrl});
     },
     getPreview() {
       return this.stac.links.find(el => el.rel === 'preview')?.href;
@@ -127,18 +129,18 @@ export default defineComponent({
       event.stopImmediatePropagation();
       const {topics, q, sortby} = this.$route.query;
       const topics_array = topics?.split(',') || [];
-      if(topics_array.includes(tag)) {
+      if (topics_array.includes(tag)) {
         return;
       }
       topics_array.push(tag);
-      let query = {topics : topics_array.join(',')};
-       if(q){
-         query = {...query, q};
-       }
-       if(sortby){
-         query = {...query, sortby};
-       }
-       this.$router.push({path: '', query});
+      let query = {topics: topics_array.join(',')};
+      if (q) {
+        query = {...query, q};
+      }
+      if (sortby) {
+        query = {...query, sortby};
+      }
+      this.$router.push({path: '', query});
 
     }
   }
@@ -257,9 +259,9 @@ img {
 }
 
 @media screen and (max-width: 575px) {
-  .sm\:col{
-    &-12{
-    width: 100% !important;
+  .sm\:col {
+    &-12 {
+      width: 100% !important;
       min-width: 300px;
       height: fit-content;
     }

@@ -1,15 +1,15 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import {stacPagination} from './rels';
-import {BASE_URL} from '@/_Hub/Endpoint';
+import config from '@/config';
 
 
-export const ACCESS_LEVELS ={
-  'NO_ACCESS':0,
-  'GUEST':1,
-  'READ_ONLY':2,
-  'CONTRIBUTOR':3,
-  'ADMINISTRATOR':4
+export const ACCESS_LEVELS = {
+  'NO_ACCESS': 0,
+  'GUEST': 1,
+  'READ_ONLY': 2,
+  'CONTRIBUTOR': 3,
+  'ADMINISTRATOR': 4
 };
 
 export const STAC_EXTENSIONS = {
@@ -283,15 +283,16 @@ export default class Utils {
     }
 
     const _topics = filters.topics.map(el => `[${el}]`);
-    if(_topics){
-      filters = {...filters,
-        q : [...filters.q, ..._topics]
+    if (_topics) {
+      filters = {
+        ...filters,
+        q: [...filters.q, ..._topics]
       };
     }
-    if(filters.q.length===0){
+    if (filters.q.length === 0) {
       delete filters.q;
     }
-    if(filters.topics){
+    if (filters.topics) {
       delete filters.topics;
     }
 
@@ -470,13 +471,6 @@ export default class Utils {
     return Utils.mergeDeep(target, ...sources);
   }
 
-  static browsifyUrl(url) {
-    const urlObject = new URL(url);
-    const url_to_resolve = urlObject.pathname.split('/').splice(1).join('/');
-    const prefix = window.location.hash.includes('#') ? '/ui/#/' : '/ui/';
-    return `${window.location.origin}${prefix}${url_to_resolve}`;
-  }
-
   static isMlModelCompliant(array) {
     return Array.isArray(array) && array.includes(STAC_EXTENSIONS['ml-model']);
   }
@@ -485,11 +479,16 @@ export default class Utils {
     return rel === 'ml-model:train-data';
   }
 
-  static isBrowserUrl(url) {
-    if (!url) {
-      return url;
-    }
-    return url.startsWith(BASE_URL);
+  static toBrowserUrl(stringUrl) {
+    const url = new URL(stringUrl);
+    return url.pathname;
+  }
+
+  static browsifyUrl(url) {
+    const urlObject = new URL(url);
+    const url_to_resolve = urlObject.pathname.split('/').splice(1).join('/');
+    const prefix = window.location.hash.includes('#') ? '/ui/#/' : '/ui/';
+    return `${window.location.origin}${prefix}${url_to_resolve}`;
   }
 
   static hasNotebookAsset(url) {
@@ -497,10 +496,23 @@ export default class Utils {
   }
 
   static removeUrlSuffix(url) {
-    if(typeof url !== 'string') {
+    if (typeof url !== 'string') {
       return url;
     }
     return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  }
+
+  static extractCollection(permalink, pattern = config.stacApiPrefixRoot) {
+    if (pattern) {
+      const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`${escapedPattern}(.+)`);
+      const match = permalink.match(regex);
+
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    return null;
   }
 
 }

@@ -1,11 +1,8 @@
 module.exports = {
     catalogUrl: null,
-    catalogTitle: "STAC Browser",
+    catalogTitle: "SharingHub",
     allowExternalAccess: false, // Must be true if catalogUrl is not given
     allowedDomains: [],
-    apiUrl: null,
-    docsUrl: null,
-    mlflowUrl: null,
     detectLocaleFromBrowser: true,
     storeLocale: true,
     locale: "en",
@@ -19,6 +16,7 @@ module.exports = {
     displayGeoTiffByDefault: false,
     buildTileUrlTemplate: ({href, asset}) => "https://tiles.rdnt.io/tiles/{z}/{x}/{y}@2x?url=" + encodeURIComponent(asset.href.startsWith("/vsi") ? asset.href : href),
     stacProxyUrl: null,
+    stacApiPrefixRoot : "/api/stac/",
     pathPrefix: "/",
     historyMode: "history",
     cardViewMode: "cards",

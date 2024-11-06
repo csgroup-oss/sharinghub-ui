@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "vue-cli-service serve --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --apiUrl=\"http://localhost:8000/api/\"",
-    "build": "vue-cli-service build --noSourceMaps --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"/ui\"",
+    "build": "vue-cli-service build --noSourceMaps --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"./\"",
     "lint": "vue-cli-service lint --fix",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.?(js|json)\"",
     "i18n:fields": "node helpers/fields_locales.js",

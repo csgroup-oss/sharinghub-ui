@@ -60,9 +60,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(['data', 'entriesRoute']),
-    get_license_link(){
-      const license_link = this.data.links.find(el => el.rel ==='license');
+    ...mapState(['data', 'entriesRoute', 'data']),
+    get_license_link() {
+      const license_link = this.data.links.find(el => el.rel === 'license');
       return license_link.href;
     }
   },
@@ -127,7 +127,7 @@ export default {
     },
 
     filterByTags(keyword) {
-      const collection = this.$route.path.split('/')[4];
+      let collection = this.data?.collection;
       this.$router.push({path: `/${collection}`, query: {topics: keyword}});
     }
 
