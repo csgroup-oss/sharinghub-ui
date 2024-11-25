@@ -31,7 +31,7 @@
             </b-button>
           </div>
 
-          <div v-for="(item, idx) in getUpCodeTemplate()" :key="idx">
+          <div v-for="(item, idx) in getUpdateCodeTemplate()" :key="idx">
             <text-view type="header__b14" v-if="item.header">
               {{ item.header }}
             </text-view>
@@ -114,9 +114,17 @@ export default defineComponent({
     CodeGenerator
   },
   props:{
-    dvcUrl :{
-      type :String,
-      required:true
+    dvcMode :{
+      type: String,
+      required: true
+    },
+    dvcStore :{
+      type: String,
+      required: true
+    },
+    projectId :{
+      type: Number,
+      required: true
     }
   },
   data(){
@@ -154,7 +162,7 @@ export default defineComponent({
     }
   },
   methods:{
-    getUpCodeTemplate(){
+    getUpdateCodeTemplate(){
       return Object.entries(getUpdateDVCCodeTemplate).map(([, val]) =>{
         const uiLanguage = this.uiLanguage || 'en';
         let item = {
@@ -163,13 +171,23 @@ export default defineComponent({
         };
         if(val.arg){
           switch (val.arg){
-            case 'credentials':
-              item['text'] = val.text({arg:this.defaultToken});
-              item['textWithCredentials'] = val.text({arg:this.token});
+            case 'config':
+              item['text'] = val.text({
+                storeMode: this.dvcMode,
+                storeUrl: this.dvcStore,
+                projectID: this.projectId
+              });
               return item;
-            case 'dvc_url':
-              item['text'] = val.text({arg:this.dvcUrl});
-              return  item;
+            case 'credentials':
+              item['text'] = val.text({
+                storeMode: this.dvcMode,
+                token: this.defaultToken
+              });
+              item['textWithCredentials'] = val.text({
+                storeMode: this.dvcMode,
+                token: this.token
+              });
+              return item;
             default:
               break;
           }
@@ -187,16 +205,22 @@ export default defineComponent({
         };
         if(val.arg){
           switch (val.arg){
-            case 'credentials':
-              item['text'] = val.text({arg:this.defaultToken});
-              item['textWithCredentials'] = val.text({arg:this.token});
+            case 'credentials dvc_pull':
+              item['text'] = val.text({
+                storeMode: this.dvcMode,
+                token: this.defaultToken
+              });
+              item['textWithCredentials'] = val.text({
+                storeMode: this.dvcMode,
+                token: this.token
+              });
               return item;
             case 'git_url directory':
               item['text'] = val.text({
-                arg: this.gitProvider.url.concat('.git'),
-                arg1:this.gitProvider.url.split('/').reverse()[0]
+                gitUrl: this.gitProvider.url.concat('.git'),
+                repo: this.gitProvider.url.split('/').reverse()[0]
               });
-              return  item;
+              return item;
             default:
               break;
           }

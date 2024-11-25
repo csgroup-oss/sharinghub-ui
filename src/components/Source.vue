@@ -44,7 +44,7 @@
             </TextView>
           </b-button>
           <b-popover v-if="canUseDVC" id="popover-dvc" target="popover-dvc-btn" triggers="focus" placement="bottom">
-            <DVCCodeGenerator :dvc-url="dvcUrl()" :label="$t('source.dvc.description')" />
+            <DVCCodeGenerator :dvc-mode="dvcMode" :dvc-store="dvcStore" :project-id="projectID" :label="$t('source.dvc.description')" />
           </b-popover>
         </template>
 
@@ -220,6 +220,20 @@ export default {
       return !!this.auth.user && this.auth.mode !== CONNEXION_MODE.DEFAULT_TOKEN;
     },
 
+    dvcMode() {
+      const {store} = this.provideConfig;
+      return store;
+    },
+    dvcStore() {
+      return STORE_DVC_URL;
+    },
+    projectID() {
+      if (!this.data || !(this.data instanceof STAC)) {
+        return null;
+      }
+      return this.data.getMetadata('sharinghub:id');
+    },
+
     canShowJupyter(){
       if (this.stac) {
         const {jupyterlab} = this.provideConfig;
@@ -234,7 +248,10 @@ export default {
       return this.currentUser;
     },
     canUseDVC() {
-      return this.dvcUrl() !== null;
+      if (!this.data || !(this.data instanceof STAC)) {
+        return false;
+      }
+      return this.dvcMode && this.dvcStore && this.data.getMetadata('sharinghub:store-s3') === 'enable';
     },
     canUseMlflow() {
       if (!this.mlflowUrl()) {
@@ -295,18 +312,6 @@ export default {
     ...mapActions(['switchLocale']),
     browserUrl() {
       return window.location.toString();
-    },
-    dvcUrl() {
-      const {store} = this.provideConfig;
-      if (!this.data || !(this.data instanceof STAC)) {
-        return null;
-      }
-
-      const projectID = this.data.getMetadata('sharinghub:id');
-      if (!projectID || !store || this.data.getMetadata('sharinghub:store-s3') !== 'enable') {
-        return null;
-      }
-      return STORE_DVC_URL + projectID;
     },
     mlflowUrl() {
       if (!this.data || !(this.data instanceof STAC)) {
