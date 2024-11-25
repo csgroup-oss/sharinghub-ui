@@ -108,86 +108,73 @@ print(product_paths)`;
 export const getUpdateDVCCodeTemplate = {
   step0: {
     header:{
-      en : `DVC remote URL`,
-      fr : `DVC remote URL`
+      en : `DVC configuration:`,
+      fr : `Configuration DVC :`
     },
-    text: ({arg}) => {
-      return `${arg}`;
+    text: ({storeMode, storeUrl, projectID}) => {
+      const remoteUrl = (storeMode === 's3') ? `s3://sharinghub/${projectID}` : storeUrl + projectID;
+      const storeConfig = (storeMode === 's3') ?
+`dvc remote modify sharinghub endpointurl ${storeUrl}` :
+`dvc remote modify sharinghub auth custom \\
+dvc remote modify sharinghub custom_auth_header 'X-Gitlab-Token'`;
+      return `dvc remote add --default sharinghub ${remoteUrl} \\\n${storeConfig}`;
     },
-    arg: 'dvc_url'
+    arg: 'config'
   },
   step1: {
-    header:{
-      en : `Configuration storage remote for DVC:`,
-      fr : `Configuration storage remote pour DVC:`
-    },
-    text: ({arg}) => {
-      return `dvc remote add -d shstore ${arg} \\
-dvc remote modify shstore auth custom \\
-dvc remote modify shstore custom_auth_header 'X-Gitlab-Token' \\
-dvc remote default shstore`;
-    },
-    arg: 'dvc_url'
-  },
-  step2: {
     header :{
-      en:`Setup Credientials:`,
-      fr:`Configuration de token d'autentification:`
+      en:`Setup Credentials:`,
+      fr:`Configuration de l'authentification :`
     },
-    text: ({arg}) => {
-      return `dvc remote modify --local shstore password ${arg}`;
+    text: ({storeMode, token}) => {
+      return (storeMode === 's3') ?
+`dvc remote modify --local sharinghub access_key_id ${token} \\
+dvc remote modify --local sharinghub secret_access_key none` :
+`dvc remote modify --local sharinghub password ${token}`;
     },
     arg: 'credentials'
   },
-  step3: {
+  step2: {
     header :{
       en : `Create data directory and add  big files assets to start DVC and Git tracking:`,
-      fr : `Créer un répertoire de données et ajouter les fichiers volumineux pour démarrer le suivi DVC et Git:`
+      fr : `Créer un répertoire de données et ajouter les fichiers volumineux pour démarrer le suivi DVC et Git :`
     },
     text: () => {
       return `mkdir data \\
 echo "very big content" > data/very_big_file.txt \\
 dvc add data \\
+dvc push \\
 git add data.dvc data/.gitignore \\
-git commit -m "Add raw data"\` `;
-    }
-  },
-
-  step6: {
-    header :{
-      en : `Push your changes on remote server:`,
-      fr : `Sauvegarder vos changements sur le server:`
-    },
-    text: () => {
-      return `git push \\
-dvc push`;
+git commit -m "Add raw data" \\
+git push`;
     }
   }
-
 };
 
 export const getPullDVCCodeTemplate = {
   step0: {
     header:{
       en : `Clone the project locally using git, if you haven't already done so:`,
-      fr : `Clonez en local le projet avec git, si ce n'est pas le cas:`
+      fr : `Clonez en local le projet avec git, si ce n'est pas le cas :`
     },
-    text: ({arg, arg1}) => {
-      return `git clone ${arg} \\
-cd ${arg1}`;
+    text: ({gitUrl, repo}) => {
+      return `git clone ${gitUrl} \\\ncd ${repo}`;
     },
     arg: 'git_url directory'
   },
   step1: {
     header :{
-      en:`Setup credentials and download resources:`,
-      fr:`Configurez le token d'autentification et téléchargez les ressources`
+      en:`Setup Credentials and download resources:`,
+      fr:`Configuration de l'authentification et téléchargement des données:`
     },
-    text: ({arg}) => {
-      return `dvc remote modify --local shstore password ${arg} \\
-dvc pull`;
+    text: ({storeMode, token}) => {
+      const credsConfig = (storeMode === 's3') ?
+`dvc remote modify --local sharinghub access_key_id ${token} \\
+dvc remote modify --local sharinghub secret_access_key none` :
+`dvc remote modify --local sharinghub password ${token}`;
+        return `${credsConfig} \\\ndvc pull`;
     },
-    arg: 'credentials'
+    arg: 'credentials dvc_pull'
   }
 };
 
