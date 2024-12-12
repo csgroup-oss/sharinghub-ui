@@ -17,6 +17,10 @@
       "generic": "Copier le  lien",
       "withSource": "Copier le  lien de {source}"
     },
+     "copyUri": {
+      "generic": "Copier URI",
+      "withSource": "Copier le  lien de {source}"
+    },
     "currentlyShown": "Ceci est la ressource actuellement affichée.",
     "download": {
       "generic": "Télécharger",
