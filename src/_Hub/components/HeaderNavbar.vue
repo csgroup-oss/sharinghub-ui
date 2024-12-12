@@ -255,9 +255,10 @@ export default defineComponent({
       const redirect = path.substring(1);
       const base_login = '/login';
       if (auth && auth === PROVIDERS.OAUTH) {
+        const login_url = this.login_url.endsWith('/') ? this.login_url.slice(0, this.login_url.length-1) : this.login_url;
         return redirect
-          ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
-          : this.login_url;
+          ? `${login_url}${this.pathPrefix}?redirect=${redirect}`
+          : login_url;
       }
       return base_login;
     },
@@ -270,9 +271,10 @@ export default defineComponent({
     },
     connexion_url() {
       const {redirect} = this.$route.query;
+      const login_url = this.login_url.endsWith('/') ? this.login_url.slice(0, this.login_url.length-1) : this.login_url;
       const url = redirect
-        ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
-        : this.login_url;
+        ? `${login_url}${this.pathPrefix}?redirect=${redirect}`
+        : login_url;
       return url;
     },
     createProjectLink() {

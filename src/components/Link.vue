@@ -14,7 +14,6 @@ import StacLink from './StacLink.vue';
 import {BPopover} from 'bootstrap-vue';
 import Utils from '@/utils';
 
-let linkId = 0;
 
 export default {
   name: 'Link',
@@ -40,11 +39,8 @@ export default {
   },
   computed: {
     popoverId() {
-      return 'popover-link-' + linkId;
+      return 'popover-link-' + `${Utils.stringToHash(this.link.title)}`;
     }
-  },
-  beforeCreate() {
-    linkId++;
   },
   async mounted() {
     if (Utils.isMlModeltrainData(this.link.rel)) {

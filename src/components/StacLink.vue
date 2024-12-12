@@ -3,7 +3,7 @@
     <template v-if="icon">
       <img :src="icon.href" :alt="icon.title" :title="icon.title" class="icon mr-2">
     </template>
-    <span class="title">{{ displayTitle }}</span>
+    <span class="title">{{ displayTitle }} </span>
   </component>
 </template>
 

@@ -13,7 +13,10 @@
       <template v-if="isThumbnail">{{ $t('assets.showThumbnail') }}</template>
       <template v-else>{{ $t('assets.showOnMap') }}</template>
     </b-button>
-    <b-button v-for="action of actions" v-bind="action.btnOptions" :key="action.id" variant="primary" @click="action.onClick">
+    <b-button
+      v-for="action of actions" v-bind="action.btnOptions" :key="action.id" variant="primary"
+      @click="action.onClick"
+    >
       <component v-if="action.icon" :is="action.icon" class="mr-1" />
       {{ action.text }}
     </b-button>
@@ -22,11 +25,11 @@
 
 
 <script>
-import { BIconBoxArrowUpRight, BIconDownload, BIconEye } from 'bootstrap-vue';
+import {BIconBoxArrowUpRight, BIconDownload, BIconEye} from 'bootstrap-vue';
 import Description from './Description.vue';
 import STAC from '../models/stac';
-import Utils, { browserProtocols, imageMediaTypes, mapMediaTypes } from '../utils';
-import { mapGetters } from 'vuex';
+import Utils, {browserProtocols, imageMediaTypes, mapMediaTypes} from '../utils';
+import {mapGetters} from 'vuex';
 import AssetActions from '../../assetActions.config';
 import LinkActions from '../../linkActions.config';
 
@@ -109,8 +112,7 @@ export default {
     isThumbnail() {
       if (this.isAsset) {
         return Array.isArray(this.data.roles) && this.data.roles.includes('thumbnail');
-      }
-      else {
+      } else {
         return this.data.rel === 'preview' && Utils.canBrowserDisplayImage(this.data);
       }
     },
@@ -121,30 +123,38 @@ export default {
       if (typeof this.data.href !== 'string') {
         return null;
       }
+      if (this.uri) {
+        return this.uri;
+      }
       let baseUrl = null;
       if (this.context instanceof STAC) {
         baseUrl = this.context.getAbsoluteUrl();
       }
       return this.getRequestUrl(this.data.href, baseUrl);
     },
+    uri() {
+      const k = Object.keys(this.data).find(el => el.includes('uri'));
+      if (k) {
+        return this.data[k];
+      }
+      return undefined;
+    },
     from() {
       if (this.isGdalVfs) {
         let type = this.data.href.match(/^\/vsi([a-z\d]+)(_streaming)?\//);
         return this.protocolName(type);
-      }
-      else {
+      } else {
         return this.protocolName(this.protocol);
       }
     },
     browserCanOpenFile() {
-      if (this.isGdalVfs)  {
+      if (this.isGdalVfs) {
         return false;
       }
       if (Utils.canBrowserDisplayImage(this.data)) {
         return true;
-      }
-      else if (typeof this.data.type === 'string') {
-        switch(this.data.type.toLowerCase()) {
+      } else if (typeof this.data.type === 'string') {
+        switch (this.data.type.toLowerCase()) {
           case 'text/html':
           case 'application/xhtml+xml':
           case 'text/plain':
@@ -162,7 +172,7 @@ export default {
       return this.$t(`assets.download.${where}`, {source: this.from});
     },
     copyButtonText() {
-      let what = this.isGdalVfs ? 'copyGdalVfsUrl' : 'copyUrl';
+      let what = this.isGdalVfs ? 'copyGdalVfsUrl' : this.uri ? 'copyUri' : 'copyUrl';
       let where = (!this.isBrowserProtocol && this.from) ? 'withSource' : 'generic';
       return this.$t(`assets.${what}.${where}`, {source: this.from});
     }
@@ -172,7 +182,7 @@ export default {
       if (typeof protocol !== 'string') {
         return '';
       }
-      switch(protocol.toLowerCase()) {
+      switch (protocol.toLowerCase()) {
         case 's3':
           return this.$t('protocol.s3');
         case 'abfs':

@@ -17,6 +17,10 @@
       "generic": "Copy URL",
       "withSource": "Copy URL for {source}"
     },
+    "copyUri": {
+      "generic": "Copy URI",
+      "withSource": "Copy URI for {source}"
+    },
     "currentlyShown": "This is the asset that is currently shown.",
     "download": {
       "generic": "Download",
