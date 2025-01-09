@@ -107,7 +107,7 @@ import TextView from '@/_Hub/components/TextView.vue';
 import { mapState } from 'vuex';
 import ItemCard from '@/_Hub/components/ItemCard.vue';
 import { get, CONNEXION_MODE } from '@/_Hub/tools/https';
-import {LOGOUT_URL, PROXY_URL, STAC_SEARCH} from '@/_Hub/Endpoint';
+import { PROXY_URL, STAC_SEARCH} from '@/_Hub/Endpoint';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
 import _ from 'lodash';
 import TagFilterComponent from '@/_Hub/components/TagFilterComponent.vue';
@@ -237,13 +237,8 @@ export default defineComponent({
           }
         })
         .catch(() => {
-          get(LOGOUT_URL).then((response) => {
-            if (response) {
-              const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
-              this.$store.commit('setUserInfo', auth);
-              this.loading =false;
-            }
-          });
+          this.loading =false;
+          this.$store.commit('clearSession');
           if (this.$route.name !== 'Login') {
             this.$router.push({
               path: '/login',

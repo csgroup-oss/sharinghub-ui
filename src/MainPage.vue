@@ -77,7 +77,7 @@ import {
   removeLocalToken,
   setAlertLastDate
 } from '@/_Hub/tools/https';
-import {CONFIG_URL, LOGIN_URL, LOGOUT_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
+import {CONFIG_URL, LOGIN_URL, PROXY_URL, STAC_ROOT_URL, USER_INFO} from '@/_Hub/Endpoint';
 import {mapState} from 'vuex';
 import Awaiter from '@/_Hub/components/Awaiter.vue';
 import I18N from '@radiantearth/stac-fields/I18N';
@@ -327,12 +327,7 @@ export default defineComponent({
     },
 
     async logout() {
-      get(LOGOUT_URL).then((response) => {
-        if (response) {
-          const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
-          this.$store.commit('setUserInfo', auth);
-        }
-      });
+      this.$store.commit('clearSession');
     }
   }
 });
