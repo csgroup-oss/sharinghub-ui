@@ -627,6 +627,9 @@ function getStore(config, router) {
       },
       setWindowWidthSize(state, payload) {
         state.windowWidthSize= payload;
+      },
+      clearSession(state) {
+        state.auth = { mode : CONNEXION_MODE.DEFAULT_TOKEN};
       }
 
 

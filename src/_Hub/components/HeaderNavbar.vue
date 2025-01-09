@@ -298,7 +298,7 @@ export default defineComponent({
                 this.avatar_url = response.data.avatar_url;
               }
             }).catch(() =>{
-               this.logout();
+              this.logout();
             });
           }
         }
@@ -336,14 +336,10 @@ export default defineComponent({
     this.updateNavbar({width: window.innerWidth});
   },
   methods: {
-    async logout() {
-      get(LOGOUT_URL).then((response) => {
-        if (response) {
-          this.isAuthenticated = false;
-          const auth = {...this.auth, mode: CONNEXION_MODE.DEFAULT_TOKEN, user: null};
-          this.$store.commit('setUserInfo', auth);
-        }
-      });
+     logout() {
+      this.isAuthenticated = false;
+      this.$store.commit('clearSession');
+      window.location.href = LOGOUT_URL;
     },
     isActiveRoute(routeKey) {
       const category = this.$route.meta?.category;
