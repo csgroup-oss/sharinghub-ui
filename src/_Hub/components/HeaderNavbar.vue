@@ -253,14 +253,14 @@ export default defineComponent({
       const {path} = this.$route;
       const {auth} = this.provideConfig;
       const redirect = path.substring(1);
-      const base_login = '/login';
+      let url = '/login';
       if (auth && auth === PROVIDERS.OAUTH) {
         const login_url = this.login_url.endsWith('/') ? this.login_url.slice(0, this.login_url.length-1) : this.login_url;
-        return redirect
-          ? `${login_url}${this.pathPrefix}?redirect=${redirect}`
+        url = redirect
+          ? `${login_url}${this.pathPrefix.replace('.', '')}?redirect=${redirect}`
           : login_url;
       }
-      return base_login;
+      return url;
     },
     docsUrl() {
       const {docs} = this.provideConfig;
@@ -268,14 +268,6 @@ export default defineComponent({
         return null;
       }
       return docs.url;
-    },
-    connexion_url() {
-      const {redirect} = this.$route.query;
-      const login_url = this.login_url.endsWith('/') ? this.login_url.slice(0, this.login_url.length-1) : this.login_url;
-      const url = redirect
-        ? `${login_url}${this.pathPrefix}?redirect=${redirect}`
-        : login_url;
-      return url;
     },
     createProjectLink() {
       const {wizard} = this.provideConfig;
@@ -317,7 +309,6 @@ export default defineComponent({
     uiLanguage: {
       immediate: true,
       handler() {
-
         Cookies.set('sharinghub_lang', this.uiLanguage);
         const width = window.innerWidth;
         this.updateNavbar({width});
