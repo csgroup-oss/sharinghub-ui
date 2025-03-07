@@ -4,7 +4,7 @@
   "description": "A full-fledged UI in Vue for browsing and searching static STAC catalogs and STAC APIs.",
   "main": "src/main.js",
   "scripts": {
-    "start": "vue-cli-service serve --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --apiUrl=\"http://localhost:8000/api/\"",
+    "start": "vue-cli-service serve --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --apiUrl=\"http://localhost:8000/api/\" --pathPrefix=\"./\"",
     "build": "vue-cli-service build --noSourceMaps --catalogTitle=\"SharingHub\" --historyMode=\"hash\" --pathPrefix=\"./\"",
     "lint": "vue-cli-service lint --fix",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.?(js|json)\"",

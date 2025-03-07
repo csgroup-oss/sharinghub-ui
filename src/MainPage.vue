@@ -186,7 +186,7 @@ export default defineComponent({
       const match = search.match(regex);
       if(match){
         const redirectContent = decodeURIComponent(match[1]);
-        const url = new URL(`${window.origin}${this.pathPrefix}#/${redirectContent}`);
+        const url = new URL(`${window.origin}${this.pathPrefix.replace('.', '')}#/${redirectContent}`);
         window.location.replace(url.toString());
       }
     }
