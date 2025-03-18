@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.4.0 (March 2025)
+
+### Bug fixes
+
+- Login with path prefix
+- Logout state management front ui
+- Redirect after login
+- Use BASE_URL for login redirect_uri instead of simple origin
+- Update responsive middle screen breakpoints
+
+### Features
+
+- Add way to copy uri of package, container
+- Add dvc mode for code generator, s3 or http
+- Add support contact link
+- Set default sort to recently updated
+- Update eodag code generator
+
+### Internal
+
+- Update front to support deployment with dynamic server api prefix
+
 ## 0.3.0 (October 2024)
 
 ### Bug fixes
