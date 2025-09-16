@@ -126,7 +126,7 @@ export default {
           }else{
                 href = '/' + href;
           }
-        
+
         }
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142
