@@ -43,7 +43,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['allowExternalAccess', 'privateQueryParameters']),
+    ...mapState(['allowExternalAccess', 'privateQueryParameters', 'pathPrefix']),
     ...mapGetters(['toBrowserPath', 'getRequestUrl', 'isExternalUrl']),
     icon() {
       if (this.stac) {
@@ -120,7 +120,13 @@ export default {
           href = this.link.href.split('/').splice(3).join('/');
         }
         if (!href.startsWith('/')) {
-          href = '/' + href;
+          const {pathname} = window.location;
+          if(pathname !== '/' && pathname !== this.pathPrefix ){
+            href =  pathname + href;
+          }else{
+                href = '/' + href;
+          }
+        
         }
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142

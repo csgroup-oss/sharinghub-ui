@@ -26,7 +26,7 @@
             </section>
             <Assets v-if="hasAssets" :assets="assets" :context="data" :shown="shownAssets" @showAsset="showAsset" />
 
-            <Contributors />
+            <Contributors v-if="showContributors" />
           </inside-tab>
 
           <inside-tab :title="$t('fields.metadata.links')">
@@ -51,8 +51,8 @@ import ShowAssetMixin from '../components/ShowAssetMixin';
 import {BTab, BTabs} from 'bootstrap-vue';
 import {addSchemaToDocument, createItemSchema} from '../schema-org';
 import STAC from '@/models/stac';
-import {get} from '@/_Hub/tools/https';
-import {PROXY_URL} from '@/_Hub/Endpoint';
+import {get, CONNEXION_MODE} from '@/_Hub/tools/https';
+import {PROXY_URL } from '@/_Hub/Endpoint';
 import {ACCESS_LEVELS} from '@/utils';
 import InsideTabs from '@/_Hub/components/InsideTabs.vue';
 import InsideTab from '@/_Hub/components/InsideTab.vue';
@@ -96,13 +96,16 @@ export default {
     };
   },
   computed: {
-    ...mapState(['data', 'url', 'uiLanguage']),
+    ...mapState(['data', 'url', 'uiLanguage', 'auth']),
     ...mapGetters(['additionalLinks', 'collectionLink', 'parentLink']),
     canViewMap() {
       if (this.data instanceof STAC) {
         return this.data.getMetadata('sharinghub:map-viewer') === 'enable' && !!this.data.bbox;
       }
       return false;
+    },
+    showContributors() {
+      return this.auth?.mode !== CONNEXION_MODE.PUBLIC;
     }
   },
   watch: {
