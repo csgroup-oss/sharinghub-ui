@@ -254,10 +254,11 @@ export default defineComponent({
       const {auth} = this.provideConfig;
       const redirect = path.substring(1);
       let url = '/login';
+      let pathPrefix  = this.pathPrefix == './' ? '' : this.pathPrefix.substring(1);
       if (auth && auth === PROVIDERS.OAUTH) {
-        const login_url = this.login_url.endsWith('/') ? this.login_url.slice(0, this.login_url.length-1) : this.login_url;
+        const login_url =  this.login_url;
         url = redirect
-          ? `${login_url}${this.pathPrefix.replace('.', '')}?redirect=${redirect}`
+          ? `${login_url}${pathPrefix}?redirect=${redirect}`
           : login_url;
       }
       return url;

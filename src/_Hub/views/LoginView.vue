@@ -64,8 +64,9 @@ export default defineComponent({
     ...mapState(['pathPrefix', 'provideConfig']),
     connexion_url() {
       const { redirect } = this.$route.query;
+      let pathPrefix  = this.pathPrefix == './' ? '' : this.pathPrefix.substring(1);
       const url = redirect
-        ? `${this.login_url}${this.pathPrefix}?redirect=${redirect}`
+        ? `${this.login_url}${pathPrefix}?redirect=${redirect}`
         : this.login_url;
       return url;
     },

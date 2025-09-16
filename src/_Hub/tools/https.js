@@ -65,7 +65,8 @@ export function removeLocalToken(){
 export const CONNEXION_MODE =  {
   'PRIVATE_TOKEN' : 'PRIVATE_TOKEN',
   'CONNECTED' : 'CONNECTED',
-  'DEFAULT_TOKEN' : 'DEFAULT_TOKEN'
+  'DEFAULT_TOKEN' : 'DEFAULT_TOKEN',
+  'PUBLIC' : 'PUBLIC'
 };
 
 export const PROVIDERS =  {

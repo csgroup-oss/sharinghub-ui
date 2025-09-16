@@ -127,8 +127,6 @@ for (let key in CONFIG) {
 
 export default {
   name: 'StacBrowser',
-  // router,
-  // store,
   components: {
     MLflowIframeView,
     TabSectionApiStac, TabSectionReview, TextView, BTabs, BTab,
