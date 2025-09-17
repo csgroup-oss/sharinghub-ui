@@ -88,6 +88,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css';
 import {DateTime, Interval} from 'luxon';
 import TextView from '@/_Hub/components/TextView.vue';
+import {isUndefined } from 'lodash';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -231,10 +232,16 @@ export default defineComponent({
         })
         .catch(async () => {
           this.isLoading = false;
-          await this.logout();
-          if (!['Login', 'Home'].includes(this.$route.name)) {
-            this.$router.push('/login');
+          const {access_token} = (await get(USER_INFO).then((res) => res.data));
+          if(isUndefined(access_token)){
+              await this.logout();
+              if (!['Login', 'Home'].includes(this.$route.name)) {
+                this.$router.push('/login');
+              }
+          }else {
+            this.$store.commit('setUserInfo', {mode: CONNEXION_MODE.PUBLIC});
           }
+
         });
     },
 
