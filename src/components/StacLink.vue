@@ -89,7 +89,8 @@ export default {
       if (this.isStacBrowserLink || this.button) {
         let obj = {
           to: this.href,
-          rel: this.rel
+          rel: this.rel,
+          href: this.href
         };
         if (Utils.isObject(this.button)) {
           Object.assign(obj, this.button);
@@ -107,7 +108,7 @@ export default {
       if (this.button) {
         return 'b-button';
       }
-      return this.isStacBrowserLink ? 'router-link' : 'a';
+      return 'a';
     },
     href() {
       if (this.stac || this.isStacBrowserLink) {
@@ -121,12 +122,7 @@ export default {
         }
         if (!href.startsWith('/')) {
           const {pathname} = window.location;
-          if(pathname !== '/' && pathname !== this.pathPrefix ){
-            href =  pathname + href;
-          }else{
-                href = '/' + href;
-          }
-
+          href =  `${pathname}#/${href}`;
         }
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142

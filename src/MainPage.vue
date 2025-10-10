@@ -187,7 +187,8 @@ export default defineComponent({
       const match = search.match(regex);
       if(match){
         const redirectContent = decodeURIComponent(match[1]);
-        const url = new URL(`${window.origin}${this.pathPrefix.replace('.', '')}#/${redirectContent}`);
+        const {pathname: browserPathname} = window.location;
+        const url = new URL(`${window.origin}${browserPathname}#/${redirectContent}`);
         window.location.replace(url.toString());
       }
     }
