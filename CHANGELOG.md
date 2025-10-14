@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1 (October 2025)
+
+### Bug fixes
+
+- Avoid default token project login redirect after refresh (#45)
+- Login redirect when server under prefix (#46)
+- Related project link wrong on server with prefix path (#47)
+
+### Internal
+
+- Update dependencies to fix vulnerabilities
+
 ## 0.4.0 (March 2025)
 
 ### Bug fixes
