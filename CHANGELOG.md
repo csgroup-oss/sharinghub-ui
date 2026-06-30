@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2 (June 2026)
+
+_Compatibility release for other components version synchronization._
+
 ## 0.4.1 (October 2025)
 
 ### Bug fixes
